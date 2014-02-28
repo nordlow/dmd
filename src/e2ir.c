@@ -119,16 +119,6 @@ elem *callfunc(Loc loc,
     int op;
     elem *eresult = ehidden;
 
-    /* if (global.params.warnings && !global.gag) */
-    /* { */
-    /*     if (fd && */
-    /*         fd->isPure() == PUREstrong && */
-    /*         tf->isnothrow && */
-    /*         tret->ty == Tvoid) */
-    /*     { */
-    /*         warning(fd->loc, "strictly pure nothrow function %s has void return type", fd->toChars()); */
-    /*     } */
-    /* } */
 #if 0
     printf("callfunc(directcall = %d, tret = '%s', ec = %p, fd = %p)\n",
            directcall, tret->toChars(), ec, fd);
