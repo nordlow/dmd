@@ -1,6 +1,6 @@
 INSTALL_DIR=$(PWD)/../install
 ECTAGS_LANGS = Make,C,C++,Sh,D
-TAGS_FILES = *.[ch] */*.[ch]
+TAGS_FILES = src/*.[ch]
 
 .PHONY: all clean test install
 
@@ -10,11 +10,13 @@ all:
 clean:
 	$(QUIET)$(MAKE) -C src -f posix.mak clean
 	$(QUIET)$(MAKE) -C test -f Makefile clean
+	$(RM) tags
 
 test:
 	$(QUIET)$(MAKE) -C test -f Makefile
 tags: posix.mak $(TAGS_FILES)
-	@ctags --sort=yes --links=no --excmd=number --languages=$(ECTAGS_LANGS) --langmap=cxx:.c --extra=+f --file-scope=yes --fields=afikmsSt --totals=yes $(TAGS_FILES)
+	ctags --sort=yes --links=no --excmd=number --languages=$(ECTAGS_LANGS) \
+		--langmap='C++:.c' --extra=+f --file-scope=yes --fields=afikmsSt --totals=yes $(TAGS_FILES)
 
 install: all
 	$(MAKE) INSTALL_DIR=$(INSTALL_DIR) -C src -f posix.mak install
