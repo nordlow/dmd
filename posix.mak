@@ -1,10 +1,10 @@
 INSTALL_DIR=$(PWD)/../install
 ECTAGS_LANGS = Make,C,C++,Sh,D
-TAGS_FILES = src/*.[ch]
+TAGS_FILES = src/*.[ch] src/backend/*.[ch] src/root/*.[ch] src/tk/*.[ch]
 
 .PHONY: all clean test install
 
-all:
+all: tags
 	$(QUIET)$(MAKE) -C src -f posix.mak
 
 clean:
