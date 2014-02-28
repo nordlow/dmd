@@ -144,10 +144,24 @@ void discardValue(Expression *e)
             return;
 
         case TOKcall:
-            /* Don't complain about calling functions with no effect,
+            /* Issue 3882: Don't complain about calling functions with no effect,
              * because purity and nothrow are inferred, and because some of the
              * runtime library depends on it. Needs more investigation.
              */
+            if (global.params.warnings && !global.gag)
+            {
+                if (e->type->ty == Tvoid)
+                {
+                    /* TODO: Restrict this message to call hierarchies that
+                     * never call assert (and or not called from inside
+                     * unittest blocks) */
+                    // e->warning("Call %s with void return has no effect", e->toChars());
+                }
+                else
+                {
+                    e->warning("Call %s with no effect discards return value", e->toChars());
+                }
+            }
             return;
 
         case TOKimport:
