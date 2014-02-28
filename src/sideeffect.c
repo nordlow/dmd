@@ -291,6 +291,13 @@ void discardValue(Expression *e)
                                    s, e->type->toChars());
                     }
                 }
+                else
+                {
+                    CallExp *ce = (CallExp *)e;
+                    e->warning("Call to strictly pure function %s discards return value of type %s, prepend a cast(void) if intentional",
+                               ce->f->toPrettyChars(),
+                               e->type->toChars());
+                }
             }
             return;
 
