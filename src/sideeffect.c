@@ -159,7 +159,7 @@ void discardValue(Expression *e)
                 }
                 else
                 {
-                    e->warning("Call %s with no side effects discards return value of type %s",
+                    e->warning("Function call %s with no side effects discards return value of type %s",
                                e->toChars(),
                                e->type->toChars());
                 }
