@@ -4,7 +4,7 @@ TAGS_FILES = src/*.[ch] src/backend/*.[ch] src/root/*.[ch] src/tk/*.[ch]
 
 .PHONY: all clean test install
 
-all: tags
+all:
 	$(QUIET)$(MAKE) -C src -f posix.mak
 
 clean:
