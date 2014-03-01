@@ -159,9 +159,12 @@ void discardValue(Expression *e)
                 }
                 else
                 {
-                    e->warning("Function call %s with no side effects discards return value of type %s",
+                    CallExp *ce = (CallExp *)e;
+                    e->warning("Function call %s without side effects discards non-void return value %s of function",
                                e->toChars(),
                                e->type->toChars());
+                    errorSupplemental(ce->f->loc, "defined here");
+                    // warning(ce->f->loc, "defined here");
                 }
             }
             return;
