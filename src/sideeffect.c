@@ -274,8 +274,19 @@ void discardValue(Expression *e)
                     if (global.params.debuglevel == 0)
                     {
                         CallExp *ce = (CallExp *)e;
-                        e->warning("Call to strictly pure function %s with void return has no effect",
-                                   ce->f->toPrettyChars());
+                        if (ce->f)
+                        {
+                            /* Issue this warning directly in the definition of
+                             * @safe pure nothrow functions that don't call
+                             * assert and no other functions.
+                             */
+                            e->warning("Call to strictly pure function %s with void return has no effect in non-debug mode",
+                                       ce->f->toPrettyChars());
+                        }
+                        else
+                        {
+                            e->warning("Call with void return type has no effect");
+                        }
                     }
                 }
                 else if (ce->e1->type)
