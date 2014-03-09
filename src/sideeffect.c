@@ -259,13 +259,24 @@ void discardValue(Expression *e)
                 CallExp *ce = (CallExp *)e;
                 if (e->type->ty == Tvoid)
                 {
-                    /* Don't complain about calling void-returning functions with no side-effect,
-                     * because purity and nothrow are inferred, and because some of the
-                     * runtime library depends on it. Needs more investigation.
+                    /* Don't complain about calling void-returning functions
+                     * with no side-effect, because purity and nothrow are
+                     * inferred, and because some of the runtime library depends
+                     * on it. Needs more investigation.
                      *
-                     * One possible solution is to restrict this message to only be called in hierarchies that
-                     * never call assert (and or not called from inside unittest blocks)
+                     * One possible solution is to restrict this message to only
+                     * be called in hierarchies that never call assert (and or
+                     * not called from inside unittest blocks).
+                     *
+                     * In non-debug mode asserts have no effect so it should be
+                     * safe to issue warning then aswell.
                      */
+                    if (global.params.debuglevel == 0)
+                    {
+                        CallExp *ce = (CallExp *)e;
+                        e->warning("Call to strictly pure function %s with void return has no effect",
+                                   ce->f->toPrettyChars());
+                    }
                 }
                 else if (ce->e1->type)
                 {
