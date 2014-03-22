@@ -271,13 +271,13 @@ void discardValue(Expression *e)
                      * In non-debug mode asserts have no effect so it should be
                      * safe to issue warning then aswell.
                      */
-                    if (global.params.debuglevel == 0)
+                    if (true/* global.params.debuglevel == 0 */)
                     {
                         CallExp *ce = (CallExp *)e;
                         if (ce->f)
                         {
                             /* Issue this warning directly in the definition of
-                             * @safe pure nothrow functions that don't call
+                             * @safe pure nothrow functions f that don't call
                              * assert and no other functions.
                              */
                             e->warning("Call to strictly pure function %s with void return has no effect in non-debug mode",
@@ -285,7 +285,7 @@ void discardValue(Expression *e)
                         }
                         else
                         {
-                            e->warning("Call with void return type has no effect");
+                            e->warning("Call to strictly pure function with void return has no effect in non-debug mode");
                         }
                     }
                 }
