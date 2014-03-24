@@ -1289,11 +1289,11 @@ Statement *ForeachStatement::semantic(Scope *sc)
     {
         if (aggr->type->ty == Tstruct)
         {
-            error("foreach over struct %s requires .tupleof suffix", aggr->toChars());
+            error("foreach over struct %s requires suffixing it with .tupleof", aggr->toChars());
         }
         else if (aggr->type->ty == Tclass)
         {
-            error("foreach over class %s requires .tupleof suffix", aggr->toChars());
+            error("foreach over class %s requires suffixing it with .tupleof", aggr->toChars());
         }
         else
         {
