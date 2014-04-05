@@ -1287,7 +1287,18 @@ Statement *ForeachStatement::semantic(Scope *sc)
 
     if (!inferAggregate(this, sc, sapply))
     {
-        error("invalid foreach aggregate %s", aggr->toChars());
+        if (aggr->type->ty == Tstruct)
+        {
+            error("foreach over struct %s requires suffixing it with .tupleof", aggr->toChars());
+        }
+        else if (aggr->type->ty == Tclass)
+        {
+            error("foreach over class %s requires suffixing it with .tupleof", aggr->toChars());
+        }
+        else
+        {
+            error("invalid foreach aggregate %s", aggr->toChars());
+        }
     Lerror:
         return new ErrorStatement();
     }
