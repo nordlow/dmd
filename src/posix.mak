@@ -257,439 +257,439 @@ $(shell test \"$(VERSION)\" != "`cat verstr.h 2> /dev/null`" \
 $(DMD_OBJS) $(GLUE_OBJS) : $(idgen_output) $(impcnvgen_output)
 $(BACK_OBJS) : $(optabgen_output)
 
-aa.o: $C/aa.c
+aa.o: $C/aa.c posix.mak
 	$(CC) -c $(MFLAGS) -I. $<
 
-aav.o: $(ROOT)/aav.c
+aav.o: $(ROOT)/aav.c posix.mak
 	$(CC) -c $(GFLAGS) -I$(ROOT) $<
 
-access.o: access.c
+access.o: access.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-aliasthis.o: aliasthis.c
+aliasthis.o: aliasthis.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-apply.o: apply.c
+apply.o: apply.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-argtypes.o: argtypes.c
+argtypes.o: argtypes.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-arrayop.o: arrayop.c
+arrayop.o: arrayop.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-async.o: $(ROOT)/async.c
+async.o: $(ROOT)/async.c posix.mak
 	$(CC) -c $(GFLAGS) -I$(ROOT) $<
 
-attrib.o: attrib.c
+attrib.o: attrib.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-backconfig.o: $C/backconfig.c
+backconfig.o: $C/backconfig.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-bcomplex.o: $C/bcomplex.c
+bcomplex.o: $C/bcomplex.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-blockopt.o: $C/blockopt.c
+blockopt.o: $C/blockopt.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-builtin.o: builtin.c
+builtin.o: builtin.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-canthrow.o: canthrow.c
+canthrow.o: canthrow.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-cast.o: cast.c
+cast.o: cast.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-cg.o: $C/cg.c fltables.c
+cg.o: $C/cg.c posix.mak fltables.c posix.mak
 	$(CC) -c $(MFLAGS) -I. $<
 
-cg87.o: $C/cg87.c
+cg87.o: $C/cg87.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-cgcod.o: $C/cgcod.c cdxxx.c
+cgcod.o: $C/cgcod.c posix.mak cdxxx.c posix.mak
 	$(CC) -c $(MFLAGS) -I. $<
 
-cgcs.o: $C/cgcs.c
+cgcs.o: $C/cgcs.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-cgcv.o: $C/cgcv.c
+cgcv.o: $C/cgcv.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-cgelem.o: $C/cgelem.c elxxx.c
+cgelem.o: $C/cgelem.c posix.mak elxxx.c posix.mak
 	$(CC) -c $(MFLAGS) -I. $<
 
-cgen.o: $C/cgen.c
+cgen.o: $C/cgen.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-cgobj.o: $C/cgobj.c
+cgobj.o: $C/cgobj.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-cgreg.o: $C/cgreg.c
+cgreg.o: $C/cgreg.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-cgsched.o: $C/cgsched.c
+cgsched.o: $C/cgsched.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-cgxmm.o: $C/cgxmm.c
+cgxmm.o: $C/cgxmm.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-class.o: class.c
+class.o: class.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-clone.o: clone.c
+clone.o: clone.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-cod1.o: $C/cod1.c
+cod1.o: $C/cod1.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-cod2.o: $C/cod2.c
+cod2.o: $C/cod2.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-cod3.o: $C/cod3.c
+cod3.o: $C/cod3.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-cod4.o: $C/cod4.c
+cod4.o: $C/cod4.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-cod5.o: $C/cod5.c
+cod5.o: $C/cod5.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-code.o: $C/code.c
+code.o: $C/code.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-constfold.o: constfold.c
+constfold.o: constfold.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-ctfeexpr.o: ctfeexpr.c
+ctfeexpr.o: ctfeexpr.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-irstate.o: irstate.c
+irstate.o: irstate.c posix.mak
 	$(CC) -c $(MFLAGS) -I$(ROOT) $<
 
-csymbol.o: $C/symbol.c
+csymbol.o: $C/symbol.c posix.mak
 	$(CC) -c $(MFLAGS) $< -o $@
 
-cond.o: cond.c
+cond.o: cond.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-cppmangle.o: cppmangle.c
+cppmangle.o: cppmangle.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-cv8.o: $C/cv8.c
+cv8.o: $C/cv8.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-debug.o: $C/debug.c debtab.c
+debug.o: $C/debug.c posix.mak debtab.c posix.mak
 	$(CC) -c $(MFLAGS) -I. $<
 
-declaration.o: declaration.c
+declaration.o: declaration.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-delegatize.o: delegatize.c
+delegatize.o: delegatize.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-divcoeff.o: $C/divcoeff.c
+divcoeff.o: $C/divcoeff.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-doc.o: doc.c
+doc.o: doc.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-dsymbol.o: dsymbol.c
+dsymbol.o: dsymbol.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-dt.o: $C/dt.c
+dt.o: $C/dt.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-dwarf.o: $C/dwarf.c
+dwarf.o: $C/dwarf.c posix.mak
 	$(CC) -c $(MFLAGS) -I. $<
 
-e2ir.o: e2ir.c
+e2ir.o: e2ir.c posix.mak
 	$(CC) -c $(MFLAGS) -I$(ROOT) $<
 
-ee.o: $C/ee.c
+ee.o: $C/ee.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-eh.o: eh.c
+eh.o: eh.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-el.o: $C/el.c
+el.o: $C/el.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-elfobj.o: $C/elfobj.c
+elfobj.o: $C/elfobj.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-entity.o: entity.c
+entity.o: entity.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-enum.o: enum.c
+enum.o: enum.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-evalu8.o: $C/evalu8.c
+evalu8.o: $C/evalu8.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-expression.o: expression.c
+expression.o: expression.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-file.o : $(ROOT)/file.c
+file.o : $(ROOT)/file.c posix.mak
 	$(CC) -c $(CFLAGS) -I$(ROOT) $<
 
-filename.o : $(ROOT)/filename.c
+filename.o : $(ROOT)/filename.c posix.mak
 	$(CC) -c $(CFLAGS) -I$(ROOT) $<
 
-func.o: func.c
+func.o: func.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-nogc.o: nogc.c
+nogc.o: nogc.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-gdag.o: $C/gdag.c
+gdag.o: $C/gdag.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-gflow.o: $C/gflow.c
+gflow.o: $C/gflow.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-#globals.o: globals.c
+#globals.o: globals.c posix.mak
 #	$(CC) -c $(CFLAGS) $<
 
-glocal.o: $C/glocal.c
+glocal.o: $C/glocal.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-gloop.o: $C/gloop.c
+gloop.o: $C/gloop.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-glue.o: glue.c
+glue.o: glue.c posix.mak
 	$(CC) -c $(MFLAGS) -I$(ROOT) $<
 
-go.o: $C/go.c
+go.o: $C/go.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-gother.o: $C/gother.c
+gother.o: $C/gother.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-hdrgen.o: hdrgen.c
+hdrgen.o: hdrgen.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-iasm.o: iasm.c
+iasm.o: iasm.c posix.mak
 	$(CC) -c $(MFLAGS) -I$(ROOT) -fexceptions $<
 
-id.o: id.c
+id.o: id.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-identifier.o: identifier.c
+identifier.o: identifier.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-impcnvtab.o: impcnvtab.c
+impcnvtab.o: impcnvtab.c posix.mak
 	$(CC) -c $(CFLAGS) -I$(ROOT) $<
 
-imphint.o: imphint.c
+imphint.o: imphint.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-import.o: import.c
+import.o: import.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-inifile.o: inifile.c
+inifile.o: inifile.c posix.mak
 	$(CC) -c $(CFLAGS) -DSYSCONFDIR='"$(SYSCONFDIR)"' $<
 
-init.o: init.c
+init.o: init.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-inline.o: inline.c
+inline.o: inline.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-interpret.o: interpret.c
+interpret.o: interpret.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-intrange.o: intrange.c
+intrange.o: intrange.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-json.o: json.c
+json.o: json.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-lexer.o: lexer.c
+lexer.o: lexer.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-libelf.o: libelf.c
+libelf.o: libelf.c posix.mak
 	$(CC) -c $(CFLAGS) -I$C $<
 
-libmach.o: libmach.c
+libmach.o: libmach.c posix.mak
 	$(CC) -c $(CFLAGS) -I$C $<
 
-libmscoff.o: libmscoff.c
+libmscoff.o: libmscoff.c posix.mak
 	$(CC) -c $(CFLAGS) -I$C $<
 
-link.o: link.c
+link.o: link.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-machobj.o: $C/machobj.c
+machobj.o: $C/machobj.c posix.mak
 	$(CC) -c $(MFLAGS) -I. $<
 
-macro.o: macro.c
+macro.o: macro.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-man.o: $(ROOT)/man.c
+man.o: $(ROOT)/man.c posix.mak
 	$(CC) -c $(GFLAGS) -I$(ROOT) $<
 
-mangle.o: mangle.c
+mangle.o: mangle.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-mars.o: mars.c verstr.h
+mars.o: mars.c posix.mak verstr.h
 	$(CC) -c $(CFLAGS) $<
 
-rmem.o: $(ROOT)/rmem.c
+rmem.o: $(ROOT)/rmem.c posix.mak
 	$(CC) -c $(GFLAGS) -I$(ROOT) $<
 
-module.o: module.c
+module.o: module.c posix.mak
 	$(CC) -c $(CFLAGS) -I$C $<
 
-mscoffobj.o: $C/mscoffobj.c
+mscoffobj.o: $C/mscoffobj.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-msc.o: msc.c
+msc.o: msc.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-mtype.o: mtype.c
+mtype.o: mtype.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-nteh.o: $C/nteh.c
+nteh.o: $C/nteh.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-object.o : $(ROOT)/object.c
+object.o : $(ROOT)/object.c posix.mak
 	$(CC) -c $(CFLAGS) -I$(ROOT) $<
 
-opover.o: opover.c
+opover.o: opover.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-optimize.o: optimize.c
+optimize.o: optimize.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-os.o: $C/os.c
+os.o: $C/os.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-out.o: $C/out.c
+out.o: $C/out.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-outbuf.o: $C/outbuf.c
+outbuf.o: $C/outbuf.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-outbuffer.o : $(ROOT)/outbuffer.c
+outbuffer.o : $(ROOT)/outbuffer.c posix.mak
 	$(CC) -c $(CFLAGS) -I$(ROOT) $<
 
-parse.o: parse.c
+parse.o: parse.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-pdata.o: $C/pdata.c
+pdata.o: $C/pdata.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-ph2.o: $C/ph2.c
+ph2.o: $C/ph2.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-platform_stub.o: $C/platform_stub.c
+platform_stub.o: $C/platform_stub.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-port.o: $(ROOT)/port.c
+port.o: $(ROOT)/port.c posix.mak
 	$(CC) -c $(GFLAGS) -I$(ROOT) $<
 
-ptrntab.o: $C/ptrntab.c
+ptrntab.o: $C/ptrntab.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-response.o: $(ROOT)/response.c
+response.o: $(ROOT)/response.c posix.mak
 	$(CC) -c $(GFLAGS) -I$(ROOT) $<
 
-rtlsym.o: $C/rtlsym.c
+rtlsym.o: $C/rtlsym.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-sapply.o: sapply.c
+sapply.o: sapply.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-s2ir.o: s2ir.c
+s2ir.o: s2ir.c posix.mak
 	$(CC) -c $(MFLAGS) -I$(ROOT) $<
 
-scanelf.o: scanelf.c
+scanelf.o: scanelf.c posix.mak
 	$(CC) -c $(CFLAGS) -I$C $<
 
-scanmach.o: scanmach.c
+scanmach.o: scanmach.c posix.mak
 	$(CC) -c $(CFLAGS) -I$C $<
 
-scope.o: scope.c
+scope.o: scope.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-sideeffect.o: sideeffect.c
+sideeffect.o: sideeffect.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-speller.o: $(ROOT)/speller.c
+speller.o: $(ROOT)/speller.c posix.mak
 	$(CC) -c $(GFLAGS) -I$(ROOT) $<
 
-statement.o: statement.c
+statement.o: statement.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-staticassert.o: staticassert.c
+staticassert.o: staticassert.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-stringtable.o: $(ROOT)/stringtable.c
+stringtable.o: $(ROOT)/stringtable.c posix.mak
 	$(CC) -c $(GFLAGS) -I$(ROOT) $<
 
-strtold.o: $C/strtold.c
+strtold.o: $C/strtold.c posix.mak
 	$(CC) -c -I$(ROOT) $<
 
-struct.o: struct.c
+struct.o: struct.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-target.o: target.c
+target.o: target.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-template.o: template.c
+template.o: template.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-ti_achar.o: $C/ti_achar.c
+ti_achar.o: $C/ti_achar.c posix.mak
 	$(CC) -c $(MFLAGS) -I. $<
 
-ti_pvoid.o: $C/ti_pvoid.c
+ti_pvoid.o: $C/ti_pvoid.c posix.mak
 	$(CC) -c $(MFLAGS) -I. $<
 
-tk.o: tk.c
+tk.o: tk.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-tocsym.o: tocsym.c
+tocsym.o: tocsym.c posix.mak
 	$(CC) -c $(MFLAGS) -I$(ROOT) $<
 
-toctype.o: toctype.c
+toctype.o: toctype.c posix.mak
 	$(CC) -c $(MFLAGS) -I$(ROOT) $<
 
-todt.o: todt.c
+todt.o: todt.c posix.mak
 	$(CC) -c $(MFLAGS) -I$(ROOT) $<
 
-toelfdebug.o: toelfdebug.c
+toelfdebug.o: toelfdebug.c posix.mak
 	$(CC) -c $(MFLAGS) -I$(ROOT) $<
 
-toir.o: toir.c
+toir.o: toir.c posix.mak
 	$(CC) -c $(MFLAGS) -I$(ROOT) $<
 
-toobj.o: toobj.c
+toobj.o: toobj.c posix.mak
 	$(CC) -c $(MFLAGS) -I$(ROOT) $<
 
-traits.o: traits.c
+traits.o: traits.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-type.o: $C/type.c
+type.o: $C/type.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-typinf.o: typinf.c
+typinf.o: typinf.c posix.mak
 	$(CC) -c $(MFLAGS) -I$(ROOT) $<
 
-util2.o: $C/util2.c
+util2.o: $C/util2.c posix.mak
 	$(CC) -c $(MFLAGS) $<
 
-utf.o: utf.c
+utf.o: utf.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-unittests.o: unittests.c
+unittests.o: unittests.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
-var.o: $C/var.c optab.c tytab.c
+var.o: $C/var.c posix.mak optab.c posix.mak tytab.c posix.mak
 	$(CC) -c $(MFLAGS) -I. $<
 
-version.o: version.c
+version.o: version.c posix.mak
 	$(CC) -c $(CFLAGS) $<
 
 -include $(DEPS)
