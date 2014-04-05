@@ -709,6 +709,7 @@ int tryMain(size_t argc, const char *argv[])
                     {
 
                         errno = 0;
+                        global.params.queryFilename = "/home/per/justd/fs.d";
                         global.params.queryAtOffset = strtol(p + off + 1, (char **)&p, 10);
                         if (*p || errno)
                             goto Lerror;

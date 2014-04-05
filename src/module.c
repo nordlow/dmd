@@ -330,6 +330,11 @@ void Module::parse()
     //printf("Module::parse()\n");
 
     char *srcname = srcfile->name->toChars();
+
+    if (global.params.queryAtOffset >= 0)  {
+        global.params.queryFlag = (strcmp(srcname, global.params.queryFilename) == 0); // is this file
+    }
+
     //printf("Module::parse(srcname = '%s')\n", srcname);
 
     isPackageFile = (strcmp(srcfile->name->name(), "package.d") == 0);
@@ -1230,5 +1235,3 @@ const char *lookForSourceFile(const char *filename)
     }
     return NULL;
 }
-
-

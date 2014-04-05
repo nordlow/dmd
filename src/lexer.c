@@ -696,14 +696,17 @@ TOK Lexer::nextToken()
         scan(&token);
     }
 
-    const long begin = token.ptr - this->base; // token begin offset
-    const long end = begin + strlen(token.toChars(token.value)); // token end offset
-    if (begin <= global.params.queryAtOffset &&
-        global.params.queryAtOffset < end)
-    {
+    if (global.params.queryFlag &&
+        global.params.queryAtOffset >= 0)  {
+        const long begin = token.ptr - this->base; // token begin offset
+        const long end = begin + strlen(token.toChars(token.value)); // token end offset
+        if (begin <= global.params.queryAtOffset &&
+            global.params.queryAtOffset < end)
+        {
 
-        token.printDoc();
-        exit(0);
+            token.printDoc();
+            exit(0);
+        }
     }
     return token.value;
 }
