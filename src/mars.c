@@ -649,6 +649,8 @@ int tryMain(size_t argc, const char *argv[])
 
     getenv_setargv("DFLAGS", &argc, &argv);
 
+    global.params.queryAtOffset = -1;
+
 #if 0
     for (size_t i = 0; i < argc; i++)
     {
@@ -692,6 +694,30 @@ int tryMain(size_t argc, const char *argv[])
                         goto Lerror;
                 }
                 else if (p[4])
+                    goto Lerror;
+            }
+            else if (memcmp(p + 1, "query", 5) == 0)
+            {
+                int off = 6;
+                global.params.queryAtOffset = 0;
+                // Parse:
+                //      -query
+                //      -query=fileoffset
+                if (p[off] == '=')
+                {
+                    if (isdigit((utf8_t)p[off + 1]))
+                    {
+
+                        errno = 0;
+                        global.params.queryAtOffset = strtol(p + off + 1, (char **)&p, 10);
+                        if (*p || errno)
+                            goto Lerror;
+                        printf("%d\n", global.params.queryAtOffset);
+                    }
+                    else
+                        goto Lerror;
+                }
+                else if (p[off])
                     goto Lerror;
             }
             else if (strcmp(p + 1, "shared") == 0)

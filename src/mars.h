@@ -138,6 +138,8 @@ struct Param
     bool addMain;       // add a default main() function
     bool allInst;       // generate code for all template instantiations
 
+    long queryAtOffset;  // query code at file offset
+
     const char *argv0;    // program name
     Strings *imppath;     // array of char*'s of where to look for import modules
     Strings *fileImppath; // array of char*'s of where to look for file import modules
