@@ -348,7 +348,7 @@ void Token::printDoc()
     case TOKstatic: doc = NULL; break;
     case TOKvirtual: doc = NULL; break;
     case TOKfinal: doc = NULL; break;
-    case TOKconst: doc = NULL; break;
+    case TOKconst: doc = "Constant data may not be changed by current scope (thread)"; break;
     case TOKabstract: doc = NULL; break;
     case TOKvolatile: doc = NULL; break;
 
@@ -362,7 +362,7 @@ void Token::printDoc()
     case TOKauto: doc = NULL; break;
     case TOKpackage: doc = NULL; break;
     case TOKmanifest: doc = NULL; break;
-    case TOKimmutable: doc = NULL; break;
+    case TOKimmutable: doc = "Immutable data can never changed by anyone scope (thread)"; break;
 
         // Statements
     case TOKif: doc = NULL; break;
@@ -404,51 +404,30 @@ void Token::printDoc()
 
         // Added after 1.0
     case TOKargTypes: doc = NULL; break;
-
-    case TOKref: doc = NULL; break;
-
-    case TOKmacro: doc = NULL; break;
-
+    case TOKref: doc = "Reference Data Qualifier"; break;
+    case TOKmacro: doc = "Macro"; break;
     case TOKparameters: doc = NULL; break;
-
     case TOKtraits: doc = NULL; break;
-
     case TOKoverloadset: doc = NULL; break;
-
     case TOKpure: doc = "Pure Function Qualifier"; break;
-
-    case TOKnothrow: doc = NULL; break;
-
+    case TOKnothrow: doc = "Specify that function cannot throw an exception"; break;
     case TOKgshared: doc = NULL; break;
-
-    case TOKline: doc = NULL; break;
-
-    case TOKfile: doc = NULL; break;
-
+    case TOKline: doc = "Current Line Number Integer"; break;
+    case TOKfile: doc = "Current D Source File String"; break;
     case TOKmodulestring: doc = NULL; break;
-
     case TOKfuncstring: doc = NULL; break;
-
-    case TOKprettyfunc: doc = NULL; break;
-
-    case TOKshared: doc = NULL; break;
-
+    case TOKprettyfunc: doc = "Current Function Pretty String"; break;
+    case TOKshared: doc = "Shared Memory Data Qualifier"; break;
     case TOKat: doc = NULL; break;
-
     case TOKpow: doc = "Power/Exponentation"; break;
-
     case TOKpowass: doc = "Power/Exponentation Assignment"; break;
-
-    case TOKgoesto: doc = NULL; break;
-
-    case TOKvector: doc = NULL; break;
-
-    case TOKpound: doc = NULL; break;
-
+    case TOKgoesto: doc = "Lambda Expression Goes To"; break;
+    case TOKvector: doc = "Vector"; break;
+    case TOKpound: doc = "Pound"; break;
     case TOKinterval: doc = "Interval"; break;
 
     case TOKMAX: doc = NULL; break;
-}
+    }
     if (doc) {
         fprintf(stderr, "%s: ", doc);
         fprintf(stderr, "%s", toChars());
