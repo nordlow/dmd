@@ -2219,7 +2219,7 @@ void Expression::checkPurity(Scope *sc, FuncDeclaration *f)
         {   // The closest pure parent of instantiated non-nested template function is
             // always itself.
             if (!f->isPure() && outerfunc->setImpure() && !(sc->flags & SCOPEctfe))
-                error("pure function '%s' cannot call impure function '%s'",
+                error("pure function '%s' cannot call impure function '%s', prepend call with `debug` if intentional",
                     outerfunc->toPrettyChars(), f->toPrettyChars());
             return;
         }
@@ -2262,13 +2262,13 @@ void Expression::checkPurity(Scope *sc, FuncDeclaration *f)
             !(sc->flags & SCOPEctfe))
         {
             if (outerfunc->setImpure())
-                error("pure function '%s' cannot call impure function '%s'",
+                error("pure function '%s' cannot call impure function '%s', prepend call with `debug` if intentional",
                     outerfunc->toPrettyChars(), f->toPrettyChars());
         }
     }
 #else
     if (sc->func && sc->func->isPure() && !sc->intypeof && !f->isPure())
-        error("pure function '%s' cannot call impure function '%s'",
+        error("pure function '%s' cannot call impure function '%s', prepend call with `debug` if intentional",
             sc->func->toPrettyChars(), f->toPrettyChars());
 #endif
 }
