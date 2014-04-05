@@ -88,8 +88,375 @@ void Token::print()
     fprintf(stderr, "%s\n", toChars());
 }
 #endif
+void Token::printDoc()
+{
+    const char* doc = NULL;
 
-const char *Token::toChars()
+    switch (this->value)
+    {
+    case TOKreserved: doc = NULL; break;
+
+        // Other
+    case TOKlparen: doc = NULL; break;
+    case TOKrparen: doc = NULL; break;
+    case TOKlbracket: doc = NULL; break;
+    case TOKrbracket: doc = NULL; break;
+    case TOKlcurly: doc = NULL; break;
+    case TOKrcurly: doc = NULL; break;
+    case TOKcolon: doc = NULL; break;
+    case TOKneg: doc = NULL; break;
+    case TOKsemicolon: doc = NULL; break;
+    case TOKdotdotdot: doc = NULL; break;
+    case TOKeof: doc = "End of File"; break;
+    case TOKcast: doc = "Type Cast"; break;
+    case TOKnull: doc = NULL; break;
+    case TOKassert: doc = "Assertion (Debug mode only)"; break;
+    case TOKtrue: doc = "Logical True"; break;
+    case TOKfalse: doc = "Logical False"; break;
+    case TOKarray: doc = "Array"; break;
+    case TOKcall: doc = "Call"; break;
+
+    case TOKaddress: doc = "Address"; break;
+
+    case TOKtype: doc = "Type"; break;
+    case TOKthrow: doc = "Throw"; break;
+
+    case TOKnew: doc = "new"; break;
+    case TOKdelete: doc = "delete"; break;
+
+    case TOKstar: doc = NULL; break;
+    case TOKsymoff: doc = NULL; break;
+
+    case TOKvar: doc = NULL; break;
+    case TOKdotvar: doc = NULL; break;
+
+    case TOKdotti: doc = NULL; break;
+    case TOKdotexp: doc = NULL; break;
+
+    case TOKdottype: doc = NULL; break;
+    case TOKslice: doc = "Slice"; break;
+
+    case TOKarraylength: doc = "Array Length"; break;
+    case TOKversion: doc = "Version"; break;
+
+    case TOKmodule: doc = NULL; break;
+    case TOKdollar: doc = "Index Beyond Last Element"; break;
+
+    case TOKtemplate: doc = "Template"; break;
+    case TOKdottd: doc = NULL; break;
+
+    case TOKdeclaration: doc = NULL; break;
+    case TOKtypeof: doc = NULL; break;
+
+    case TOKpragma: doc = NULL; break;
+    case TOKdsymbol: doc = NULL; break;
+
+    case TOKtypeid: doc = "RRTI TypeId"; break;
+    case TOKuadd: doc = NULL; break;
+
+    case TOKremove: doc = NULL; break;
+
+    case TOKnewanonclass: doc = NULL; break;
+    case TOKcomment: doc = NULL; break;
+
+    case TOKarrayliteral: doc = "Array Literal"; break;
+    case TOKassocarrayliteral: doc = "Associtive Array (Map) Literal"; break;
+
+    case TOKstructliteral: doc = "Struct Literal"; break;
+
+    case TOKclassreference: doc = "Class Reference"; break;
+
+    case TOKthrownexception: doc = "Thrown Exception"; break;
+
+        // Operators
+    case TOKlt: doc = "Less Tha"; break;
+    case TOKgt: doc = "Greater Tha"; break;
+
+    case TOKle: doc = "Less Than or Equal to"; break;
+    case TOKge: doc = "Greater Than or Equal to"; break;
+
+    case TOKequal: doc = "Equality"; break;
+    case TOKnotequal: doc = "Not Equality"; break;
+
+    case TOKidentity: doc = "Identity"; break;
+    case TOKnotidentity: doc = "Not Identity"; break;
+
+    case TOKindex: doc = "Indexing"; break;
+    case TOKis: doc = "Is"; break;
+
+    case TOKtobool: doc = NULL; break;
+
+        // 60
+        // NCEG floating point compares
+        // !<>=     <>    <>=    !>     !>=   !<     !<=   !<>
+    case TOKunord: doc = NULL; break;
+    case TOKlg: doc = NULL; break;
+    case TOKleg: doc = NULL; break;
+    case TOKule: doc = NULL; break;
+    case TOKul: doc = NULL; break;
+    case TOKuge: doc = NULL; break;
+    case TOKug: doc = NULL; break;
+    case TOKue: doc = NULL; break;
+
+    case TOKshl: doc = "Shift Left"; break;
+    case TOKshr: doc = "Shift Right"; break;
+
+    case TOKshlass: doc = "Shift Left Assign"; break;
+    case TOKshrass: doc = "Shift Right Assign"; break;
+
+    case TOKushr: doc = "Unsigned Shift Right"; break;
+    case TOKushrass: doc = "Unsigned Shift Right Assign"; break;
+
+    case TOKcat: doc = "Concatenate"; break;
+    case TOKcatass: doc = "Append"; break;
+
+        // ~ ~=
+    case TOKadd: doc = "Add"; break;
+    case TOKmin: doc = "Subtract/Minus"; break;
+    case TOKaddass: doc = "Add Assign"; break;
+    case TOKminass: doc = "Substract/Minus Assign"; break;
+
+    case TOKmul: doc = "Multiply"; break;
+    case TOKdiv: doc = "Divide"; break;
+    case TOKmod: doc = "Modulus/Remainder"; break;
+
+    case TOKmulass: doc = "Multiply Assign"; break;
+    case TOKdivass: doc = "Divide Assign"; break;
+    case TOKmodass: doc = "Modulus/Remainder Assign"; break;
+
+    case TOKand: doc = "Bitwise And"; break;
+    case TOKor: doc = "Bitwise Or"; break;
+    case TOKxor: doc = "Bitwise Exclusive Or (XOr)"; break;
+
+    case TOKandass: doc = "Bitwise And Assign"; break;
+    case TOKorass: doc = "Bitwise Or Assign"; break;
+    case TOKxorass: doc = "Bitwise Exclusive Or (XOr) Assign"; break;
+
+    case TOKassign: doc = "Assign"; break;
+    case TOKnot: doc = "Logical Not"; break;
+    case TOKtilde: doc = NULL; break;
+
+    case TOKplusplus: doc = "Increment"; break;
+    case TOKminusminus: doc = "Decrement"; break;
+    case TOKconstruct: doc = "Construct"; break;
+    case TOKblit: doc = "Blit"; break;
+
+    case TOKdot: doc = "Member"; break;
+    case TOKarrow: doc = NULL; break;
+    case TOKcomma: doc = "Comma"; break;
+
+    case TOKquestion: doc = NULL; break;
+    case TOKandand: doc = "Logical And"; break;
+    case TOKoror: doc = "Logical Or"; break;
+
+    case TOKpreplusplus: doc = "Prefixed Increment"; break;
+    case TOKpreminusminus: doc = "Prefixed Decrement"; break;
+
+        // 106
+        // Numeric literals
+    case TOKint32v: doc = "Signed 32-Bit Integer Literal"; break;
+    case TOKuns32v: doc = "UnSigned 32-Bit Integer Literal"; break;
+
+    case TOKint64v: doc = "Signed 64-Bit Integer Literal"; break;
+    case TOKuns64v: doc = "UnSigned 64-Bit Integer Literal"; break;
+
+    case TOKfloat32v: doc = "32-Bit Floating-Point Literal (float)"; break;
+    case TOKfloat64v: doc = "64-Bit Floating-Point Literal (double)"; break;
+    case TOKfloat80v: doc = "80-Bit Floating-Point Literal (real)"; break;
+
+    case TOKimaginary32v: doc = "Imaginary 32-Bit Floating-Point Literal (ifloat)"; break;
+    case TOKimaginary64v: doc = "Imaginary 64-Bit Floating-Point Literal (idouble)"; break;
+    case TOKimaginary80v: doc = "Imaginary 80-Bit Floating-Point Literal (ireal)"; break;
+
+        // Char constants
+    case TOKcharv: doc = "Character Constant (UTF-8)"; break;
+    case TOKwcharv: doc = "Wide Character Constant (UTF-16)"; break;
+    case TOKdcharv: doc = "D Character Constant (UTF-32)"; break;
+
+        // Leaf operators
+    case TOKidentifier: doc = "Identifier"; break;
+    case TOKstring: doc = "String Literal"; break;
+    case TOKxstring: doc = "Hexadecimal String Literal"; break;
+
+    case TOKthis: doc = NULL; break;
+    case TOKsuper: doc = NULL; break;
+
+    case TOKhalt: doc = NULL; break;
+    case TOKtuple: doc = NULL; break;
+
+    case TOKerror: doc = NULL; break;
+
+        // Basic types
+    case TOKvoid: doc = NULL; break;
+
+    case TOKint8: doc = "Signed 8-Bit Integer Type"; break;
+    case TOKuns8: doc = "Unsigned 8-Bit Integer Type"; break;
+
+    case TOKint16: doc = "Signed 16-Bit Integer Type"; break;
+    case TOKuns16: doc = "Unsigned 16-Bit Integer Type"; break;
+
+    case TOKint32: doc = "Signed 32-Bit Integer Type"; break;
+    case TOKuns32: doc = "Unsigned 32-Bit Integer Type"; break;
+
+    case TOKint64: doc = "Signed 64-Bit Integer Type"; break;
+    case TOKuns64: doc = "Unsigned 64-Bit Integer Type"; break;
+
+    case TOKint128: doc = "Signed 128-Bit Integer Type"; break;
+    case TOKuns128: doc = "Unsigned 128-Bit Integer Type"; break;
+
+    case TOKfloat32: doc = "32-Bit Floating Point Type"; break;
+    case TOKfloat64: doc = "64-Bit Floating Point Type"; break;
+    case TOKfloat80: doc = "80-Bit Floating Point Type"; break;
+
+    case TOKimaginary32: doc = "Imaginary 32-Bit Floating Point Type"; break;
+    case TOKimaginary64: doc = "Imaginary 64-Bit Floating Point Type"; break;
+    case TOKimaginary80: doc = "Imaginary 80-Bit Floating Point Type"; break;
+
+    case TOKcomplex32: doc = "Complex 32-Bit Floating Point Type"; break;
+    case TOKcomplex64: doc = "Complex 64-Bit Floating Point Type"; break;
+    case TOKcomplex80: doc = "Complex 80-Bit Floating Point Type"; break;
+
+    case TOKchar: doc = "Character Type"; break;
+    case TOKwchar: doc = "Wide Character Type"; break;
+    case TOKdchar: doc = "Double Wide Character Type"; break;
+    case TOKbool: doc = "Boolean/Logical Type"; break;
+
+        // 152
+        // Aggregates
+    case TOKstruct: doc = NULL; break;
+    case TOKclass: doc = NULL; break;
+    case TOKinterface: doc = NULL; break;
+    case TOKunion: doc = NULL; break;
+    case TOKenum: doc = NULL; break;
+    case TOKimport: doc = NULL; break;
+
+    case TOKtypedef: doc = NULL; break;
+    case TOKalias: doc = NULL; break;
+    case TOKoverride: doc = NULL; break;
+    case TOKdelegate: doc = NULL; break;
+    case TOKfunction: doc = NULL; break;
+
+    case TOKmixin: doc = NULL; break;
+
+    case TOKalign: doc = "Byte Memory Alignment Specifier"; break;
+    case TOKextern: doc = "External Qualifier"; break;
+    case TOKprivate: doc = "Private Access Qualifier"; break;
+    case TOKprotected: doc = "Protected Access Qualifier"; break;
+    case TOKpublic: doc = "Public Access Qualifier"; break;
+    case TOKexport: doc = NULL; break;
+
+    case TOKstatic: doc = NULL; break;
+    case TOKvirtual: doc = NULL; break;
+    case TOKfinal: doc = NULL; break;
+    case TOKconst: doc = NULL; break;
+    case TOKabstract: doc = NULL; break;
+    case TOKvolatile: doc = NULL; break;
+
+    case TOKdebug: doc = NULL; break;
+    case TOKdeprecated: doc = NULL; break;
+    case TOKin: doc = "Input Argument passed by Constant Reference"; break;
+    case TOKout: doc = "Output Argument passed by Reference"; break;
+    case TOKinout: doc = NULL; break;
+    case TOKlazy: doc = "Lazily Evaluated Expression"; break;
+
+    case TOKauto: doc = NULL; break;
+    case TOKpackage: doc = NULL; break;
+    case TOKmanifest: doc = NULL; break;
+    case TOKimmutable: doc = NULL; break;
+
+        // Statements
+    case TOKif: doc = NULL; break;
+    case TOKelse: doc = NULL; break;
+    case TOKwhile: doc = NULL; break;
+    case TOKfor: doc = NULL; break;
+    case TOKdo: doc = NULL; break;
+    case TOKswitch: doc = NULL; break;
+
+    case TOKcase: doc = NULL; break;
+    case TOKdefault: doc = NULL; break;
+    case TOKbreak: doc = NULL; break;
+    case TOKcontinue: doc = NULL; break;
+    case TOKwith: doc = NULL; break;
+
+    case TOKsynchronized: doc = NULL; break;
+    case TOKreturn: doc = NULL; break;
+    case TOKgoto: doc = NULL; break;
+    case TOKtry: doc = NULL; break;
+    case TOKcatch: doc = NULL; break;
+    case TOKfinally: doc = NULL; break;
+
+    case TOKasm: doc = NULL; break;
+    case TOKforeach: doc = "Range Iteration"; break;
+    case TOKforeach_reverse: doc = "Reverse Range Iteration"; break;
+
+    case TOKscope: doc = "Scope"; break;
+
+    case TOKon_scope_exit: doc = "Called upon exit of current scope"; break;
+    case TOKon_scope_failure: doc = "Called upon failure of current scope"; break;
+    case TOKon_scope_success: doc = "Called upon success of current scope"; break;
+
+        // Contracts
+    case TOKbody: doc = "Contract Body"; break;
+    case TOKinvariant: doc = "Contract Invariant"; break;
+
+        // Testing
+    case TOKunittest: doc = "Unittest"; break;
+
+        // Added after 1.0
+    case TOKargTypes: doc = NULL; break;
+
+    case TOKref: doc = NULL; break;
+
+    case TOKmacro: doc = NULL; break;
+
+    case TOKparameters: doc = NULL; break;
+
+    case TOKtraits: doc = NULL; break;
+
+    case TOKoverloadset: doc = NULL; break;
+
+    case TOKpure: doc = "Pure Function Qualifier"; break;
+
+    case TOKnothrow: doc = NULL; break;
+
+    case TOKgshared: doc = NULL; break;
+
+    case TOKline: doc = NULL; break;
+
+    case TOKfile: doc = NULL; break;
+
+    case TOKmodulestring: doc = NULL; break;
+
+    case TOKfuncstring: doc = NULL; break;
+
+    case TOKprettyfunc: doc = NULL; break;
+
+    case TOKshared: doc = NULL; break;
+
+    case TOKat: doc = NULL; break;
+
+    case TOKpow: doc = "Power/Exponentation"; break;
+
+    case TOKpowass: doc = "Power/Exponentation Assignment"; break;
+
+    case TOKgoesto: doc = NULL; break;
+
+    case TOKvector: doc = NULL; break;
+
+    case TOKpound: doc = NULL; break;
+
+    case TOKinterval: doc = "Interval"; break;
+
+    case TOKMAX: doc = NULL; break;
+}
+    if (doc) {
+        fprintf(stderr, "%s: ", doc);
+        fprintf(stderr, "%s", toChars());
+        fprintf(stderr, "\n");
+    }
+}
+
+ const char *Token::toChars()
 {   const char *p;
     static char buffer[3 + 3 * sizeof(float80value) + 1];
 
@@ -349,7 +716,7 @@ TOK Lexer::nextToken()
     {
         scan(&token);
     }
-    //token.print();
+    token.printDoc();
     return token.value;
 }
 
@@ -3002,4 +3369,3 @@ void unittest_lexer()
 }
 
 #endif
-
