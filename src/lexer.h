@@ -225,6 +225,7 @@ struct Token
 #ifdef DEBUG
     void print();
 #endif
+    void printDoc(); // pretty print
     const char *toChars();
     static const char *toChars(TOK);
 };
