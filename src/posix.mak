@@ -42,7 +42,7 @@ GIT=git
 #COV=-fprofile-arcs -ftest-coverage
 #PROFILE=-pg
 
-WARNINGS=-Wall -Wextra -Wno-deprecated -Wstrict-aliasing
+WARNINGS=-Wall -Wextra -Wno-deprecated -Wstrict-aliasing -Wno-unused-parameter -Wno-unknown-pragmas -Wno-sign-compare -Wno-overloaded-virtual
 MMD=-MMD -MF $(basename $@).deps
 
 ifneq (,$(DEBUG))
