@@ -2276,8 +2276,8 @@ void Expression::checkPurity(Scope *sc, FuncDeclaration *f)
     {
         if (sc->flags & SCOPEcompile ? outerfunc->isPureBypassingInferenceX() : outerfunc->setImpure())
         {
-            error("pure function '%s' cannot call impure function '%s'",
-                outerfunc->toPrettyChars(), f->toPrettyChars());
+            error("pure function '%s' cannot call impure function '%s', prepend call with `debug` if intentional",
+                  outerfunc->toPrettyChars(), f->toPrettyChars());
         }
     }
 }
