@@ -712,7 +712,7 @@ int tryMain(size_t argc, const char *argv[])
                         global.params.queryAtOffset = strtol(p + off + 1, (char **)&p, 10);
                         if (*p || errno)
                             goto Lerror;
-                        printf("%d\n", global.params.queryAtOffset);
+                        // printf("%d\n", global.params.queryAtOffset);
                     }
                     else
                         goto Lerror;
