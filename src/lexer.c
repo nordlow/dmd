@@ -88,7 +88,8 @@ void Token::print()
     fprintf(stderr, "%s\n", toChars());
 }
 #endif
-void Token::printDoc()
+void Token::printDoc(long begin,
+                     long end)
 {
     const char* doc = NULL;
 
@@ -105,8 +106,8 @@ void Token::printDoc()
     case TOKrcurly: doc = NULL; break;
     case TOKcolon: doc = NULL; break;
     case TOKneg: doc = NULL; break;
-    case TOKsemicolon: doc = NULL; break;
-    case TOKdotdotdot: doc = NULL; break;
+    case TOKsemicolon: doc = "Statement End"; break;
+    case TOKdotdotdot: doc = "Variadic Arguments Specifier"; break;
     case TOKeof: doc = "End of File"; break;
     case TOKcast: doc = "Type Cast"; break;
     case TOKnull: doc = NULL; break;
@@ -124,22 +125,22 @@ void Token::printDoc()
     case TOKnew: doc = "new"; break;
     case TOKdelete: doc = "delete"; break;
 
-    case TOKstar: doc = NULL; break;
-    case TOKsymoff: doc = NULL; break;
+    case TOKstar: doc = "Star"; break;
+    case TOKsymoff: doc = "Symoff"; break;
 
-    case TOKvar: doc = NULL; break;
+    case TOKvar: doc = "Var"; break;
     case TOKdotvar: doc = NULL; break;
 
     case TOKdotti: doc = NULL; break;
     case TOKdotexp: doc = NULL; break;
 
     case TOKdottype: doc = NULL; break;
-    case TOKslice: doc = "Slice"; break;
+    case TOKslice: doc = "Separates begin from end iterator in slice expressions"; break;
 
     case TOKarraylength: doc = "Array Length"; break;
-    case TOKversion: doc = "Version"; break;
+    case TOKversion: doc = "Code Versioning"; break;
 
-    case TOKmodule: doc = NULL; break;
+    case TOKmodule: doc = "Module name specifier"; break;
     case TOKdollar: doc = "Index Beyond Last Element"; break;
 
     case TOKtemplate: doc = "Template"; break;
@@ -151,8 +152,8 @@ void Token::printDoc()
     case TOKpragma: doc = NULL; break;
     case TOKdsymbol: doc = NULL; break;
 
-    case TOKtypeid: doc = "RRTI TypeId"; break;
-    case TOKuadd: doc = NULL; break;
+    case TOKtypeid: doc = "Run-Time Type Information (RTTI) Id"; break;
+    case TOKuadd: doc = "Unary Add"; break;
 
     case TOKremove: doc = NULL; break;
 
@@ -428,11 +429,8 @@ void Token::printDoc()
 
     case TOKMAX: doc = NULL; break;
     }
-    if (doc) {
-        fprintf(stderr, "%s: ", doc);
-        fprintf(stderr, "%s", toChars());
-        fprintf(stderr, "\n");
-    }
+
+    fprintf(stdout, "%s: %s [%ld..%ld]\n", doc, toChars(), begin,  end);
 }
 
  const char *Token::toChars()
@@ -696,7 +694,6 @@ TOK Lexer::nextToken()
         scan(&token);
     }
 
-    /* TODO: Use this->mod->arg */
     if (global.params.queryFlag &&
         global.params.queryAtOffset >= 0)  {
         const long begin = token.ptr - this->base; // token begin offset
@@ -704,7 +701,7 @@ TOK Lexer::nextToken()
         if (begin <= global.params.queryAtOffset &&
             global.params.queryAtOffset < end)
         {
-            token.printDoc();
+            token.printDoc(begin, end);
             exit(0);
         }
     }
