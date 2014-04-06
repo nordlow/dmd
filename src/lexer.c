@@ -423,14 +423,19 @@ void Token::printDoc(long begin,
     case TOKpow: doc = "Power/Exponentation"; break;
     case TOKpowass: doc = "Power/Exponentation Assignment"; break;
     case TOKgoesto: doc = "Lambda Expression Goes To"; break;
-    case TOKvector: doc = "Vector"; break;
+    case TOKvector: doc = "Vector Intrinsic"; break;
     case TOKpound: doc = "Pound"; break;
     case TOKinterval: doc = "Interval"; break;
 
     case TOKMAX: doc = NULL; break;
     }
 
-    fprintf(stdout, "%s: %s [%ld..%ld]\n", doc, toChars(), begin,  end);
+    fprintf(stdout, "%s: %s [%ld..%ld], [%d:%d]\n",
+            doc, toChars(),
+            begin,  end,
+            this->loc.linnum,
+            this->loc.charnum
+            );
 }
 
  const char *Token::toChars()
