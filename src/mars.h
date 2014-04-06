@@ -139,7 +139,6 @@ struct Param
     bool allInst;       // generate code for all template instantiations
 
     bool queryFlag;
-    const char* queryFilename;
     long queryAtOffset;  // query code at file offset
 
     const char *argv0;    // program name
