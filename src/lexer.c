@@ -704,7 +704,6 @@ TOK Lexer::nextToken()
         if (begin <= global.params.queryAtOffset &&
             global.params.queryAtOffset < end)
         {
-
             token.printDoc();
             exit(0);
         }
