@@ -699,6 +699,7 @@ TOK Lexer::nextToken()
         scan(&token);
     }
 
+    // print context if -query flags was given to dmd
     if (global.params.queryFlag &&
         global.params.queryAtOffset >= 0)  {
         const long begin = token.ptr - this->base; // token begin offset
