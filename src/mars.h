@@ -140,6 +140,8 @@ struct Param
 
     bool queryFlag;
     long queryAtOffset;  // query code at file offset
+    long queryAtRow;     // query code at file row
+    long queryAtColumn;  // query code at file column
 
     const char *argv0;    // program name
     Strings *imppath;     // array of char*'s of where to look for import modules

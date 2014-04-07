@@ -413,6 +413,8 @@ Usage:\n\
   -c             do not link\n\
   -cov           do code coverage analysis\n\
   -cov=nnn       require at least nnn%% code coverage\n\
+  -query=offset  query code context at file offset\n\
+  -query=row:col query code context at file row:column\n\
   -D             generate documentation\n\
   -Dddocdir      write documentation file to docdir directory\n\
   -Dffilename    write documentation file to filename\n\
@@ -650,6 +652,8 @@ int tryMain(size_t argc, const char *argv[])
     getenv_setargv("DFLAGS", &argc, &argv);
 
     global.params.queryAtOffset = -1;
+    global.params.queryAtRow = -1;
+    global.params.queryAtColumn = -1;
 
 #if 0
     for (size_t i = 0; i < argc; i++)
@@ -709,7 +713,20 @@ int tryMain(size_t argc, const char *argv[])
                     {
                         errno = 0;
                         global.params.queryAtOffset = strtol(p + off + 1, (char **)&p, 10);
-                        if (*p || errno)
+                        if (errno)
+                            goto Lerror;
+                        if (*p == ':')  { // separator
+                            long column = strtol(p + 1, (char **)&p, 10);
+                            if (*p || errno) // // if chars left or error
+                                goto Lerror;
+                            global.params.queryAtRow = global.params.queryAtOffset;
+                            global.params.queryAtColumn = column;
+                            printf("row:%ld, column:%ld\n",
+                                   global.params.queryAtRow,
+                                   global.params.queryAtColumn);
+                        }
+
+                        if (*p || errno) // // if chars left or error
                             goto Lerror;
                         // printf("%d\n", global.params.queryAtOffset);
                     }
