@@ -331,7 +331,7 @@ void Module::parse()
 
     char *srcname = srcfile->name->toChars();
 
-    if (global.params.queryAtOffset >= 0)  {
+    if (global.params.queryOffset >= 0)  {
         global.params.queryFlag = (strcmp(srcname, this->arg) == 0);
     }
 

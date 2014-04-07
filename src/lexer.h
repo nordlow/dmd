@@ -220,7 +220,7 @@ struct Token
 #ifdef DEBUG
     void print();
 #endif
-    void printDoc(long begin, long end); // pretty print
+    void printDoc(); // pretty print
     const char *toChars();
     static const char *toChars(TOK);
 };

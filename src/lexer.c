@@ -88,8 +88,7 @@ void Token::print()
     fprintf(stderr, "%s\n", toChars());
 }
 #endif
-void Token::printDoc(long begin,
-                     long end)
+void Token::printDoc()
 {
     const char* doc = NULL;
 
@@ -429,12 +428,14 @@ void Token::printDoc(long begin,
 
     case TOKMAX: doc = NULL; break;
     }
+    if (!doc && this->isKeyword())  {
+        doc = "Keyword";
+    }
 
-    fprintf(stdout, "%s: %s [%ld..%ld], [%d:%d]\n",
-            doc, toChars(),
-            begin,  end,
-            this->loc.linnum,
-            this->loc.charnum
+    fprintf(stdout, "%s: %s\n",
+            doc, toChars()
+            /* this->loc.linnum, */
+            /* this->loc.charnum */
             );
 }
 
@@ -701,15 +702,26 @@ TOK Lexer::nextToken()
 
     // print context if -query flags was given to dmd
     if (global.params.queryFlag &&
-        global.params.queryAtOffset >= 0)  {
-        const long begin = token.ptr - this->base; // token begin offset
-        const long end = begin + strlen(token.toChars(token.value)); // token end offset
-        if (begin <= global.params.queryAtOffset &&
-            global.params.queryAtOffset < end)
+        global.params.queryOffset >= 0)
+    {
+        if (global.params.queryRow == token.loc.linnum &&
+            global.params.queryColumn == token.loc.charnum/*  && */
+            /* global.params.queryColumn < token.loc.charnum + strlen(token.toChars(token.value)) */) // if -query=ROW:COLUMN given and inside current token
         {
-            token.printDoc(begin, end);
+            token.printDoc();
             exit(0);
         }
+        /* else */
+        /* { */
+        /*     const long begin = token.ptr - this->base; // token begin offset */
+        /*     const long end = begin + strlen(token.toChars(token.value)); // token end offset */
+        /*     if (begin <= global.params.queryOffset && */
+        /*         global.params.queryOffset < end) */
+        /*     { */
+        /*         token.printDoc(); */
+        /*         exit(0); */
+        /*     } */
+        /* } */
     }
     return token.value;
 }
