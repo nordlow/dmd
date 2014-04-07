@@ -711,6 +711,11 @@ TOK Lexer::nextToken()
             token.printDoc();
             exit(0);
         }
+        else if (global.params.queryRow < token.loc.linnum ||
+                 (global.params.queryRow == token.loc.linnum &&
+                  global.params.queryColumn < token.loc.charnum)) {
+            exit(0); // it missed
+        }
         /* else */
         /* { */
         /*     const long begin = token.ptr - this->base; // token begin offset */
