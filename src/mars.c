@@ -414,7 +414,7 @@ Usage:\n\
   -cov           do code coverage analysis\n\
   -cov=nnn       require at least nnn%% code coverage\n\
   -query=offset  query code context at file offset\n\
-  -query=row:col query code context at file row:column\n\
+  -query=row:col query code context at file row:column offset, row starts at 1, column starts at 0\n\
   -D             generate documentation\n\
   -Dddocdir      write documentation file to docdir directory\n\
   -Dffilename    write documentation file to filename\n\
