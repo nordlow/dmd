@@ -101,8 +101,8 @@ void Token::printDoc()
     case TOKrparen: doc = "Right Parenthesis"; break;
     case TOKlbracket: doc = "Left Bracket used for array indexing"; break;
     case TOKrbracket: doc = "Right Bracket used for array indexing"; break;
-    case TOKlcurly: doc = "Left Curly Brace creates scope"; break;
-    case TOKrcurly: doc = "Right Curly Brace creates scope"; break;
+    case TOKlcurly: doc = "Left Curly Brace: Opens scope"; break;
+    case TOKrcurly: doc = "Right Curly Brace: Closes scope"; break;
     case TOKcolon: doc = "Colon"; break;
     case TOKneg: doc = "Arithmetic Negation"; break;
     case TOKsemicolon: doc = "Statement End"; break;
@@ -125,18 +125,18 @@ void Token::printDoc()
     case TOKdelete: doc = "delete"; break;
 
     case TOKstar: doc = "Star"; break;
-    case TOKsymoff: doc = "Symoff"; break;
+    case TOKsymoff: doc = "For Debugging"; break;
 
     case TOKvar: doc = "Var"; break;
     case TOKdotvar: doc = NULL; break;
 
-    case TOKdotti: doc = NULL; break;
-    case TOKdotexp: doc = NULL; break;
+    case TOKdotti: doc = "For Debugging"; break;
+    case TOKdotexp: doc = "For Debugging"; break;
 
-    case TOKdottype: doc = NULL; break;
+    case TOKdottype: doc = "For Debugging"; break;
     case TOKslice: doc = "Separates begin from end iterator in slice expressions"; break;
 
-    case TOKarraylength: doc = "Array Length"; break;
+    case TOKarraylength: doc = "For Debugging"; break;
     case TOKversion: doc = "Code Versioning"; break;
 
     case TOKmodule: doc = "Module name specifier"; break;
