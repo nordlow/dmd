@@ -97,20 +97,20 @@ void Token::printDoc()
     case TOKreserved: doc = NULL; break;
 
         // Other
-    case TOKlparen: doc = NULL; break;
-    case TOKrparen: doc = NULL; break;
-    case TOKlbracket: doc = NULL; break;
-    case TOKrbracket: doc = NULL; break;
-    case TOKlcurly: doc = NULL; break;
-    case TOKrcurly: doc = NULL; break;
-    case TOKcolon: doc = NULL; break;
-    case TOKneg: doc = NULL; break;
+    case TOKlparen: doc = "Left Parenthesis"; break;
+    case TOKrparen: doc = "Right Parenthesis"; break;
+    case TOKlbracket: doc = "Left Bracket used for array indexing"; break;
+    case TOKrbracket: doc = "Right Bracket used for array indexing"; break;
+    case TOKlcurly: doc = "Left Curly Brace creates scope"; break;
+    case TOKrcurly: doc = "Right Curly Brace creates scope"; break;
+    case TOKcolon: doc = "Colon"; break;
+    case TOKneg: doc = "Arithmetic Negation"; break;
     case TOKsemicolon: doc = "Statement End"; break;
     case TOKdotdotdot: doc = "Variadic Arguments Specifier"; break;
     case TOKeof: doc = "End of File"; break;
     case TOKcast: doc = "Type Cast"; break;
-    case TOKnull: doc = NULL; break;
-    case TOKassert: doc = "Assertion (Debug mode only)"; break;
+    case TOKnull: doc = "Zero/Empty Reference/Pointer"; break;
+    case TOKassert: doc = "Assertion (only when dmd flag -debug is given)"; break;
     case TOKtrue: doc = "Logical True"; break;
     case TOKfalse: doc = "Logical False"; break;
     case TOKarray: doc = "Array"; break;
@@ -146,10 +146,10 @@ void Token::printDoc()
     case TOKdottd: doc = NULL; break;
 
     case TOKdeclaration: doc = NULL; break;
-    case TOKtypeof: doc = NULL; break;
+    case TOKtypeof: doc = "Return Type of Expression"; break;
 
-    case TOKpragma: doc = NULL; break;
-    case TOKdsymbol: doc = NULL; break;
+    case TOKpragma: doc = "Pragma"; break;
+    case TOKdsymbol: doc = "dsymbol"; break;
 
     case TOKtypeid: doc = "Run-Time Type Information (RTTI) Id"; break;
     case TOKuadd: doc = "Unary Add"; break;
@@ -157,7 +157,7 @@ void Token::printDoc()
     case TOKremove: doc = NULL; break;
 
     case TOKnewanonclass: doc = NULL; break;
-    case TOKcomment: doc = NULL; break;
+    case TOKcomment: doc = "Comment"; break;
 
     case TOKarrayliteral: doc = "Array Literal"; break;
     case TOKassocarrayliteral: doc = "Associtive Array (Map) Literal"; break;
@@ -169,8 +169,8 @@ void Token::printDoc()
     case TOKthrownexception: doc = "Thrown Exception"; break;
 
         // Operators
-    case TOKlt: doc = "Less Tha"; break;
-    case TOKgt: doc = "Greater Tha"; break;
+    case TOKlt: doc = "Less Than"; break;
+    case TOKgt: doc = "Greater Than"; break;
 
     case TOKle: doc = "Less Than or Equal to"; break;
     case TOKge: doc = "Greater Than or Equal to"; break;
@@ -184,19 +184,19 @@ void Token::printDoc()
     case TOKindex: doc = "Indexing"; break;
     case TOKis: doc = "Is"; break;
 
-    case TOKtobool: doc = NULL; break;
+    case TOKtobool: doc = "tobool?"; break;
 
         // 60
         // NCEG floating point compares
         // !<>=     <>    <>=    !>     !>=   !<     !<=   !<>
-    case TOKunord: doc = NULL; break;
-    case TOKlg: doc = NULL; break;
-    case TOKleg: doc = NULL; break;
-    case TOKule: doc = NULL; break;
-    case TOKul: doc = NULL; break;
-    case TOKuge: doc = NULL; break;
-    case TOKug: doc = NULL; break;
-    case TOKue: doc = NULL; break;
+    case TOKunord: doc = "Floating point NCEG: See also: http://dlang.org/deprecate.html#Floating point NCEG operators"; break;
+    case TOKlg: doc = "Floating point NCEG: See also: http://dlang.org/deprecate.html#Floating point NCEG operators"; break;
+    case TOKleg: doc = "Floating point NCEG: See also: http://dlang.org/deprecate.html#Floating point NCEG operators"; break;
+    case TOKule: doc = "Floating point NCEG: See also: http://dlang.org/deprecate.html#Floating point NCEG operators"; break;
+    case TOKul: doc = "Floating point NCEG: See also: http://dlang.org/deprecate.html#Floating point NCEG operators"; break;
+    case TOKuge: doc = "Floating point NCEG: See also: http://dlang.org/deprecate.html#Floating point NCEG operators"; break;
+    case TOKug: doc = "Floating point NCEG: See also: http://dlang.org/deprecate.html#Floating point NCEG operators"; break;
+    case TOKue: doc = "Floating point NCEG: See also: http://dlang.org/deprecate.html#Floating point NCEG operators"; break;
 
     case TOKshl: doc = "Shift Left"; break;
     case TOKshr: doc = "Shift Right"; break;
@@ -236,8 +236,8 @@ void Token::printDoc()
     case TOKnot: doc = "Logical Not"; break;
     case TOKtilde: doc = NULL; break;
 
-    case TOKplusplus: doc = "Increment"; break;
-    case TOKminusminus: doc = "Decrement"; break;
+    case TOKplusplus: doc = "Increment: Overload: opUnary!(\"++\")()"; break;
+    case TOKminusminus: doc = "Decrement: Overload: opUnary!(\"--\")()"; break;
     case TOKconstruct: doc = "Construct"; break;
     case TOKblit: doc = "Blit"; break;
 
@@ -323,20 +323,20 @@ void Token::printDoc()
 
         // 152
         // Aggregates
-    case TOKstruct: doc = NULL; break;
-    case TOKclass: doc = NULL; break;
-    case TOKinterface: doc = NULL; break;
-    case TOKunion: doc = NULL; break;
-    case TOKenum: doc = NULL; break;
-    case TOKimport: doc = NULL; break;
+    case TOKstruct: doc = "Structure (value semantics)"; break;
+    case TOKclass: doc = "Class (reference semantics)"; break;
+    case TOKinterface: doc = "Interface"; break;
+    case TOKunion: doc = "Union"; break;
+    case TOKenum: doc = "Enumeration"; break;
+    case TOKimport: doc = "Module import directive"; break;
 
     case TOKtypedef: doc = NULL; break;
-    case TOKalias: doc = NULL; break;
-    case TOKoverride: doc = NULL; break;
+    case TOKalias: doc = "Symbol alias"; break;
+    case TOKoverride: doc = "Definition of virtual function must override an existing function in parenting (base) class"; break;
     case TOKdelegate: doc = NULL; break;
     case TOKfunction: doc = NULL; break;
 
-    case TOKmixin: doc = NULL; break;
+    case TOKmixin: doc = "Insert a string given as argument into code at point and compile it"; break;
 
     case TOKalign: doc = "Byte Memory Alignment Specifier"; break;
     case TOKextern: doc = "External Qualifier"; break;
@@ -345,24 +345,24 @@ void Token::printDoc()
     case TOKpublic: doc = "Public Access Qualifier"; break;
     case TOKexport: doc = NULL; break;
 
-    case TOKstatic: doc = NULL; break;
-    case TOKvirtual: doc = NULL; break;
-    case TOKfinal: doc = NULL; break;
-    case TOKconst: doc = "Constant data may not be changed by current scope (thread)"; break;
-    case TOKabstract: doc = NULL; break;
-    case TOKvolatile: doc = NULL; break;
+    case TOKstatic: doc = "Static Qualifier"; break;
+    case TOKvirtual: doc = "Virtual Function Qualifier"; break;
+    case TOKfinal: doc = "Final Qualifier"; break;
+    case TOKconst: doc = "Constant data can never be changed by current scope nor thread"; break;
+    case TOKabstract: doc = "Abstract Qualifier"; break;
+    case TOKvolatile: doc = "Volatile Qualifier"; break;
 
     case TOKdebug: doc = NULL; break;
     case TOKdeprecated: doc = NULL; break;
     case TOKin: doc = "Input Argument passed by Constant Reference"; break;
     case TOKout: doc = "Output Argument passed by Reference"; break;
-    case TOKinout: doc = NULL; break;
+    case TOKinout: doc = "Wildcard for matching variables that are passed either by constant or mutable reference into return value"; break;
     case TOKlazy: doc = "Lazily Evaluated Expression"; break;
 
-    case TOKauto: doc = NULL; break;
+    case TOKauto: doc = "Automatic Data Type Deduction"; break;
     case TOKpackage: doc = NULL; break;
     case TOKmanifest: doc = NULL; break;
-    case TOKimmutable: doc = "Immutable data can never changed by anyone scope (thread)"; break;
+    case TOKimmutable: doc = "Immutable data can never changed by any scope nor thread"; break;
 
         // Statements
     case TOKif: doc = NULL; break;
@@ -385,7 +385,7 @@ void Token::printDoc()
     case TOKcatch: doc = NULL; break;
     case TOKfinally: doc = NULL; break;
 
-    case TOKasm: doc = NULL; break;
+    case TOKasm: doc = "Assembler"; break;
     case TOKforeach: doc = "Range Iteration"; break;
     case TOKforeach_reverse: doc = "Reverse Range Iteration"; break;
 
