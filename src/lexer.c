@@ -70,6 +70,16 @@ static void cmtable_init()
 
 const char *Token::tochars[TOKMAX];
 
+unsigned Token::length() const
+{
+    return strlen(this->toChars());
+    /* if (this->isKeyword())  { */
+    /*     return 0; // lookup from table */
+    /* } else  { */
+    /*     return 0; // indicate undefined */
+    /* } */
+}
+
 Token *Token::alloc()
 {
     if (Lexer::freelist)
@@ -84,12 +94,12 @@ Token *Token::alloc()
 }
 
 #ifdef DEBUG
-void Token::print()
+void Token::print() const
 {
     fprintf(stderr, "%s\n", toChars());
 }
 #endif
-void Token::printDoc()
+void Token::printDoc() const
 {
     const char* doc = NULL;
 
@@ -98,12 +108,12 @@ void Token::printDoc()
     case TOKreserved: doc = NULL; break;
 
         // Other
-    case TOKlparen: doc = "Left Parenthesis"; break;
-    case TOKrparen: doc = "Right Parenthesis"; break;
-    case TOKlbracket: doc = "Left Bracket used for array indexing"; break;
-    case TOKrbracket: doc = "Right Bracket used for array indexing"; break;
-    case TOKlcurly: doc = "Left Curly Brace: Opens scope"; break;
-    case TOKrcurly: doc = "Right Curly Brace: Closes scope"; break;
+    case TOKlparen: doc = "Left Parenthesis: Opens Group"; break;
+    case TOKrparen: doc = "Right Parenthesis: Closes Group"; break;
+    case TOKlbracket: doc = "Left Bracket: Opens Array Indexing"; break;
+    case TOKrbracket: doc = "Right Bracket: Closes Array Indexing"; break;
+    case TOKlcurly: doc = "Left Curly Brace: Opens Scope"; break;
+    case TOKrcurly: doc = "Right Curly Brace: Closes Scope"; break;
     case TOKcolon: doc = "Colon"; break;
     case TOKneg: doc = "Arithmetic Negation"; break;
     case TOKsemicolon: doc = "Statement End"; break;
@@ -288,7 +298,7 @@ void Token::printDoc()
     case TOKerror: doc = NULL; break;
 
         // Basic types
-    case TOKvoid: doc = NULL; break;
+    case TOKvoid: doc = "No Type"; break;
 
     case TOKint8: doc = "Signed 8-Bit Integer Type"; break;
     case TOKuns8: doc = "Unsigned 8-Bit Integer Type"; break;
@@ -440,7 +450,7 @@ void Token::printDoc()
             );
 }
 
- const char *Token::toChars()
+ const char *Token::toChars() const
 {   const char *p;
     static char buffer[3 + 3 * sizeof(float80value) + 1];
 
@@ -706,8 +716,9 @@ TOK Lexer::nextToken()
         global.params.queryOffset >= 0)
     {
         if (global.params.queryRow == token.loc.linnum &&
-            global.params.queryColumn == token.loc.charnum/*  && */
-            /* global.params.queryColumn < token.loc.charnum + strlen(token.toChars(token.value)) */) // if -query=ROW:COLUMN given and inside current token
+            global.params.queryColumn >= token.loc.charnum &&
+            global.params.queryColumn  < token.loc.charnum + token.length()
+            ) // if -query=ROW:COLUMN given and inside current token
         {
             token.printDoc();
             exit(0);
@@ -3187,7 +3198,7 @@ static Keyword keywords[] =
     {   NULL,           TOKreserved     }
 };
 
-int Token::isKeyword()
+int Token::isKeyword() const
 {
     for (size_t u = 0; u < nkeywords; u++)
     {
