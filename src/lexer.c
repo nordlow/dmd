@@ -719,13 +719,15 @@ TOK Lexer::nextToken()
             global.params.queryColumn  < token.loc.charnum + token.length()
             ) // if -query=ROW:COLUMN given and inside current token
         {
-            token.printDoc();
-            exit(0);
+            // we found a token
+            token.printDoc(); // so print it
+            exit(0); // and exit gracefully
         }
         else if (global.params.queryRow < token.loc.linnum ||
                  (global.params.queryRow == token.loc.linnum &&
-                  global.params.queryColumn < token.loc.charnum)) {
-            exit(0); // it missed
+                  global.params.queryColumn < token.loc.charnum))
+        {
+            exit(-1); // it missed so exit with error
         }
     }
     return token.value;
