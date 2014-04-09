@@ -216,12 +216,13 @@ struct Token
     static void *operator new(size_t sz);
 
     Token() : next(NULL) {}
-    int isKeyword();
+    int isKeyword() const;
+    unsigned length() const; // get length of token in characters
 #ifdef DEBUG
-    void print();
+    void print() const;
 #endif
-    void printDoc(); // pretty print
-    const char *toChars();
+    void printDoc() const; // pretty print
+    const char *toChars() const;
     static const char *toChars(TOK);
 };
 
