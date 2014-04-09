@@ -1304,7 +1304,7 @@ Expression *Slice(Type *type, Expression *e1, Expression *lwr, Expression *upr)
 {   Expression *e = EXP_CANT_INTERPRET;
     Loc loc = e1->loc;
 
-#if 1
+#if LOG
     printf("Slice()\n");
     if (lwr)
     {   printf("\te1 = %s\n", e1->toChars());
