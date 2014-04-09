@@ -98,7 +98,7 @@ void Token::print() const
     fprintf(stderr, "%s\n", toChars());
 }
 #endif
-void Token::printDoc() const
+void Token::printDoc(unsigned token_length) const
 {
     const char* doc = NULL;
 
@@ -442,11 +442,11 @@ void Token::printDoc() const
         doc = "Keyword";
     }
 
-    fprintf(stdout, "%s: %s\n",
-            doc, toChars()
-            /* this->loc.linnum, */
-            /* this->loc.charnum */
-            );
+    fprintf(stdout, "%s: %s [%d:%d:%d]\n",
+            doc, toChars(),
+            this->loc.linnum,
+            this->loc.charnum,
+            token_length);
 }
 
  const char *Token::toChars() const
@@ -714,18 +714,22 @@ TOK Lexer::nextToken()
     if (global.params.queryFlag &&
         global.params.queryOffset >= 0)
     {
-        if (global.params.queryRow == token.loc.linnum &&
-            global.params.queryColumn >= token.loc.charnum &&
-            global.params.queryColumn  < token.loc.charnum + token.length()
-            ) // if -query=ROW:COLUMN given and inside current token
+        if (global.params.queryRow == token.loc.linnum)
         {
-            // we found a token
-            token.printDoc(); // so print it
-            exit(0); // and exit gracefully
+            unsigned length_ = token.length();
+            if (global.params.queryColumn >= token.loc.charnum &&
+                global.params.queryColumn  < token.loc.charnum + length_) // if -query=ROW:COLUMN given and inside current token
+            {
+                // we found a token
+                token.printDoc(length_); // so print it
+                exit(0); // and exit gracefully
+            }
+            else if (global.params.queryColumn <= token.loc.charnum) // if passed queryColumn
+            {
+                exit(-1); // it missed so exit with error
+            }
         }
-        else if (global.params.queryRow < token.loc.linnum ||
-                 (global.params.queryRow == token.loc.linnum &&
-                  global.params.queryColumn < token.loc.charnum))
+        else if (global.params.queryRow < token.loc.linnum) // if token below query row
         {
             exit(-1); // it missed so exit with error
         }

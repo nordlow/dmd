@@ -221,7 +221,7 @@ struct Token
 #ifdef DEBUG
     void print() const;
 #endif
-    void printDoc() const; // pretty print
+    void printDoc(unsigned token_length) const; // pretty print
     const char *toChars() const;
     static const char *toChars(TOK);
 };
