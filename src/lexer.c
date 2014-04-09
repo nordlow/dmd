@@ -727,17 +727,6 @@ TOK Lexer::nextToken()
                   global.params.queryColumn < token.loc.charnum)) {
             exit(0); // it missed
         }
-        /* else */
-        /* { */
-        /*     const long begin = token.ptr - this->base; // token begin offset */
-        /*     const long end = begin + strlen(token.toChars(token.value)); // token end offset */
-        /*     if (begin <= global.params.queryOffset && */
-        /*         global.params.queryOffset < end) */
-        /*     { */
-        /*         token.printDoc(); */
-        /*         exit(0); */
-        /*     } */
-        /* } */
     }
     return token.value;
 }
