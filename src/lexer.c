@@ -114,15 +114,15 @@ void Token::printDoc(unsigned token_length) const
     case TOKlcurly: doc = "Left Curly Brace: Opens Scope"; break;
     case TOKrcurly: doc = "Right Curly Brace: Closes Scope"; break;
     case TOKcolon: doc = "Colon"; break;
-    case TOKneg: doc = "Arithmetic Negation"; break;
+    case TOKneg: doc = "Arithmetic Negation Operator"; break;
     case TOKsemicolon: doc = "Statement End"; break;
     case TOKdotdotdot: doc = "Variadic Arguments Specifier"; break;
     case TOKeof: doc = "End of File"; break;
     case TOKcast: doc = "Type Cast"; break;
     case TOKnull: doc = "Zero/Empty Reference/Pointer"; break;
     case TOKassert: doc = "Assertion (only when dmd flag -debug is given)"; break;
-    case TOKtrue: doc = "Logical True"; break;
-    case TOKfalse: doc = "Logical False"; break;
+    case TOKtrue: doc = "Logical True Literal"; break;
+    case TOKfalse: doc = "Logical False Literal"; break;
     case TOKarray: doc = "Array"; break;
     case TOKcall: doc = "Call"; break;
 
@@ -131,10 +131,10 @@ void Token::printDoc(unsigned token_length) const
     case TOKtype: doc = "Type"; break;
     case TOKthrow: doc = "Throw"; break;
 
-    case TOKnew: doc = "new"; break;
-    case TOKdelete: doc = "delete"; break;
+    case TOKnew: doc = "Data Construction"; break;
+    case TOKdelete: doc = "Data Destruction"; break;
 
-    case TOKstar: doc = "Star"; break;
+    case TOKstar: doc = "Star Operator"; break;
     case TOKsymoff: doc = "For Debugging"; break;
 
     case TOKvar: doc = "Var"; break;
@@ -144,7 +144,7 @@ void Token::printDoc(unsigned token_length) const
     case TOKdotexp: doc = "For Debugging"; break;
 
     case TOKdottype: doc = "For Debugging"; break;
-    case TOKslice: doc = "Separates begin from end iterator in slice expressions"; break;
+    case TOKslice: doc = "Separates Begin from End Iterator in Slice Expressions"; break;
 
     case TOKarraylength: doc = "For Debugging"; break;
     case TOKversion: doc = "Code Versioning"; break;
@@ -162,7 +162,7 @@ void Token::printDoc(unsigned token_length) const
     case TOKdsymbol: doc = "dsymbol"; break;
 
     case TOKtypeid: doc = "Run-Time Type Information (RTTI) Id"; break;
-    case TOKuadd: doc = "Unary Add"; break;
+    case TOKuadd: doc = "Unary Add Operator"; break;
 
     case TOKremove: doc = NULL; break;
 
@@ -179,19 +179,19 @@ void Token::printDoc(unsigned token_length) const
     case TOKthrownexception: doc = "Thrown Exception"; break;
 
         // Operators
-    case TOKlt: doc = "Less Than"; break;
-    case TOKgt: doc = "Greater Than"; break;
+    case TOKlt: doc = "Less Than Operator"; break;
+    case TOKgt: doc = "Greater Than Operator"; break;
 
-    case TOKle: doc = "Less Than or Equal to"; break;
-    case TOKge: doc = "Greater Than or Equal to"; break;
+    case TOKle: doc = "Less Than or Equal to Operator"; break;
+    case TOKge: doc = "Greater Than or Equal to Operator"; break;
 
-    case TOKequal: doc = "Equality"; break;
-    case TOKnotequal: doc = "Not Equality"; break;
+    case TOKequal: doc = "Equality Operator"; break;
+    case TOKnotequal: doc = "Not Equality Operator"; break;
 
-    case TOKidentity: doc = "Identity"; break;
-    case TOKnotidentity: doc = "Not Identity"; break;
+    case TOKidentity: doc = "Identity Operator"; break;
+    case TOKnotidentity: doc = "Not Identity Operator"; break;
 
-    case TOKindex: doc = "Indexing"; break;
+    case TOKindex: doc = "Indexing Operator"; break;
     case TOKis: doc = "Is"; break;
 
     case TOKtobool: doc = "tobool?"; break;
@@ -208,59 +208,59 @@ void Token::printDoc(unsigned token_length) const
     case TOKug: doc = "Floating point NCEG: See also: http://dlang.org/deprecate.html#Floating point NCEG operators"; break;
     case TOKue: doc = "Floating point NCEG: See also: http://dlang.org/deprecate.html#Floating point NCEG operators"; break;
 
-    case TOKshl: doc = "Shift Left"; break;
-    case TOKshr: doc = "Shift Right"; break;
+    case TOKshl: doc = "Shift Left Operator"; break;
+    case TOKshr: doc = "Shift Right Operator"; break;
 
-    case TOKshlass: doc = "Shift Left Assign"; break;
-    case TOKshrass: doc = "Shift Right Assign"; break;
+    case TOKshlass: doc = "Shift Left Assign Operator"; break;
+    case TOKshrass: doc = "Shift Right Assign Operator"; break;
 
-    case TOKushr: doc = "Unsigned Shift Right"; break;
-    case TOKushrass: doc = "Unsigned Shift Right Assign"; break;
+    case TOKushr: doc = "Unsigned Shift Right Operator"; break;
+    case TOKushrass: doc = "Unsigned Shift Right Assign Operator"; break;
 
-    case TOKcat: doc = "Concatenate"; break;
-    case TOKcatass: doc = "Append"; break;
+    case TOKcat: doc = "Concatenate Operator"; break;
+    case TOKcatass: doc = "Append Operator"; break;
 
         // ~ ~=
-    case TOKadd: doc = "Add"; break;
-    case TOKmin: doc = "Subtract/Minus"; break;
-    case TOKaddass: doc = "Add Assign"; break;
-    case TOKminass: doc = "Substract/Minus Assign"; break;
+    case TOKadd: doc = "Add Operator"; break;
+    case TOKmin: doc = "Subtract/Minus Operator"; break;
+    case TOKaddass: doc = "Add Assign Operator"; break;
+    case TOKminass: doc = "Substract/Minus Assign Operator"; break;
 
-    case TOKmul: doc = "Multiply"; break;
-    case TOKdiv: doc = "Divide"; break;
-    case TOKmod: doc = "Modulus/Remainder"; break;
+    case TOKmul: doc = "Multiply Operator"; break;
+    case TOKdiv: doc = "Divide Operator"; break;
+    case TOKmod: doc = "Modulus/Remainder Operator"; break;
 
-    case TOKmulass: doc = "Multiply Assign"; break;
-    case TOKdivass: doc = "Divide Assign"; break;
-    case TOKmodass: doc = "Modulus/Remainder Assign"; break;
+    case TOKmulass: doc = "Multiply Assign Operator"; break;
+    case TOKdivass: doc = "Divide Assign Operator"; break;
+    case TOKmodass: doc = "Modulus/Remainder Assign Operator"; break;
 
-    case TOKand: doc = "Bitwise And"; break;
-    case TOKor: doc = "Bitwise Or"; break;
-    case TOKxor: doc = "Bitwise Exclusive Or (XOr)"; break;
+    case TOKand: doc = "Bitwise And Operator"; break;
+    case TOKor: doc = "Bitwise Or Operator"; break;
+    case TOKxor: doc = "Bitwise Exclusive Or (XOr) Operator"; break;
 
-    case TOKandass: doc = "Bitwise And Assign"; break;
-    case TOKorass: doc = "Bitwise Or Assign"; break;
-    case TOKxorass: doc = "Bitwise Exclusive Or (XOr) Assign"; break;
+    case TOKandass: doc = "Bitwise And Assign Operator"; break;
+    case TOKorass: doc = "Bitwise Or Assign Operator"; break;
+    case TOKxorass: doc = "Bitwise Exclusive Or (XOr) Assign Operator"; break;
 
-    case TOKassign: doc = "Assign"; break;
-    case TOKnot: doc = "Logical Not"; break;
+    case TOKassign: doc = "Assign Operator"; break;
+    case TOKnot: doc = "Logical Not Operator"; break;
     case TOKtilde: doc = NULL; break;
 
-    case TOKplusplus: doc = "Increment: Overload: opUnary!(\"++\")()"; break;
-    case TOKminusminus: doc = "Decrement: Overload: opUnary!(\"--\")()"; break;
+    case TOKplusplus: doc = "Increment: Overload: opUnary!(\"++\")() Operator"; break;
+    case TOKminusminus: doc = "Decrement: Overload: opUnary!(\"--\")() Operator"; break;
     case TOKconstruct: doc = "Construct"; break;
     case TOKblit: doc = "Blit"; break;
 
-    case TOKdot: doc = "Member"; break;
-    case TOKarrow: doc = NULL; break;
+    case TOKdot: doc = "Member Operator"; break;
+    case TOKarrow: doc = "Lambda Arrow Operator"; break;
     case TOKcomma: doc = "Comma"; break;
 
-    case TOKquestion: doc = NULL; break;
-    case TOKandand: doc = "Logical And"; break;
-    case TOKoror: doc = "Logical Or"; break;
+    case TOKquestion: doc = "Question Operator"; break;
+    case TOKandand: doc = "Logical And Operator"; break;
+    case TOKoror: doc = "Logical Or Operator"; break;
 
-    case TOKpreplusplus: doc = "Prefixed Increment"; break;
-    case TOKpreminusminus: doc = "Prefixed Decrement"; break;
+    case TOKpreplusplus: doc = "Prefixed Increment Operator"; break;
+    case TOKpreminusminus: doc = "Prefixed Decrement Operator"; break;
 
         // 106
         // Numeric literals
@@ -333,20 +333,20 @@ void Token::printDoc(unsigned token_length) const
 
         // 152
         // Aggregates
-    case TOKstruct: doc = "Structure (value semantics)"; break;
-    case TOKclass: doc = "Class (reference semantics)"; break;
+    case TOKstruct: doc = "Structure (value semantics) Specifier"; break;
+    case TOKclass: doc = "Class (reference semantics) Specifier"; break;
     case TOKinterface: doc = "Interface"; break;
-    case TOKunion: doc = "Union"; break;
-    case TOKenum: doc = "Enumeration"; break;
-    case TOKimport: doc = "Module import directive"; break;
+    case TOKunion: doc = "Union Type Specifier"; break;
+    case TOKenum: doc = "Enumeration Type Specifier"; break;
+    case TOKimport: doc = "Module Import Directive"; break;
 
-    case TOKtypedef: doc = NULL; break;
+    case TOKtypedef: doc = "Type Definition"; break;
     case TOKalias: doc = "Symbol alias"; break;
     case TOKoverride: doc = "Definition of virtual function must override an existing function in parenting (base) class"; break;
-    case TOKdelegate: doc = NULL; break;
-    case TOKfunction: doc = NULL; break;
+    case TOKdelegate: doc = "Deletgate Specifier"; break;
+    case TOKfunction: doc = "Function Specifier"; break;
 
-    case TOKmixin: doc = "Insert a string given as argument into code at point and compile it"; break;
+    case TOKmixin: doc = "Mixin: Insert a string given as argument into code at point and compile it"; break;
 
     case TOKalign: doc = "Byte Memory Alignment Specifier"; break;
     case TOKextern: doc = "External Qualifier"; break;
@@ -358,12 +358,12 @@ void Token::printDoc(unsigned token_length) const
     case TOKstatic: doc = "Static Qualifier"; break;
     case TOKvirtual: doc = "Virtual Function Qualifier"; break;
     case TOKfinal: doc = "Final Qualifier"; break;
-    case TOKconst: doc = "Constant data can never be changed by current scope nor thread"; break;
+    case TOKconst: doc = "Constant data cannot be changed in current scope (thread)"; break;
     case TOKabstract: doc = "Abstract Qualifier"; break;
     case TOKvolatile: doc = "Volatile Qualifier"; break;
 
-    case TOKdebug: doc = NULL; break;
-    case TOKdeprecated: doc = NULL; break;
+    case TOKdebug: doc = "Debug Specifier"; break;
+    case TOKdeprecated: doc = "Deprecation Specifier"; break;
     case TOKin: doc = "Input Argument passed by Constant Reference"; break;
     case TOKout: doc = "Output Argument passed by Reference"; break;
     case TOKinout: doc = "Wildcard for matching variables that are passed either by constant or mutable reference into return value"; break;
@@ -372,7 +372,7 @@ void Token::printDoc(unsigned token_length) const
     case TOKauto: doc = "Automatic Data Type Deduction"; break;
     case TOKpackage: doc = NULL; break;
     case TOKmanifest: doc = NULL; break;
-    case TOKimmutable: doc = "Immutable data can never changed by any scope nor thread"; break;
+    case TOKimmutable: doc = "Immutable data guaranteed to never ever be changed by anyone"; break;
 
         // Statements
     case TOKif: doc = NULL; break;
@@ -401,13 +401,13 @@ void Token::printDoc(unsigned token_length) const
 
     case TOKscope: doc = "Scope"; break;
 
-    case TOKon_scope_exit: doc = "Called upon exit of current scope"; break;
-    case TOKon_scope_failure: doc = "Called upon failure of current scope"; break;
-    case TOKon_scope_success: doc = "Called upon success of current scope"; break;
+    case TOKon_scope_exit: doc = "Called Upon Exit of Current Scope"; break;
+    case TOKon_scope_failure: doc = "Called Upon Failure of Current Scope"; break;
+    case TOKon_scope_success: doc = "Called Upon Success of Current Scope"; break;
 
         // Contracts
     case TOKbody: doc = "Contract Body"; break;
-    case TOKinvariant: doc = "Contract Invariant"; break;
+    case TOKinvariant: doc = "Contract Invariant (Callback): Called in struct/class data member change."; break;
 
         // Testing
     case TOKunittest: doc = "Unittest"; break;
