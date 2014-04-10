@@ -486,6 +486,22 @@ static Module *rootHasMain = NULL;
  * to a program, such as a C++ program, that didn't have a _Dmain.
  */
 
+#include <time.h>
+
+void
+tspan(struct timespec a, struct timespec b, struct timespec * span)
+{
+    const time_t s1 = a.tv_sec; long n1 = a.tv_nsec;
+    const time_t s2 = b.tv_sec; long n2 = b.tv_nsec;
+    span->tv_sec = s2 - s1;
+    if (n1 <= n2) {
+        span->tv_nsec = n2 - n1;
+    } else {
+        span->tv_nsec = 1e9 + n2 - n1;
+        span->tv_sec--;
+    }
+}
+
 void genCmain(Scope *sc)
 {
     if (entrypoint)
@@ -515,9 +531,28 @@ void genCmain(Scope *sc)
     global.params.verbose = false;
     m->importedFrom = m;
     m->importAll(NULL);
+
+    struct timespec tic, toc, span;
+    clockid_t clk = CLOCK_THREAD_CPUTIME_ID;
+
+    clock_gettime(clk, &tic);
     m->semantic();
+    clock_gettime(clk, &toc);
+    tspan(tic, toc, &span);
+    printf("semantic  took %ld.%09ld seconds\n", span.tv_sec, span.tv_nsec);
+
+    clock_gettime(clk, &tic);
     m->semantic2();
+    clock_gettime(clk, &toc);
+    tspan(tic, toc, &span);
+    printf("semantic2 took %ld.%09ld seconds\n", span.tv_sec, span.tv_nsec);
+
+    clock_gettime(clk, &tic);
     m->semantic3();
+    clock_gettime(clk, &toc);
+    tspan(tic, toc, &span);
+    printf("semantic3 took %ld.%09ld seconds\n", span.tv_sec, span.tv_nsec);
+
     global.params.verbose = v;
 
     entrypoint = m;
