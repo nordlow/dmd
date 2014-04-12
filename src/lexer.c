@@ -383,18 +383,18 @@ void Token::printDoc(unsigned token_length) const
     case TOKdo: doc = "Do Statement"; break;
     case TOKswitch: doc = "Switch Statement"; break;
 
-    case TOKcase: "Switch Case" = NULL; break;
-    case TOKdefault: "Switch Default Case" = NULL; break;
+    case TOKcase: doc = "Switch Case"; break;
+    case TOKdefault: doc = "Switch Default Case"; break;
     case TOKbreak: doc = "Break Out of Current while/for/switch Statement"; break;
     case TOKcontinue: doc = "Continue Current while/for Statement"; break;
     case TOKwith: doc = "With Statement"; break;
 
     case TOKsynchronized: doc = NULL; break;
     case TOKreturn: doc = "Return from current (function) scope"; break;
-    case TOKgoto: doc = NULL; "Goto label Statement";
-    case TOKtry: doc = NULL; "Try Statement";
-    case TOKcatch: doc = NULL; "Catch (Exception) Statement";
-    case TOKfinally: doc = NULL; "Finally";
+    case TOKgoto: doc = "Goto label Statement"; break;
+    case TOKtry: doc = "Try Statement"; break;
+    case TOKcatch: doc = "Catch (Exception) Statement"; break;
+    case TOKfinally: doc = "Finally"; break;
 
     case TOKasm: doc = "Assembler"; break;
     case TOKforeach: doc = "Range Iteration"; break;
