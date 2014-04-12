@@ -289,13 +289,13 @@ void Token::printDoc(unsigned token_length) const
     case TOKstring: doc = "String Literal"; break;
     case TOKxstring: doc = "Hexadecimal String Literal"; break;
 
-    case TOKthis: doc = NULL; break;
-    case TOKsuper: doc = NULL; break;
+    case TOKthis: doc = "Reference to current class (if any)"; break;
+    case TOKsuper: doc = "Reference to parenting class (if any)"; break;
 
-    case TOKhalt: doc = NULL; break;
-    case TOKtuple: doc = NULL; break;
+    case TOKhalt: doc = "Halt"; break;
+    case TOKtuple: doc = "Tuple"; break;
 
-    case TOKerror: doc = NULL; break;
+    case TOKerror: doc = "Error"; break;
 
         // Basic types
     case TOKvoid: doc = "No Type"; break;
@@ -376,25 +376,25 @@ void Token::printDoc(unsigned token_length) const
     case TOKimmutable: doc = "Immutable data guaranteed to never ever be changed by anyone"; break;
 
         // Statements
-    case TOKif: doc = NULL; break;
-    case TOKelse: doc = NULL; break;
-    case TOKwhile: doc = NULL; break;
-    case TOKfor: doc = NULL; break;
-    case TOKdo: doc = NULL; break;
-    case TOKswitch: doc = NULL; break;
+    case TOKif: doc = "If Statement"; break;
+    case TOKelse: doc = "Else Statement"; break;
+    case TOKwhile: doc = "While Loop Statement"; break;
+    case TOKfor: doc = "For Loop Statement"; break;
+    case TOKdo: doc = "Do Statement"; break;
+    case TOKswitch: doc = "Switch Statement"; break;
 
-    case TOKcase: doc = NULL; break;
-    case TOKdefault: doc = NULL; break;
-    case TOKbreak: doc = NULL; break;
-    case TOKcontinue: doc = NULL; break;
-    case TOKwith: doc = NULL; break;
+    case TOKcase: "Switch Case" = NULL; break;
+    case TOKdefault: "Switch Default Case" = NULL; break;
+    case TOKbreak: doc = "Break Out of Current while/for/switch Statement"; break;
+    case TOKcontinue: doc = "Continue Current while/for Statement"; break;
+    case TOKwith: doc = "With Statement"; break;
 
     case TOKsynchronized: doc = NULL; break;
-    case TOKreturn: doc = NULL; break;
-    case TOKgoto: doc = NULL; break;
-    case TOKtry: doc = NULL; break;
-    case TOKcatch: doc = NULL; break;
-    case TOKfinally: doc = NULL; break;
+    case TOKreturn: doc = "Return from current (function) scope"; break;
+    case TOKgoto: doc = NULL; "Goto label Statement";
+    case TOKtry: doc = NULL; "Try Statement";
+    case TOKcatch: doc = NULL; "Catch (Exception) Statement";
+    case TOKfinally: doc = NULL; "Finally";
 
     case TOKasm: doc = "Assembler"; break;
     case TOKforeach: doc = "Range Iteration"; break;
