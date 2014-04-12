@@ -379,19 +379,23 @@ void genCmain(Scope *sc)
     m->semantic();
     clock_gettime(clk, &toc);
     tspan(tic, toc, &span);
-    printf("semantic  took %ld.%09ld seconds\n", span.tv_sec, span.tv_nsec);
+
+    if (global.params.queryOffset < 0)
+        printf("semantic  took %ld.%09ld seconds\n", span.tv_sec, span.tv_nsec);
 
     clock_gettime(clk, &tic);
     m->semantic2();
     clock_gettime(clk, &toc);
     tspan(tic, toc, &span);
-    printf("semantic2 took %ld.%09ld seconds\n", span.tv_sec, span.tv_nsec);
+    if (global.params.queryOffset < 0)
+        printf("semantic2 took %ld.%09ld seconds\n", span.tv_sec, span.tv_nsec);
 
     clock_gettime(clk, &tic);
     m->semantic3();
     clock_gettime(clk, &toc);
     tspan(tic, toc, &span);
-    printf("semantic3 took %ld.%09ld seconds\n", span.tv_sec, span.tv_nsec);
+    if (global.params.queryOffset < 0)
+        printf("semantic3 took %ld.%09ld seconds\n", span.tv_sec, span.tv_nsec);
 
     global.params.verbose = v;
 

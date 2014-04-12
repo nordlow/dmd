@@ -439,15 +439,38 @@ void Token::printDoc(unsigned token_length) const
 
     case TOKMAX: doc = NULL; break;
     }
-    if (!doc && this->isKeyword())  {
-        doc = "Keyword";
+
+    char type = '?';
+    if (this->isKeyword())
+    {
+        type = 'K'; // keyword
+        if (!doc)
+        {
+            doc = "Keyword";
+        }
+    }
+    else if (this->value == TOKstring)
+    {
+        type = 'S'; // string
+    }
+    else if (this->value >= TOKint32v &&
+               this->value <= TOKimaginary80v)
+    {
+        type = 'N'; // numeric
+    }
+    else if (this->value >= TOKvoid &&
+               this->value <= TOKbool)
+    {
+        type = 'T'; // basic types
     }
 
-    fprintf(stdout, "%s: %s [%d:%d:%d]\n",
-            doc, toChars(),
+    fprintf(stdout, "%s\t%s\t%d\t%d\t%d\t%c\n",
+            doc,
+            toChars(),
             this->loc.linnum,
             this->loc.charnum,
-            token_length);
+            token_length,
+            type);
 }
 
  const char *Token::toChars() const
