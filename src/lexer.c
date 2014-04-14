@@ -251,12 +251,12 @@ void Token::printDoc(unsigned token_length) const
 
     case TOKassign: doc = "Assign Operator"; break;
     case TOKnot: doc = "Logical Not Operator"; break;
-    case TOKtilde: doc = NULL; break;
+    case TOKtilde: doc = "Concatenate"; break;
 
     case TOKplusplus: doc = "Increment: Overload: opUnary!(\"++\")() Operator"; break;
     case TOKminusminus: doc = "Decrement: Overload: opUnary!(\"--\")() Operator"; break;
     case TOKconstruct: doc = "Construct"; break;
-    case TOKblit: doc = "Blit"; break;
+    case TOKblit: doc = "Blit (Raw Memory Copy)"; break;
 
     case TOKdot: doc = "Member Operator"; break;
     case TOKarrow: doc = "Lambda Arrow Operator"; break;
