@@ -99,6 +99,12 @@ void Token::print() const
     fprintf(stderr, "%s\n", toChars());
 }
 #endif
+
+#define ASCII_FS (0x1C) // file separator
+#define ASCII_GS (0x1D) // group separator
+#define ASCII_RS (0x1E) // record separator
+#define ASCII_US (0x1F) // unit separator
+
 void Token::printDoc(unsigned token_length) const
 {
     const char* doc = NULL;
@@ -108,12 +114,12 @@ void Token::printDoc(unsigned token_length) const
     case TOKreserved: doc = NULL; break;
 
         // Other
-    case TOKlparen: doc = "Left Parenthesis: Opens Group"; break;
-    case TOKrparen: doc = "Right Parenthesis: Closes Group"; break;
-    case TOKlbracket: doc = "Left Bracket: Opens Array Indexing"; break;
-    case TOKrbracket: doc = "Right Bracket: Closes Array Indexing"; break;
-    case TOKlcurly: doc = "Left Curly Brace: Opens Scope"; break;
-    case TOKrcurly: doc = "Right Curly Brace: Closes Scope"; break;
+    case TOKlparen: doc = "Opens Group"; break;
+    case TOKrparen: doc = "Closes Group"; break;
+    case TOKlbracket: doc = "Opens Array Indexing"; break;
+    case TOKrbracket: doc = "Closes Array Indexing"; break;
+    case TOKlcurly: doc = "Opens Scope"; break;
+    case TOKrcurly: doc = "Closes Scope"; break;
     case TOKcolon: doc = "Colon"; break;
     case TOKneg: doc = "Arithmetic Negation Operator"; break;
     case TOKsemicolon: doc = "Statement End"; break;
@@ -464,16 +470,16 @@ void Token::printDoc(unsigned token_length) const
         type = 'T'; // basic types
     }
 
-    fprintf(stdout, "%s\t%s\t%d\t%d\t%d\t%c\n",
-            doc,
-            toChars(),
-            this->loc.linnum,
-            this->loc.charnum,
-            token_length,
+    fprintf(stdout, "%s%c%s%c%d%c%d%c%d%c%c\n",
+            doc, ASCII_US,
+            toChars(), ASCII_US,
+            this->loc.linnum, ASCII_US,
+            this->loc.charnum, ASCII_US,
+            token_length, ASCII_US,
             type);
 }
 
- const char *Token::toChars() const
+const char *Token::toChars() const
 {   const char *p;
     static char buffer[3 + 3 * sizeof(float80value) + 1];
 
