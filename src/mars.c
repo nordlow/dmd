@@ -536,9 +536,9 @@ int tryMain(size_t argc, const char *argv[])
 
     getenv_setargv("DFLAGS", &argc, &argv);
 
-    global.params.queryAtOffset = -1;
-    global.params.queryAtRow = -1;
-    global.params.queryAtColumn = -1;
+    global.params.queryOffset = -1;
+    global.params.queryRow = -1;
+    global.params.queryColumn = -1;
 
 #if 0
     for (size_t i = 0; i < argc; i++)
@@ -604,7 +604,7 @@ int tryMain(size_t argc, const char *argv[])
             else if (memcmp(p + 1, "query", 5) == 0)
             {
                 int off = 6;
-                global.params.queryAtOffset = 0;
+                global.params.queryOffset = 0;
                 // Parse:
                 //      -query
                 //      -query=fileoffset
@@ -614,26 +614,26 @@ int tryMain(size_t argc, const char *argv[])
                     {
 
                         errno = 0;
-                        global.params.queryAtOffset = strtol(p + off + 1, (char **)&p, 10);
+                        global.params.queryOffset = strtol(p + off + 1, (char **)&p, 10);
                         if (errno)
                             goto Lerror;
                         if (*p == ':')  { // separator
                             long column = strtol(p + 1, (char **)&p, 10);
                             if (*p || errno) // // if chars left or error
                                 goto Lerror;
-                            global.params.queryAtRow = global.params.queryAtOffset;
-                            global.params.queryAtColumn = column;
-                            if (global.params.queryAtRow < 1)
+                            global.params.queryRow = global.params.queryOffset;
+                            global.params.queryColumn = column;
+                            if (global.params.queryRow < 1)
                                 error(Loc(), "Parameter row=%ld of -query=row:column be >= 1",
-                                      global.params.queryAtRow);
-                            if (global.params.queryAtColumn < 1)
+                                      global.params.queryRow);
+                            if (global.params.queryColumn < 1)
                                 error(Loc(), "Parameter column=%ld of -query=row:column be >= 1",
-                                      global.params.queryAtColumn);
+                                      global.params.queryColumn);
                         }
 
                         if (*p || errno) // // if chars left or error
                             goto Lerror;
-                        // printf("%d\n", global.params.queryAtOffset);
+                        // printf("%d\n", global.params.queryOffset);
                     }
                     else
                         goto Lerror;
