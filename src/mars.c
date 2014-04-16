@@ -253,7 +253,7 @@ Usage:\n\
   -cov           do code coverage analysis\n\
   -cov=nnn       require at least nnn%% code coverage\n\
   -query=offset  query code context at file offset\n\
-  -query=row:col query code context at file row:column offset, row starts at 1, column starts at 0\n\
+  -query=row:col query code context at file row:column offset, both starting at 1\n\
   -D             generate documentation\n\
   -Dddocdir      write documentation file to docdir directory\n\
   -Dffilename    write documentation file to filename\n\
@@ -575,7 +575,6 @@ int tryMain(size_t argc, const char *argv[])
                     {
 
                         errno = 0;
-                        global.params.queryFilename = "/home/per/justd/fs.d";
                         global.params.queryAtOffset = strtol(p + off + 1, (char **)&p, 10);
                         if (errno)
                             goto Lerror;
@@ -585,9 +584,12 @@ int tryMain(size_t argc, const char *argv[])
                                 goto Lerror;
                             global.params.queryAtRow = global.params.queryAtOffset;
                             global.params.queryAtColumn = column;
-                            printf("row:%ld, column:%ld\n",
-                                   global.params.queryAtRow,
-                                   global.params.queryAtColumn);
+                            if (global.params.queryAtRow < 1)
+                                error(Loc(), "Parameter row=%ld of -query=row:column be >= 1",
+                                      global.params.queryAtRow);
+                            if (global.params.queryAtColumn < 1)
+                                error(Loc(), "Parameter column=%ld of -query=row:column be >= 1",
+                                      global.params.queryAtColumn);
                         }
 
                         if (*p || errno) // // if chars left or error
