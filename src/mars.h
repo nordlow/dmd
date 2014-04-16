@@ -141,10 +141,16 @@ struct Param
     bool allInst;       // generate code for all template instantiations
 
     bool queryFlag;
+<<<<<<< HEAD
     const char* queryFilename;
     long queryAtOffset;  // query code at file offset
     long queryAtRow;     // query code at file row
     long queryAtColumn;  // query code at file column
+=======
+    long queryOffset;  // query code at file offset
+    long queryRow;     // query code at file row
+    long queryColumn;  // query code at file column
+>>>>>>> Works at beginning of token
 
     const char *argv0;    // program name
     Strings *imppath;     // array of char*'s of where to look for import modules
