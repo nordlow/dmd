@@ -140,8 +140,8 @@ struct Param
     bool addMain;       // add a default main() function
     bool allInst;       // generate code for all template instantiations
 
-    bool queryFlag;
-    const char* queryFilename;
+    bool queryTriggered;     // flags that we found our first argument
+    const char* queryFilename; // filename to query
     long queryOffset;  // query code at file offset
     long queryRow;     // query code at file row
     long queryColumn;  // query code at file column

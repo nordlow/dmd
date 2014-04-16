@@ -741,7 +741,7 @@ TOK Lexer::nextToken()
     }
 
     // print context if -query flags was given to dmd
-    if (global.params.queryFlag &&
+    if (global.params.queryTriggered &&
         global.params.queryOffset >= 0)
     {
         if (global.params.queryRow == token.loc.linnum)

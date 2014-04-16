@@ -253,7 +253,7 @@ Usage:\n\
   -cov           do code coverage analysis\n\
   -cov=nnn       require at least nnn%% code coverage\n\
   -query=offset  query code context at file offset\n\
-  -query=row:col query code context at file row:column offset, both starting at 1\n\
+  -query=row:col query code context at file row:column offset, both starting at 1. file must follow this argument\n\
   -D             generate documentation\n\
   -Dddocdir      write documentation file to docdir directory\n\
   -Dffilename    write documentation file to filename\n\
@@ -536,6 +536,8 @@ int tryMain(size_t argc, const char *argv[])
 
     getenv_setargv("DFLAGS", &argc, &argv);
 
+    global.params.queryTriggered = false;
+    global.params.queryFilename = NULL;
     global.params.queryOffset = -1;
     global.params.queryRow = -1;
     global.params.queryColumn = -1;
@@ -605,7 +607,8 @@ int tryMain(size_t argc, const char *argv[])
             {
                 int off = 6;
                 global.params.queryOffset = 0;
-                // Parse:
+
+                    // Parse:
                 //      -query
                 //      -query=fileoffset
                 if (p[off] == '=')
@@ -1115,6 +1118,11 @@ Language changes listed by -transition=id:\n\
     if (files.dim == 0)
     {   usage();
         return EXIT_FAILURE;
+    }
+    else
+    {
+        global.params.queryFilename = files[0];
+        /* printf("%s\n", global.params.queryFilename); */
     }
 
     if (!setdebuglib)

@@ -332,7 +332,7 @@ void Module::parse()
     char *srcname = srcfile->name->toChars();
 
     if (global.params.queryOffset >= 0)  {
-        global.params.queryFlag = (strcmp(srcname, global.params.queryFilename) == 0); // is this file
+        global.params.queryTriggered = (strcmp(srcname, global.params.queryFilename) == 0); // is this file
     }
 
     //printf("Module::parse(srcname = '%s')\n", srcname);
