@@ -372,30 +372,9 @@ void genCmain(Scope *sc)
     m->importedFrom = m;
     m->importAll(NULL);
 
-    struct timespec tic, toc, span;
-    clockid_t clk = CLOCK_THREAD_CPUTIME_ID;
-
-    clock_gettime(clk, &tic);
     m->semantic();
-    clock_gettime(clk, &toc);
-    tspan(tic, toc, &span);
-
-    if (global.params.queryOffset < 0)
-        printf("semantic  took %ld.%09ld seconds\n", span.tv_sec, span.tv_nsec);
-
-    clock_gettime(clk, &tic);
     m->semantic2();
-    clock_gettime(clk, &toc);
-    tspan(tic, toc, &span);
-    if (global.params.queryOffset < 0)
-        printf("semantic2 took %ld.%09ld seconds\n", span.tv_sec, span.tv_nsec);
-
-    clock_gettime(clk, &tic);
     m->semantic3();
-    clock_gettime(clk, &toc);
-    tspan(tic, toc, &span);
-    if (global.params.queryOffset < 0)
-        printf("semantic3 took %ld.%09ld seconds\n", span.tv_sec, span.tv_nsec);
 
     global.params.verbose = v;
 
@@ -1567,13 +1546,24 @@ Language changes listed by -transition=id:\n\
 
     backend_init();
 
+    struct timespec tic, toc, span;
+    clockid_t clk = CLOCK_THREAD_CPUTIME_ID;
+
     // Do semantic analysis
     for (size_t i = 0; i < modules.dim; i++)
     {
         Module *m = modules[i];
         if (global.params.verbose)
             fprintf(global.stdmsg, "semantic  %s\n", m->toChars());
+        clock_gettime(clk, &tic);
         m->semantic();
+        clock_gettime(clk, &toc);
+        tspan(tic, toc, &span);
+
+        if (global.params.queryOffset < 0)
+            printf("semantic1 took %ld.%09ld seconds for %s\n",
+                   span.tv_sec, span.tv_nsec,
+                   m->srcfile->name->str);
     }
     if (global.errors)
         fatal();
@@ -1596,7 +1586,14 @@ Language changes listed by -transition=id:\n\
         Module *m = modules[i];
         if (global.params.verbose)
             fprintf(global.stdmsg, "semantic2 %s\n", m->toChars());
+        clock_gettime(clk, &tic);
         m->semantic2();
+        clock_gettime(clk, &toc);
+        tspan(tic, toc, &span);
+        if (global.params.queryOffset < 0)
+            printf("semantic2 took %ld.%09ld seconds for %s\n",
+                   span.tv_sec, span.tv_nsec,
+                   m->srcfile->name->str);
     }
     if (global.errors)
         fatal();
@@ -1607,8 +1604,15 @@ Language changes listed by -transition=id:\n\
         Module *m = modules[i];
         if (global.params.verbose)
             fprintf(global.stdmsg, "semantic3 %s\n", m->toChars());
+        clock_gettime(clk, &tic);
         m->semantic3();
-    }
+        clock_gettime(clk, &toc);
+        tspan(tic, toc, &span);
+        if (global.params.queryOffset < 0)
+            printf("semantic3 took %ld.%09ld seconds for %s\n",
+                   span.tv_sec, span.tv_nsec,
+                   m->srcfile->name->str);
+     }
     if (global.errors)
         fatal();
     if (global.params.useInline)
