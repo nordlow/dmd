@@ -1561,7 +1561,7 @@ Language changes listed by -transition=id:\n\
         tspan(tic, toc, &span);
 
         if (global.params.queryOffset < 0)
-            printf("semantic1 took %ld.%09ld seconds for %s\n",
+            printf("dmd: semantic : %ld.%09lds: %s\n",
                    span.tv_sec, span.tv_nsec,
                    m->srcfile->name->str);
     }
@@ -1591,7 +1591,7 @@ Language changes listed by -transition=id:\n\
         clock_gettime(clk, &toc);
         tspan(tic, toc, &span);
         if (global.params.queryOffset < 0)
-            printf("semantic2 took %ld.%09ld seconds for %s\n",
+            printf("dmd: semantic2: %ld.%09lds: %s\n",
                    span.tv_sec, span.tv_nsec,
                    m->srcfile->name->str);
     }
@@ -1609,7 +1609,7 @@ Language changes listed by -transition=id:\n\
         clock_gettime(clk, &toc);
         tspan(tic, toc, &span);
         if (global.params.queryOffset < 0)
-            printf("semantic3 took %ld.%09ld seconds for %s\n",
+            printf("dmd: semantic3: %ld.%09lds: %s\n",
                    span.tv_sec, span.tv_nsec,
                    m->srcfile->name->str);
      }
