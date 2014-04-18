@@ -291,7 +291,38 @@ void Token::printDoc(unsigned token_length) const
     case TOKdcharv: doc = "D Character Constant (UTF-32)"; break;
 
         // Leaf operators
-    case TOKidentifier: doc = "Identifier"; break;
+    case TOKidentifier:
+        /* TODO: Add check that previous token is TOKdot. http://dlang.org/arrays.html 
+           TODO: Move this to parse? */
+        if (strncmp(ident->string, "ptr", ident->len) == 0)
+        {
+            doc = "Property: Returns a pointer to the first element of the array.";
+        }
+        else if (strncmp(ident->string, "length", ident->len) == 0)
+        {
+            doc = "Property: Returns the number of elements in the array.";
+        }
+        else if (strncmp(ident->string, "dup", ident->len) == 0)
+        {
+            doc = "Property: Create a dynamic array of the same size and copy the contents of the array into it.";
+        }
+        else if (strncmp(ident->string, "idup", ident->len) == 0)
+        {
+            doc = "Property: Create a dynamic array of the same size and copy the contents of the array into it. The copy is typed as being immutable. D 2.0 only";
+        }
+        else if (strncmp(ident->string, "reverse", ident->len) == 0)
+        {
+            doc = "Property: Reverses in place the order of the elements in the array. Returns the array.";
+        }
+        else if (strncmp(ident->string, "sort", ident->len) == 0)
+        {
+            doc = "Property: Sorts in place the order of the elements in the array. Returns the array.";
+        }
+        else
+        {
+            doc = "Identifier";
+        }
+        break;
     case TOKstring: doc = "String Literal"; break;
     case TOKxstring: doc = "Hexadecimal String Literal"; break;
 
