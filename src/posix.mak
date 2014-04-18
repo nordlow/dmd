@@ -34,7 +34,7 @@ LDFLAGS=-lm -lstdc++ -lpthread
 #ifeq (osx,$(OS))
 #	HOST_CC=clang++
 #else
-	HOST_CC=g++
+	HOST_CC=clang++
 #endif
 CC=$(HOST_CC) $(MODEL_FLAG)
 GIT=git
@@ -97,6 +97,8 @@ CFLAGS := $(WARNINGS) \
 ifneq (,$(DEBUG))
 ENABLE_DEBUG := 1
 endif
+
+ENABLE_DEBUG := 1
 
 # Append different flags for debugging, profiling and release. Define
 # ENABLE_DEBUG and ENABLE_PROFILING to enable profiling.
