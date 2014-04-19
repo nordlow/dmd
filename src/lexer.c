@@ -300,15 +300,15 @@ void Token::printDoc(unsigned token_length) const
         {
             if      (ident->len == 3 && strncmp(ident->string, "ptr", 3) == 0)
             {
-                doc = "Property: Returns a pointer to the first element of the array.";
+                doc = "Property: Returns a pointer to the first element of the array";
             }
             else if (ident->len == 6 && strncmp(ident->string, "length", ident->len) == 0)
             {
-                doc = "Property: Returns the number of elements in the array.";
+                doc = "Property: Returns the number of elements in the array";
             }
             else if (ident->len == 3 && strncmp(ident->string, "dup", ident->len) == 0)
             {
-                doc = "Property: Create a dynamic array of the same size and copy the contents of the array into it.";
+                doc = "Property: Create a dynamic array of the same size and copy the contents of the array into it";
             }
             else if (ident->len == 4 && strncmp(ident->string, "idup", ident->len) == 0)
             {
@@ -316,11 +316,11 @@ void Token::printDoc(unsigned token_length) const
             }
             else if (ident->len == 7 && strncmp(ident->string, "reverse", ident->len) == 0)
             {
-                doc = "Property: Reverses in place the order of the elements in the array. Returns the array.";
+                doc = "Property: Reverses in place the order of the elements in the array. Returns the array";
             }
             else if (ident->len == 4 && strncmp(ident->string, "sort", ident->len) == 0)
             {
-                doc = "Property: Sorts in place the order of the elements in the array. Returns the array.";
+                doc = "Property: Sorts in place the order of the elements in the array. Returns the array";
             }
             else
             {
@@ -454,7 +454,7 @@ void Token::printDoc(unsigned token_length) const
 
         // Contracts
     case TOKbody: doc = "Contract Body"; break;
-    case TOKinvariant: doc = "Contract Invariant (Callback): Called in struct/class data member change."; break;
+    case TOKinvariant: doc = "Contract Invariant (Callback): Called in struct/class data member change"; break;
 
         // Testing
     case TOKunittest: doc = "Unittest"; break;
