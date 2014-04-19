@@ -1546,8 +1546,12 @@ Language changes listed by -transition=id:\n\
 
     backend_init();
 
+    const clockid_t clk = CLOCK_THREAD_CPUTIME_ID;
+
+    struct timespec tic0, toc0, span0; // whole span
+    clock_gettime(clk, &tic0);
+
     struct timespec tic, toc, span;
-    clockid_t clk = CLOCK_THREAD_CPUTIME_ID;
 
     // Do semantic analysis
     for (size_t i = 0; i < modules.dim; i++)
@@ -1558,11 +1562,14 @@ Language changes listed by -transition=id:\n\
         clock_gettime(clk, &tic);
         m->semantic();
         clock_gettime(clk, &toc);
+        clock_gettime(clk, &toc0);
         tspan(tic, toc, &span);
+        tspan(tic0, toc0, &span0);
 
         if (global.params.queryOffset < 0)
-            printf("dmd: semantic : %ld.%09lds: %s\n",
+            printf("dmd: semantic : %ld.%09lds %ld.%09lds: %s\n",
                    span.tv_sec, span.tv_nsec,
+                   span0.tv_sec, span0.tv_nsec,
                    m->srcfile->name->str);
     }
     if (global.errors)
@@ -1589,10 +1596,13 @@ Language changes listed by -transition=id:\n\
         clock_gettime(clk, &tic);
         m->semantic2();
         clock_gettime(clk, &toc);
+        clock_gettime(clk, &toc0);
         tspan(tic, toc, &span);
+        tspan(tic0, toc0, &span0);
         if (global.params.queryOffset < 0)
-            printf("dmd: semantic2: %ld.%09lds: %s\n",
+            printf("dmd: semantic2: %ld.%09lds %ld.%09lds: %s\n",
                    span.tv_sec, span.tv_nsec,
+                   span0.tv_sec, span0.tv_nsec,
                    m->srcfile->name->str);
     }
     if (global.errors)
@@ -1607,10 +1617,13 @@ Language changes listed by -transition=id:\n\
         clock_gettime(clk, &tic);
         m->semantic3();
         clock_gettime(clk, &toc);
+        clock_gettime(clk, &toc0);
         tspan(tic, toc, &span);
+        tspan(tic0, toc0, &span0);
         if (global.params.queryOffset < 0)
-            printf("dmd: semantic3: %ld.%09lds: %s\n",
+            printf("dmd: semantic3: %ld.%09lds %ld.%09lds: %s\n",
                    span.tv_sec, span.tv_nsec,
+                   span0.tv_sec, span0.tv_nsec,
                    m->srcfile->name->str);
      }
     if (global.errors)
