@@ -105,6 +105,8 @@ void Token::print() const
 #define ASCII_RS (0x1E) // record separator
 #define ASCII_US (0x1F) // unit separator
 
+Token g_previousToken;     // indicate undefined
+
 void Token::printDoc(unsigned token_length) const
 {
     const char* doc = NULL;
@@ -294,29 +296,36 @@ void Token::printDoc(unsigned token_length) const
     case TOKidentifier:
         /* TODO: Add check that previous token is TOKdot. http://dlang.org/arrays.html
            TODO: Move this to parse? */
-        if      (ident->len == 3 && strncmp(ident->string, "ptr", 3) == 0)
+        if (g_previousToken.value == TOKdot)
         {
-            doc = "Property: Returns a pointer to the first element of the array.";
-        }
-        else if (ident->len == 6 && strncmp(ident->string, "length", ident->len) == 0)
-        {
-            doc = "Property: Returns the number of elements in the array.";
-        }
-        else if (ident->len == 3 && strncmp(ident->string, "dup", ident->len) == 0)
-        {
-            doc = "Property: Create a dynamic array of the same size and copy the contents of the array into it.";
-        }
-        else if (ident->len == 4 && strncmp(ident->string, "idup", ident->len) == 0)
-        {
-            doc = "Property: Create a dynamic array of the same size and copy the contents of the array into it. The copy is typed as being immutable. D 2.0 only";
-        }
-        else if (ident->len == 7 && strncmp(ident->string, "reverse", ident->len) == 0)
-        {
-            doc = "Property: Reverses in place the order of the elements in the array. Returns the array.";
-        }
-        else if (ident->len == 4 && strncmp(ident->string, "sort", ident->len) == 0)
-        {
-            doc = "Property: Sorts in place the order of the elements in the array. Returns the array.";
+            if      (ident->len == 3 && strncmp(ident->string, "ptr", 3) == 0)
+            {
+                doc = "Property: Returns a pointer to the first element of the array.";
+            }
+            else if (ident->len == 6 && strncmp(ident->string, "length", ident->len) == 0)
+            {
+                doc = "Property: Returns the number of elements in the array.";
+            }
+            else if (ident->len == 3 && strncmp(ident->string, "dup", ident->len) == 0)
+            {
+                doc = "Property: Create a dynamic array of the same size and copy the contents of the array into it.";
+            }
+            else if (ident->len == 4 && strncmp(ident->string, "idup", ident->len) == 0)
+            {
+                doc = "Property: Create a dynamic array of the same size and copy the contents of the array into it. The copy is typed as being immutable. D 2.0 only";
+            }
+            else if (ident->len == 7 && strncmp(ident->string, "reverse", ident->len) == 0)
+            {
+                doc = "Property: Reverses in place the order of the elements in the array. Returns the array.";
+            }
+            else if (ident->len == 4 && strncmp(ident->string, "sort", ident->len) == 0)
+            {
+                doc = "Property: Sorts in place the order of the elements in the array. Returns the array.";
+            }
+            else
+            {
+                doc = "Identifier";
+            }
         }
         else
         {
@@ -671,6 +680,7 @@ Lexer::Lexer(Module *mod,
     //printf("Lexer::Lexer(%p,%d)\n",base,length);
     //printf("lexer.mod = %p, %p\n", mod, this->loc.mod);
     memset(&token,0,sizeof(token));
+    memset(&g_previousToken,0,sizeof(g_previousToken));
     this->base = base;
     this->end  = base + endoffset;
     p = base + begoffset;
@@ -759,6 +769,8 @@ void Lexer::deprecation(const char *format, ...)
 
 TOK Lexer::nextToken()
 {
+    g_previousToken = token;
+
     if (token.next)
     {
         Token *t = token.next;
@@ -795,6 +807,7 @@ TOK Lexer::nextToken()
             exit(-1); // it missed so exit with error
         }
     }
+
     return token.value;
 }
 

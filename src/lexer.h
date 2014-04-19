@@ -244,7 +244,9 @@ public:
     const utf8_t *end;         // past end of buffer
     const utf8_t *p;           // current character
     const utf8_t *line;        // start of current line
+
     Token token;
+
     Module *mod;
     int doDocComment;           // collect doc comment information
     int anyToken;               // !=0 means seen at least one token
