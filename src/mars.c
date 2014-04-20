@@ -1697,8 +1697,8 @@ Language changes listed by -transition=id:\n\
                 }
             }
         }
+        //exit(0);
     }
-    exit(0);
 
     if (global.errors)
         fatal();
