@@ -594,12 +594,12 @@ int tryMain(size_t argc, const char *argv[])
                 {
                     if (isdigit((utf8_t)p[off + 1]))
                     {
-
                         errno = 0;
                         global.params.queryOffset = strtol(p + off + 1, (char **)&p, 10);
-                        if (errno)
+                        if (errno) // if parse error
                             goto Lerror;
-                        if (*p == ':')  { // separator
+
+                        if (*p == ':')  { // if colon separator follows we assume -query=ROW:COLUMN
                             long column = strtol(p + 1, (char **)&p, 10);
                             if (*p || errno) // // if chars left or error
                                 goto Lerror;
@@ -613,7 +613,7 @@ int tryMain(size_t argc, const char *argv[])
                                       global.params.queryColumn);
                         }
 
-                        if (*p || errno) // // if chars left or error
+                        if (*p || errno) // if chars left or parse error
                             goto Lerror;
                         // printf("%d\n", global.params.queryOffset);
                     }
