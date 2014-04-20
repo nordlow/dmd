@@ -252,7 +252,7 @@ void Token::printDoc(unsigned token_length) const
     case TOKxorass: doc = "Bitwise Exclusive Or (XOr) Assign Operator"; break;
 
     case TOKassign: doc = "Assign Operator"; break;
-    case TOKnot: doc = "Logical Not Operator"; break;
+    case TOKnot: doc = "Logical Not or Template Instantiation Operator"; break;
     case TOKtilde: doc = "Concatenate"; break;
 
     case TOKplusplus: doc = "Increment: Overload: opUnary!(\"++\")() Operator"; break;
