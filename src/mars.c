@@ -1625,7 +1625,80 @@ Language changes listed by -transition=id:\n\
                    span.tv_sec, span.tv_nsec,
                    span0.tv_sec, span0.tv_nsec,
                    m->srcfile->name->str);
-     }
+    }
+
+    // query context
+    if (true || global.params.queryOffset >= 0)
+    {
+        for (size_t i = 0; i < modules.dim; i++) // for each module
+        {
+            if (i == 0)
+            {
+                Module *m = modules[i];
+                for (size_t j = 0; j < m->members->dim; j++) // for each top level declaration
+                {
+                    Dsymbol* sym = m->members->data[j];
+                    assert(sym != NULL);
+                    if (sym)
+                    {
+                        /* sym->loc or sym->getLoc() */
+                        /* sym->isAnonymous() */
+                        /* sym->ident */
+                        /* sym->comment */
+                        /* sym->scope */
+
+                        /* virtual Package *isPackage() { return NULL; } */
+                        /* virtual Module *isModule() { return NULL; } */
+                        /* virtual EnumMember *isEnumMember() { return NULL; } */
+
+                        /* virtual TemplateDeclaration *isTemplateDeclaration() { return NULL; } */
+                        /* ->type for all declarations! */
+                        /* getType() */
+
+                        /* virtual TemplateInstance *isTemplateInstance() { return NULL; } */
+                        /* virtual TemplateMixin *isTemplateMixin() { return NULL; } */
+                        /* virtual Declaration *isDeclaration() { return NULL; } */
+                        /* virtual ThisDeclaration *isThisDeclaration() { return NULL; } */
+                        /* virtual TypeInfoDeclaration *isTypeInfoDeclaration() { return NULL; } */
+                        /* virtual TupleDeclaration *isTupleDeclaration() { return NULL; } */
+                        /* virtual TypedefDeclaration *isTypedefDeclaration() { return NULL; } */
+                        /* virtual AliasDeclaration *isAliasDeclaration() { return NULL; } */
+                        /* virtual AggregateDeclaration *isAggregateDeclaration() { return NULL; } */
+                        /* virtual FuncDeclaration *isFuncDeclaration() { return NULL; } */
+                        /* virtual FuncAliasDeclaration *isFuncAliasDeclaration() { return NULL; } */
+                        /* virtual FuncLiteralDeclaration *isFuncLiteralDeclaration() { return NULL; } */
+                        /* virtual CtorDeclaration *isCtorDeclaration() { return NULL; } */
+                        /* virtual PostBlitDeclaration *isPostBlitDeclaration() { return NULL; } */
+                        /* virtual DtorDeclaration *isDtorDeclaration() { return NULL; } */
+                        /* virtual StaticCtorDeclaration *isStaticCtorDeclaration() { return NULL; } */
+                        /* virtual StaticDtorDeclaration *isStaticDtorDeclaration() { return NULL; } */
+                        /* virtual SharedStaticCtorDeclaration *isSharedStaticCtorDeclaration() { return NULL; } */
+                        /* virtual SharedStaticDtorDeclaration *isSharedStaticDtorDeclaration() { return NULL; } */
+                        /* virtual InvariantDeclaration *isInvariantDeclaration() { return NULL; } */
+                        /* virtual UnitTestDeclaration *isUnitTestDeclaration() { return NULL; } */
+                        /* virtual NewDeclaration *isNewDeclaration() { return NULL; } */
+                        /* virtual VarDeclaration *isVarDeclaration() { return NULL; } */
+                        /* virtual ClassDeclaration *isClassDeclaration() { return NULL; } */
+                        /* virtual StructDeclaration *isStructDeclaration() { return NULL; } */
+                        /* virtual UnionDeclaration *isUnionDeclaration() { return NULL; } */
+                        /* virtual InterfaceDeclaration *isInterfaceDeclaration() { return NULL; } */
+                        /* virtual ScopeDsymbol *isScopeDsymbol() { return NULL; } */
+                        /* virtual WithScopeSymbol *isWithScopeSymbol() { return NULL; } */
+                        /* virtual ArrayScopeSymbol *isArrayScopeSymbol() { return NULL; } */
+                        /* virtual Import *isImport() { return NULL; } */
+                        /* virtual EnumDeclaration *isEnumDeclaration() { return NULL; } */
+                        /* virtual DeleteDeclaration *isDeleteDeclaration() { return NULL; } */
+                        /* virtual SymbolDeclaration *isSymbolDeclaration() { return NULL; } */
+                        /* virtual AttribDeclaration *isAttribDeclaration() { return NULL; } */
+                        /* virtual OverloadSet *isOverloadSet() { return NULL; } */
+                        /* virtual void accept(Visitor *v) { v->visit(this); } */
+                    }
+                }
+            }
+        }
+    }
+    exit(0);
+
     if (global.errors)
         fatal();
     if (global.params.useInline)
