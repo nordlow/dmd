@@ -1643,9 +1643,10 @@ Language changes listed by -transition=id:\n\
                     {
                         /* sym->loc or sym->getLoc() */
                         /* sym->isAnonymous() */
-                        /* sym->ident */
+                        /* sym->ident or sym->getIdent() */
                         /* sym->comment */
                         /* sym->scope */
+                        /* sym->kind() */
 
                         /* virtual Package *isPackage() { return NULL; } */
                         /* virtual Module *isModule() { return NULL; } */
