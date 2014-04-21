@@ -520,6 +520,7 @@ int tryMain(size_t argc, const char *argv[])
     global.params.queryOffset = -1;
     global.params.queryRow = -1;
     global.params.queryColumn = -1;
+    global.params.queryFound = false;
 
 #if 0
     for (size_t i = 0; i < argc; i++)
@@ -1627,8 +1628,6 @@ Language changes listed by -transition=id:\n\
                    m->srcfile->name->str);
     }
 
-    printf("xxx\n");
-
     // query context
     if (true || global.params.queryOffset >= 0)
     {
@@ -1644,65 +1643,80 @@ Language changes listed by -transition=id:\n\
                     Dsymbol* sym = m->members->data[j];
                     assert(sym != NULL);
                     Type* type = sym->getType();
+
+                    Loc loc = sym->getLoc();
+
+                    if (global.params.queryRow == loc.linnum)
+                    {
+                        if (global.params.queryColumn == loc.charnum)
+                        {
+                            printf("hit\n");
+                            exit(0);
+                            // hit
+                        }
+                        else if (global.params.queryColumn < loc.charnum) // if passed queryColumn
+                        {
+                            // miss
+                        }
+                    }
+
                     printf("loc: %s", sym->getLoc().toChars());
                     if (type)
                         printf(" type: %s", type->toChars());
                     printf("\n");
-                    if (sym)
-                    {
-                        /* sym->loc or sym->getLoc() */
-                        /* sym->isAnonymous() */
-                        /* sym->ident or sym->getIdent() */
-                        /* sym->comment */
-                        /* sym->scope */
-                        /* sym->kind() */
 
-                        /* virtual Package *isPackage() { return NULL; } */
-                        /* virtual Module *isModule() { return NULL; } */
-                        /* virtual EnumMember *isEnumMember() { return NULL; } */
+                    /* sym->loc or sym->getLoc() */
+                    /* sym->isAnonymous() */
+                    /* sym->ident or sym->getIdent() */
+                    /* sym->comment */
+                    /* sym->scope */
+                    /* sym->kind() */
 
-                        /* virtual TemplateDeclaration *isTemplateDeclaration() { return NULL; } */
-                        /* ->type for all declarations! */
-                        /* getType() */
+                    /* virtual Package *isPackage() { return NULL; } */
+                    /* virtual Module *isModule() { return NULL; } */
+                    /* virtual EnumMember *isEnumMember() { return NULL; } */
 
-                        /* virtual TemplateInstance *isTemplateInstance() { return NULL; } */
-                        /* virtual TemplateMixin *isTemplateMixin() { return NULL; } */
-                        /* virtual Declaration *isDeclaration() { return NULL; } */
-                        /* virtual ThisDeclaration *isThisDeclaration() { return NULL; } */
-                        /* virtual TypeInfoDeclaration *isTypeInfoDeclaration() { return NULL; } */
-                        /* virtual TupleDeclaration *isTupleDeclaration() { return NULL; } */
-                        /* virtual TypedefDeclaration *isTypedefDeclaration() { return NULL; } */
-                        /* virtual AliasDeclaration *isAliasDeclaration() { return NULL; } */
-                        /* virtual AggregateDeclaration *isAggregateDeclaration() { return NULL; } */
-                        /* virtual FuncDeclaration *isFuncDeclaration() { return NULL; } */
-                        /* virtual FuncAliasDeclaration *isFuncAliasDeclaration() { return NULL; } */
-                        /* virtual FuncLiteralDeclaration *isFuncLiteralDeclaration() { return NULL; } */
-                        /* virtual CtorDeclaration *isCtorDeclaration() { return NULL; } */
-                        /* virtual PostBlitDeclaration *isPostBlitDeclaration() { return NULL; } */
-                        /* virtual DtorDeclaration *isDtorDeclaration() { return NULL; } */
-                        /* virtual StaticCtorDeclaration *isStaticCtorDeclaration() { return NULL; } */
-                        /* virtual StaticDtorDeclaration *isStaticDtorDeclaration() { return NULL; } */
-                        /* virtual SharedStaticCtorDeclaration *isSharedStaticCtorDeclaration() { return NULL; } */
-                        /* virtual SharedStaticDtorDeclaration *isSharedStaticDtorDeclaration() { return NULL; } */
-                        /* virtual InvariantDeclaration *isInvariantDeclaration() { return NULL; } */
-                        /* virtual UnitTestDeclaration *isUnitTestDeclaration() { return NULL; } */
-                        /* virtual NewDeclaration *isNewDeclaration() { return NULL; } */
-                        /* virtual VarDeclaration *isVarDeclaration() { return NULL; } */
-                        /* virtual ClassDeclaration *isClassDeclaration() { return NULL; } */
-                        /* virtual StructDeclaration *isStructDeclaration() { return NULL; } */
-                        /* virtual UnionDeclaration *isUnionDeclaration() { return NULL; } */
-                        /* virtual InterfaceDeclaration *isInterfaceDeclaration() { return NULL; } */
-                        /* virtual ScopeDsymbol *isScopeDsymbol() { return NULL; } */
-                        /* virtual WithScopeSymbol *isWithScopeSymbol() { return NULL; } */
-                        /* virtual ArrayScopeSymbol *isArrayScopeSymbol() { return NULL; } */
-                        /* virtual Import *isImport() { return NULL; } */
-                        /* virtual EnumDeclaration *isEnumDeclaration() { return NULL; } */
-                        /* virtual DeleteDeclaration *isDeleteDeclaration() { return NULL; } */
-                        /* virtual SymbolDeclaration *isSymbolDeclaration() { return NULL; } */
-                        /* virtual AttribDeclaration *isAttribDeclaration() { return NULL; } */
-                        /* virtual OverloadSet *isOverloadSet() { return NULL; } */
-                        /* virtual void accept(Visitor *v) { v->visit(this); } */
-                    }
+                    /* virtual TemplateDeclaration *isTemplateDeclaration() { return NULL; } */
+                    /* ->type for all declarations! */
+                    /* getType() */
+
+                    /* virtual TemplateInstance *isTemplateInstance() { return NULL; } */
+                    /* virtual TemplateMixin *isTemplateMixin() { return NULL; } */
+                    /* virtual Declaration *isDeclaration() { return NULL; } */
+                    /* virtual ThisDeclaration *isThisDeclaration() { return NULL; } */
+                    /* virtual TypeInfoDeclaration *isTypeInfoDeclaration() { return NULL; } */
+                    /* virtual TupleDeclaration *isTupleDeclaration() { return NULL; } */
+                    /* virtual TypedefDeclaration *isTypedefDeclaration() { return NULL; } */
+                    /* virtual AliasDeclaration *isAliasDeclaration() { return NULL; } */
+                    /* virtual AggregateDeclaration *isAggregateDeclaration() { return NULL; } */
+                    /* virtual FuncDeclaration *isFuncDeclaration() { return NULL; } */
+                    /* virtual FuncAliasDeclaration *isFuncAliasDeclaration() { return NULL; } */
+                    /* virtual FuncLiteralDeclaration *isFuncLiteralDeclaration() { return NULL; } */
+                    /* virtual CtorDeclaration *isCtorDeclaration() { return NULL; } */
+                    /* virtual PostBlitDeclaration *isPostBlitDeclaration() { return NULL; } */
+                    /* virtual DtorDeclaration *isDtorDeclaration() { return NULL; } */
+                    /* virtual StaticCtorDeclaration *isStaticCtorDeclaration() { return NULL; } */
+                    /* virtual StaticDtorDeclaration *isStaticDtorDeclaration() { return NULL; } */
+                    /* virtual SharedStaticCtorDeclaration *isSharedStaticCtorDeclaration() { return NULL; } */
+                    /* virtual SharedStaticDtorDeclaration *isSharedStaticDtorDeclaration() { return NULL; } */
+                    /* virtual InvariantDeclaration *isInvariantDeclaration() { return NULL; } */
+                    /* virtual UnitTestDeclaration *isUnitTestDeclaration() { return NULL; } */
+                    /* virtual NewDeclaration *isNewDeclaration() { return NULL; } */
+                    /* virtual VarDeclaration *isVarDeclaration() { return NULL; } */
+                    /* virtual ClassDeclaration *isClassDeclaration() { return NULL; } */
+                    /* virtual StructDeclaration *isStructDeclaration() { return NULL; } */
+                    /* virtual UnionDeclaration *isUnionDeclaration() { return NULL; } */
+                    /* virtual InterfaceDeclaration *isInterfaceDeclaration() { return NULL; } */
+                    /* virtual ScopeDsymbol *isScopeDsymbol() { return NULL; } */
+                    /* virtual WithScopeSymbol *isWithScopeSymbol() { return NULL; } */
+                    /* virtual ArrayScopeSymbol *isArrayScopeSymbol() { return NULL; } */
+                    /* virtual Import *isImport() { return NULL; } */
+                    /* virtual EnumDeclaration *isEnumDeclaration() { return NULL; } */
+                    /* virtual DeleteDeclaration *isDeleteDeclaration() { return NULL; } */
+                    /* virtual SymbolDeclaration *isSymbolDeclaration() { return NULL; } */
+                    /* virtual AttribDeclaration *isAttribDeclaration() { return NULL; } */
+                    /* virtual OverloadSet *isOverloadSet() { return NULL; } */
+                    /* virtual void accept(Visitor *v) { v->visit(this); } */
                 }
             }
         }
