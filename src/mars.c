@@ -1627,6 +1627,8 @@ Language changes listed by -transition=id:\n\
                    m->srcfile->name->str);
     }
 
+    printf("xxx\n");
+
     // query context
     if (true || global.params.queryOffset >= 0)
     {
@@ -1635,10 +1637,17 @@ Language changes listed by -transition=id:\n\
             if (i == 0)
             {
                 Module *m = modules[i];
+                printf("module: name:%s\n", m->toChars());
+
                 for (size_t j = 0; j < m->members->dim; j++) // for each top level declaration
                 {
                     Dsymbol* sym = m->members->data[j];
                     assert(sym != NULL);
+                    Type* type = sym->getType();
+                    printf("loc: %s", sym->getLoc().toChars());
+                    if (type)
+                        printf(" type: %s", type->toChars());
+                    printf("\n");
                     if (sym)
                     {
                         /* sym->loc or sym->getLoc() */
