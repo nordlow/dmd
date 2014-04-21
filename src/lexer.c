@@ -785,6 +785,7 @@ TOK Lexer::nextToken()
 
     // print context if -query flags was given to dmd
     if (global.params.queryTriggered &&
+        (!global.params.queryFound) &&
         global.params.queryOffset >= 0)
     {
         if (global.params.queryRow == token.loc.linnum)
@@ -795,16 +796,16 @@ TOK Lexer::nextToken()
             {
                 // we found a token
                 token.printDoc(length_); // so print it
-                exit(0); // and exit gracefully
+                // exit(0); // and exit gracefully
             }
             else if (global.params.queryColumn <= token.loc.charnum) // if passed queryColumn
             {
-                exit(-1); // it missed so exit with error
+                // exit(-1); // it missed so exit with error
             }
         }
         else if (global.params.queryRow < token.loc.linnum) // if token below query row
         {
-            exit(-1); // it missed so exit with error
+            // exit(-1); // it missed so exit with error
         }
     }
 
