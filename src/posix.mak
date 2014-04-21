@@ -103,7 +103,7 @@ ENABLE_DEBUG := 1
 # Append different flags for debugging, profiling and release. Define
 # ENABLE_DEBUG and ENABLE_PROFILING to enable profiling.
 ifdef ENABLE_DEBUG
-CFLAGS += -g -g3 -DDEBUG=1 -DUNITTEST
+CFLAGS += -g -g3 -DDEBUG=1 -DUNITTEST -O2
 ifdef ENABLE_PROFILING
 CFLAGS  += -pg -fprofile-arcs -ftest-coverage
 LDFLAGS += -pg -fprofile-arcs -ftest-coverage
