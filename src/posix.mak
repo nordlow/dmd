@@ -462,3 +462,6 @@ endif
 zip:
 	-rm -f dmdsrc.zip
 	zip dmdsrc $(SRC) $(ROOT_SRC) $(GLUE_SRC) $(BACK_SRC) $(TK_SRC)
+
+test-query: dmd
+	./dmd -query=4279:1 -vcolumns -c ~/justd/fs.d -I~/justd
