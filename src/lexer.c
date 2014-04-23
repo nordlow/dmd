@@ -100,11 +100,6 @@ void Token::print() const
 }
 #endif
 
-#define ASCII_FS (0x1C) // file separator
-#define ASCII_GS (0x1D) // group separator
-#define ASCII_RS (0x1E) // record separator
-#define ASCII_US (0x1F) // unit separator
-
 Token g_previousToken;     // indicate undefined
 
 void Token::printDoc(unsigned token_length) const
@@ -486,10 +481,16 @@ void Token::printDoc(unsigned token_length) const
     case TOKMAX: doc = NULL; break;
     }
 
-    char type = '?';
-    if (this->isKeyword())
+    // Use typeChar to determine Editor Font/Color (Emacs face)
+    char typeChar = '?';
+    if (this->value >= TOKvoid &&
+        this->value <= TOKbool) // put before check for keyword because this is what editors show
     {
-        type = 'K'; // keyword
+        typeChar = 'T'; // basic types
+    }
+    else if (this->isKeyword())
+    {
+        typeChar = 'K'; // keyword
         if (!doc)
         {
             doc = "Keyword";
@@ -497,26 +498,23 @@ void Token::printDoc(unsigned token_length) const
     }
     else if (this->value == TOKstring)
     {
-        type = 'S'; // string
+        typeChar = 'S'; // string
     }
     else if (this->value >= TOKint32v &&
-               this->value <= TOKimaginary80v)
+             this->value <= TOKimaginary80v)
     {
-        type = 'N'; // numeric
-    }
-    else if (this->value >= TOKvoid &&
-               this->value <= TOKbool)
-    {
-        type = 'T'; // basic types
+        typeChar = 'N'; // numeric
     }
 
-    fprintf(stdout, "%s%c%s%c%d%c%d%c%d%c%c\n",
-            doc, ASCII_US,
-            toChars(), ASCII_US,
-            this->loc.linnum, ASCII_US,
-            this->loc.charnum, ASCII_US,
-            token_length, ASCII_US,
-            type);
+    fprintf(stdout, "%s%c%s%c%d%c%d%c%d%c%c",
+            doc, ASCII_US,             // 1:st query element
+            this->toChars(), ASCII_US, // 2:nd query element
+            this->loc.linnum, ASCII_US, // 3:rd query element,
+            this->loc.charnum, ASCII_US, // 4:th query element
+            token_length, ASCII_US, // 5:th query element
+            typeChar                // 6:th query element
+            // more follow in semantic passes in tryMain in mars.c
+            );
 }
 
 const char *Token::toChars() const

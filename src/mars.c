@@ -1636,7 +1636,7 @@ Language changes listed by -transition=id:\n\
             if (i == 0)
             {
                 Module *m = modules[i];
-                /* printf("module: name:%s\n", m->toChars()); */
+                /* fprintf(stdout, "module: name:%s\n", m->toChars()); */
 
                 for (size_t j = 0; j < m->members->dim; j++) // for each top level declaration
                 {
@@ -1650,82 +1650,98 @@ Language changes listed by -transition=id:\n\
                     {
                         if (global.params.queryColumn == loc.charnum)
                         {
-                            printf("hit\n");
+                            fprintf(stdout, "%c%s%c%s%s",
+                                    ASCII_US, type ? type->toChars() : "", // 7:th query element
+                                    ASCII_US, sym->comment != NULL ? reinterpret_cast<const char*>(sym->comment) : "", // 8:th query element
+                                    "\n"
+                                    );
                             exit(0);
                             // hit
                         }
                         else if (global.params.queryColumn < loc.charnum) // if passed queryColumn
                         {
-                            // miss
+                            goto queryMiss; // not hit possible
                         }
                     }
-
-                    printf("loc: %s", sym->getLoc().toChars());
-                    if (type)
-                        printf(" type: %s", type->toChars());
-                    printf(": ");
-
-                    /* sym->loc or sym->getLoc() */
-                    /* sym->isAnonymous() */
-                    /* sym->ident or sym->getIdent() */
-                    /* sym->comment */
-                    /* sym->scope */
-                    /* sym->kind() */
-
-                    /* virtual Package *isPackage() { return NULL; } */
-                    /* virtual Module *isModule() { return NULL; } */
-                    /* virtual EnumMember *isEnumMember() { return NULL; } */
-
-                    /* virtual TemplateDeclaration *isTemplateDeclaration() { return NULL; } */
-                    /* ->type for all declarations! */
-                    /* getType() */
-
-                    if (TemplateInstance* tsym = sym->isTemplateInstance()) { printf("TemplateInstance, "); }
-                    if (TemplateMixin* tsym = sym->isTemplateMixin()) { printf("TemplateMixin, "); }
-
-                    /* TODO: I don't know if these are mutually exclusive so do if instead of else if for now... */
-                    /* if (Declaration* tsym = sym->isDeclaration()) { printf("Declaration, "); } */
-                    if      (ThisDeclaration* tsym = sym->isThisDeclaration()) { printf("ThisDeclaration, "); }
-                    if (TypeInfoDeclaration* tsym = sym->isTypeInfoDeclaration()) { printf("TypeInfoDeclaration, "); }
-                    if (TupleDeclaration* tsym = sym->isTupleDeclaration()) { printf("TupleDeclaration, "); }
-                    if (TypedefDeclaration* tsym = sym->isTypedefDeclaration()) { printf("TypedefDeclaration, "); }
-                    if (AliasDeclaration* tsym = sym->isAliasDeclaration()) { printf("AliasDeclaration, "); }
-                    if (AggregateDeclaration* tsym = sym->isAggregateDeclaration()) { printf("AggregateDeclaration, "); }
-                    if (FuncDeclaration* tsym = sym->isFuncDeclaration()) { printf("FuncDeclaration, "); }
-                    if (FuncAliasDeclaration* tsym = sym->isFuncAliasDeclaration()) { printf("FuncAliasDeclaration, "); }
-                    if (FuncLiteralDeclaration* tsym = sym->isFuncLiteralDeclaration()) { printf("FuncLiteralDeclaration, "); }
-                    if (CtorDeclaration* tsym = sym->isCtorDeclaration()) { printf("CtorDeclaration, "); }
-                    if (PostBlitDeclaration* tsym = sym->isPostBlitDeclaration()) { printf("PostBlitDeclaration, "); }
-                    if (DtorDeclaration* tsym = sym->isDtorDeclaration()) { printf("DtorDeclaration, "); }
-                    if (StaticCtorDeclaration* tsym = sym->isStaticCtorDeclaration()) { printf("StaticCtorDeclaration, "); }
-                    if (StaticDtorDeclaration* tsym = sym->isStaticDtorDeclaration()) { printf("StaticDtorDeclaration, "); }
-                    if (SharedStaticCtorDeclaration* tsym = sym->isSharedStaticCtorDeclaration()) { printf("SharedStaticCtorDeclaration, "); }
-                    if (SharedStaticDtorDeclaration* tsym = sym->isSharedStaticDtorDeclaration()) { printf("SharedStaticDtorDeclaration, "); }
-                    if (InvariantDeclaration* tsym = sym->isInvariantDeclaration()) { printf("InvariantDeclaration, "); }
-                    if (UnitTestDeclaration* tsym = sym->isUnitTestDeclaration()) { printf("UnitTestDeclaration, "); }
-                    if (NewDeclaration* tsym = sym->isNewDeclaration()) { printf("NewDeclaration, "); }
-                    if (VarDeclaration* tsym = sym->isVarDeclaration()) { printf("VarDeclaration, "); }
-                    if (ClassDeclaration* tsym = sym->isClassDeclaration()) { printf("ClassDeclaration, "); }
-                    if (StructDeclaration* tsym = sym->isStructDeclaration()) { printf("StructDeclaration, "); }
-                    if (UnionDeclaration* tsym = sym->isUnionDeclaration()) { printf("UnionDeclaration, "); }
-                    if (InterfaceDeclaration* tsym = sym->isInterfaceDeclaration()) { printf("InterfaceDeclaration, "); }
-                    if (EnumDeclaration* tsym = sym->isEnumDeclaration()) { printf("EnumDeclaration, "); }
-                    if (DeleteDeclaration* tsym = sym->isDeleteDeclaration()) { printf("DeleteDeclaration, "); }
-                    if (SymbolDeclaration* tsym = sym->isSymbolDeclaration()) { printf("SymbolDeclaration, "); }
-                    if (AttribDeclaration* tsym = sym->isAttribDeclaration()) { printf("AttribDeclaration, "); }
-
-                    if (ScopeDsymbol* tsym = sym->isScopeDsymbol()) { printf("ScopeDsymbol, "); }
-                    if (WithScopeSymbol* tsym = sym->isWithScopeSymbol()) { printf("WithScopeSymbol, "); }
-                    if (ArrayScopeSymbol* tsym = sym->isArrayScopeSymbol()) { printf("ArrayScopeSymbol, "); }
-                    if (Import* tsym = sym->isImport()) {
-                        printf("Import, ");
+                    else if (global.params.queryRow < loc.linnum)
+                    {
+                        goto queryMiss; // no hit possible
                     }
 
-                    if (OverloadSet* tsym = sym->isOverloadSet()) { printf("OverloadSet, "); }
-                    printf("\n");
+                    if (false)
+                    {
+                        fprintf(stdout, "loc: %s", sym->getLoc().toChars());
+                        if (type)
+                            fprintf(stdout, " type: %s", type->toChars());
+                        fprintf(stdout, ": ");
+
+                        /* sym->loc or sym->getLoc() */
+                        /* sym->isAnonymous() */
+                        /* sym->ident or sym->getIdent() */
+                        /* sym->comment */
+                        /* sym->scope */
+                        /* sym->kind() */
+
+                        /* virtual Package *isPackage() { return NULL; } */
+                        /* virtual Module *isModule() { return NULL; } */
+                        /* virtual EnumMember *isEnumMember() { return NULL; } */
+
+                        /* virtual TemplateDeclaration *isTemplateDeclaration() { return NULL; } */
+                        /* ->type for all declarations! */
+                        /* getType() */
+
+                        if (TemplateInstance* tsym = sym->isTemplateInstance()) { fprintf(stdout, "TemplateInstance, "); }
+                        if (TemplateMixin* tsym = sym->isTemplateMixin()) { fprintf(stdout, "TemplateMixin, "); }
+
+                        /* TODO: I don't know if these are mutually exclusive so do if instead of else if for now... */
+                        /* if (Declaration* tsym = sym->isDeclaration()) { fprintf(stdout, "Declaration, "); } */
+                        if (ThisDeclaration* tsym = sym->isThisDeclaration()) { fprintf(stdout, "ThisDeclaration, "); }
+                        if (TypeInfoDeclaration* tsym = sym->isTypeInfoDeclaration()) { fprintf(stdout, "TypeInfoDeclaration, "); }
+                        if (TupleDeclaration* tsym = sym->isTupleDeclaration()) { fprintf(stdout, "TupleDeclaration, "); }
+                        if (TypedefDeclaration* tsym = sym->isTypedefDeclaration()) { fprintf(stdout, "TypedefDeclaration, "); }
+                        if (AliasDeclaration* tsym = sym->isAliasDeclaration()) { fprintf(stdout, "AliasDeclaration, "); }
+                        if (AggregateDeclaration* tsym = sym->isAggregateDeclaration()) { fprintf(stdout, "AggregateDeclaration, "); }
+                        if (FuncDeclaration* tsym = sym->isFuncDeclaration()) { fprintf(stdout, "FuncDeclaration, "); }
+                        if (FuncAliasDeclaration* tsym = sym->isFuncAliasDeclaration()) { fprintf(stdout, "FuncAliasDeclaration, "); }
+                        if (FuncLiteralDeclaration* tsym = sym->isFuncLiteralDeclaration()) { fprintf(stdout, "FuncLiteralDeclaration, "); }
+                        if (CtorDeclaration* tsym = sym->isCtorDeclaration()) { fprintf(stdout, "CtorDeclaration, "); }
+                        if (PostBlitDeclaration* tsym = sym->isPostBlitDeclaration()) { fprintf(stdout, "PostBlitDeclaration, "); }
+                        if (DtorDeclaration* tsym = sym->isDtorDeclaration()) { fprintf(stdout, "DtorDeclaration, "); }
+                        if (StaticCtorDeclaration* tsym = sym->isStaticCtorDeclaration()) { fprintf(stdout, "StaticCtorDeclaration, "); }
+                        if (StaticDtorDeclaration* tsym = sym->isStaticDtorDeclaration()) { fprintf(stdout, "StaticDtorDeclaration, "); }
+                        if (SharedStaticCtorDeclaration* tsym = sym->isSharedStaticCtorDeclaration()) { fprintf(stdout, "SharedStaticCtorDeclaration, "); }
+                        if (SharedStaticDtorDeclaration* tsym = sym->isSharedStaticDtorDeclaration()) { fprintf(stdout, "SharedStaticDtorDeclaration, "); }
+                        if (InvariantDeclaration* tsym = sym->isInvariantDeclaration()) { fprintf(stdout, "InvariantDeclaration, "); }
+                        if (UnitTestDeclaration* tsym = sym->isUnitTestDeclaration()) { fprintf(stdout, "UnitTestDeclaration, "); }
+                        if (NewDeclaration* tsym = sym->isNewDeclaration()) { fprintf(stdout, "NewDeclaration, "); }
+                        if (VarDeclaration* tsym = sym->isVarDeclaration()) { fprintf(stdout, "VarDeclaration, "); }
+                        if (ClassDeclaration* tsym = sym->isClassDeclaration()) { fprintf(stdout, "ClassDeclaration, "); }
+                        if (StructDeclaration* tsym = sym->isStructDeclaration()) { fprintf(stdout, "StructDeclaration, "); }
+                        if (UnionDeclaration* tsym = sym->isUnionDeclaration()) { fprintf(stdout, "UnionDeclaration, "); }
+                        if (InterfaceDeclaration* tsym = sym->isInterfaceDeclaration()) { fprintf(stdout, "InterfaceDeclaration, "); }
+                        if (EnumDeclaration* tsym = sym->isEnumDeclaration()) { fprintf(stdout, "EnumDeclaration, "); }
+                        if (DeleteDeclaration* tsym = sym->isDeleteDeclaration()) { fprintf(stdout, "DeleteDeclaration, "); }
+                        if (SymbolDeclaration* tsym = sym->isSymbolDeclaration()) { fprintf(stdout, "SymbolDeclaration, "); }
+                        if (AttribDeclaration* tsym = sym->isAttribDeclaration()) { fprintf(stdout, "AttribDeclaration, "); }
+
+                        if (ScopeDsymbol* tsym = sym->isScopeDsymbol()) { fprintf(stdout, "ScopeDsymbol, "); }
+                        if (WithScopeSymbol* tsym = sym->isWithScopeSymbol()) { fprintf(stdout, "WithScopeSymbol, "); }
+                        if (ArrayScopeSymbol* tsym = sym->isArrayScopeSymbol()) { fprintf(stdout, "ArrayScopeSymbol, "); }
+                        if (Import* tsym = sym->isImport()) {
+                            fprintf(stdout, "Import, ");
+                        }
+
+                        if (OverloadSet* tsym = sym->isOverloadSet()) { fprintf(stdout, "OverloadSet, "); }
+                        fprintf(stdout, "\n");
+                    }
                 }
             }
         }
+    queryMiss:
+        fprintf(stdout, "%c%s%c%s%s",
+                ASCII_US, "", // 7:th query element
+                ASCII_US, "", // 8:th query element
+                "\n");
         exit(0);
     }
 

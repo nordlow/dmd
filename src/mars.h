@@ -76,6 +76,11 @@ void unittests();
 #define DMDV1   0
 #define DMDV2   1       // Version 2.0 features
 
+#define ASCII_FS (0x1C) // file separator
+#define ASCII_GS (0x1D) // group separator
+#define ASCII_RS (0x1E) // record separator
+#define ASCII_US (0x1F) // unit separator
+
 struct OutBuffer;
 
 // Can't include arraytypes.h here, need to declare these directly.
