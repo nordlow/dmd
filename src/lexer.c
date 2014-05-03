@@ -794,6 +794,7 @@ TOK Lexer::nextToken()
             {
                 // we found a token
                 token.printDoc(length_); // so print it
+                global.params.queryFound = true;
                 // exit(0); // and exit gracefully
             }
             else if (global.params.queryColumn <= token.loc.charnum) // if passed queryColumn

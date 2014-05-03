@@ -1662,6 +1662,9 @@ Language changes listed by -transition=id:\n\
     // query context
     if (global.params.queryOffset >= 0)
     {
+        if (!global.params.queryFound) // if not token found
+            exit(-1);                  // signal not found
+
         for (size_t i = 0; i < modules.dim; i++) // for each module
         {
             if (i == 0)
