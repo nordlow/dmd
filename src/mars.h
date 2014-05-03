@@ -151,6 +151,7 @@ struct Param
     long queryRow;     // query code at file row
     long queryColumn;  // query code at file column
     bool queryFound;     // flags that we found our first token
+    bool timePasses;     // benchmark passes
 
     const char *argv0;    // program name
     Strings *imppath;     // array of char*'s of where to look for import modules

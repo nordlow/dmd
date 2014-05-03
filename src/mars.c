@@ -260,6 +260,7 @@ Usage:\n\
   -d             silently allow deprecated features\n\
   -dw            show use of deprecated features as warnings (default)\n\
   -de            show use of deprecated features as errors (halt compilation)\n\
+  -time          benchmark semantic passes\n\
   -debug         compile in debug code\n\
   -debug=level   compile in debug code <= level\n\
   -debug=ident   compile in debug code identified by ident\n\
@@ -521,6 +522,7 @@ int tryMain(size_t argc, const char *argv[])
     global.params.queryRow = -1;
     global.params.queryColumn = -1;
     global.params.queryFound = false;
+    global.params.timePasses = false;
 
 #if 0
     for (size_t i = 0; i < argc; i++)
@@ -734,6 +736,8 @@ Language changes listed by -transition=id:\n\
                 global.params.warnings = 1;
             else if (strcmp(p + 1, "wi") == 0)
                 global.params.warnings = 2;
+            else if (strcmp(p + 1, "time") == 0)
+                global.params.timePasses = true;
             else if (strcmp(p + 1, "O") == 0)
                 global.params.optimize = true;
             else if (p[1] == 'o')
@@ -1567,7 +1571,8 @@ Language changes listed by -transition=id:\n\
         tspan(tic, toc, &span);
         tspan(tic0, toc0, &span0);
 
-        if (global.params.queryOffset < 0)
+        if (global.params.timePasses &&
+            global.params.queryOffset < 0)
             printf("dmd: semantic : %ld.%09lds %ld.%09lds: %s\n",
                    span.tv_sec, span.tv_nsec,
                    span0.tv_sec, span0.tv_nsec,
@@ -1600,7 +1605,8 @@ Language changes listed by -transition=id:\n\
         clock_gettime(clk, &toc0);
         tspan(tic, toc, &span);
         tspan(tic0, toc0, &span0);
-        if (global.params.queryOffset < 0)
+        if (global.params.timePasses &&
+            global.params.queryOffset < 0)
             printf("dmd: semantic2: %ld.%09lds %ld.%09lds: %s\n",
                    span.tv_sec, span.tv_nsec,
                    span0.tv_sec, span0.tv_nsec,
@@ -1621,7 +1627,8 @@ Language changes listed by -transition=id:\n\
         clock_gettime(clk, &toc0);
         tspan(tic, toc, &span);
         tspan(tic0, toc0, &span0);
-        if (global.params.queryOffset < 0)
+        if (global.params.timePasses &&
+            global.params.queryOffset < 0)
             printf("dmd: semantic3: %ld.%09lds %ld.%09lds: %s\n",
                    span.tv_sec, span.tv_nsec,
                    span0.tv_sec, span0.tv_nsec,
