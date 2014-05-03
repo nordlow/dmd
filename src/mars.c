@@ -1554,7 +1554,11 @@ Language changes listed by -transition=id:\n\
     const clockid_t clk = CLOCK_THREAD_CPUTIME_ID;
 
     struct timespec tic0, toc0, span0; // whole span
-    clock_gettime(clk, &tic0);
+    if (global.params.timePasses &&
+        global.params.queryOffset < 0)
+    {
+        clock_gettime(clk, &tic0);
+    }
 
     struct timespec tic, toc, span;
 
@@ -1564,19 +1568,26 @@ Language changes listed by -transition=id:\n\
         Module *m = modules[i];
         if (global.params.verbose)
             fprintf(global.stdmsg, "semantic  %s\n", m->toChars());
-        clock_gettime(clk, &tic);
-        m->semantic();
-        clock_gettime(clk, &toc);
-        clock_gettime(clk, &toc0);
-        tspan(tic, toc, &span);
-        tspan(tic0, toc0, &span0);
-
         if (global.params.timePasses &&
             global.params.queryOffset < 0)
-            printf("dmd: semantic : %ld.%09lds %ld.%09lds: %s\n",
-                   span.tv_sec, span.tv_nsec,
-                   span0.tv_sec, span0.tv_nsec,
-                   m->srcfile->name->str);
+        {
+            clock_gettime(clk, &tic);
+        }
+        m->semantic();
+        if (global.params.timePasses &&
+            global.params.queryOffset < 0)
+        {
+            clock_gettime(clk, &toc);
+            clock_gettime(clk, &toc0);
+            tspan(tic, toc, &span);
+            tspan(tic0, toc0, &span0);
+            if (global.params.timePasses &&
+                global.params.queryOffset < 0)
+                printf("dmd: semantic : %ld.%09lds %ld.%09lds: %s\n",
+                       span.tv_sec, span.tv_nsec,
+                       span0.tv_sec, span0.tv_nsec,
+                       m->srcfile->name->str);
+        }
     }
     if (global.errors)
         fatal();
@@ -1599,18 +1610,25 @@ Language changes listed by -transition=id:\n\
         Module *m = modules[i];
         if (global.params.verbose)
             fprintf(global.stdmsg, "semantic2 %s\n", m->toChars());
-        clock_gettime(clk, &tic);
-        m->semantic2();
-        clock_gettime(clk, &toc);
-        clock_gettime(clk, &toc0);
-        tspan(tic, toc, &span);
-        tspan(tic0, toc0, &span0);
         if (global.params.timePasses &&
             global.params.queryOffset < 0)
+        {
+            clock_gettime(clk, &tic);
+        }
+        m->semantic2();
+        if (global.params.timePasses &&
+            global.params.queryOffset < 0)
+        {
+            clock_gettime(clk, &toc);
+            clock_gettime(clk, &toc0);
+            tspan(tic, toc, &span);
+            tspan(tic0, toc0, &span0);
             printf("dmd: semantic2: %ld.%09lds %ld.%09lds: %s\n",
                    span.tv_sec, span.tv_nsec,
                    span0.tv_sec, span0.tv_nsec,
                    m->srcfile->name->str);
+        }
+
     }
     if (global.errors)
         fatal();
@@ -1621,18 +1639,24 @@ Language changes listed by -transition=id:\n\
         Module *m = modules[i];
         if (global.params.verbose)
             fprintf(global.stdmsg, "semantic3 %s\n", m->toChars());
-        clock_gettime(clk, &tic);
-        m->semantic3();
-        clock_gettime(clk, &toc);
-        clock_gettime(clk, &toc0);
-        tspan(tic, toc, &span);
-        tspan(tic0, toc0, &span0);
         if (global.params.timePasses &&
             global.params.queryOffset < 0)
+        {
+            clock_gettime(clk, &tic);
+        }
+        m->semantic3();
+        if (global.params.timePasses &&
+            global.params.queryOffset < 0)
+        {
+            clock_gettime(clk, &toc);
+            clock_gettime(clk, &toc0);
+            tspan(tic, toc, &span);
+            tspan(tic0, toc0, &span0);
             printf("dmd: semantic3: %ld.%09lds %ld.%09lds: %s\n",
                    span.tv_sec, span.tv_nsec,
                    span0.tv_sec, span0.tv_nsec,
                    m->srcfile->name->str);
+        }
     }
 
     // query context
