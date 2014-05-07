@@ -473,7 +473,7 @@ void Token::printDoc(unsigned token_length) const
     case TOKat: doc = NULL; break;
     case TOKpow: doc = "Power/Exponentation"; break;
     case TOKpowass: doc = "Power/Exponentation Assignment"; break;
-    case TOKgoesto: doc = "Lambda Expression Goes To"; break;
+    case TOKgoesto: doc = "Separates Argument(s) from Expression in Lambdas"; break;
     case TOKvector: doc = "Vector Intrinsic"; break;
     case TOKpound: doc = "Pound"; break;
     case TOKinterval: doc = "Interval"; break;
