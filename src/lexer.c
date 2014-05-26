@@ -384,7 +384,7 @@ void Token::printDoc(unsigned token_length) const
 
     case TOKtypedef: doc = "Type Definition"; break;
     case TOKalias: doc = "Symbol alias"; break;
-    case TOKoverride: doc = "Definition of virtual function must override an existing function in parenting (base) class"; break;
+    case TOKoverride: doc = "Definition of virtual function overrides preexisting in parenting (base) class"; break;
     case TOKdelegate: doc = "Deletgate Specifier"; break;
     case TOKfunction: doc = "Function Specifier"; break;
 
