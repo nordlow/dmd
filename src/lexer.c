@@ -400,7 +400,7 @@ void Token::printDoc(unsigned token_length) const
     case TOKstatic: doc = "Static Qualifier"; break;
     case TOKvirtual: doc = "Virtual Function Qualifier"; break;
     case TOKfinal: doc = "Final Qualifier"; break;
-    case TOKconst: doc = "Constant data cannot be changed in current scope (thread)"; break;
+    case TOKconst: doc = "Constant value never changed in current scope (thread)"; break;
     case TOKabstract: doc = "Abstract Qualifier"; break;
     case TOKvolatile: doc = "Volatile Qualifier"; break;
 
@@ -414,7 +414,7 @@ void Token::printDoc(unsigned token_length) const
     case TOKauto: doc = "Automatic Data Type Deduction"; break;
     case TOKpackage: doc = NULL; break;
     case TOKmanifest: doc = NULL; break;
-    case TOKimmutable: doc = "Immutable data guaranteed to never ever be changed by anyone"; break;
+    case TOKimmutable: doc = "Immutable value never changed anywhere (in any thread)"; break;
 
         // Statements
     case TOKif: doc = "If Statement"; break;
