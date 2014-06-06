@@ -34,7 +34,7 @@ LDFLAGS=-lm -lstdc++ -lpthread
 #ifeq (osx,$(OS))
 #	HOST_CC=clang++
 #else
-	HOST_CC=clang++
+	HOST_CC=g++
 #endif
 CC=$(HOST_CC) $(MODEL_FLAG)
 GIT=git
@@ -62,7 +62,8 @@ WARNINGS := -Wall -Wextra \
 	-Wno-unused-label \
 	-Wno-unused-parameter \
 	-Wno-unused-value \
-	-Wno-unused-variable
+	-Wno-unused-variable \
+	-Wno-format
 # GCC Specific
 ifeq ($(HOST_CC), g++)
 WARNINGS := $(WARNINGS) \
@@ -71,14 +72,14 @@ WARNINGS := $(WARNINGS) \
 	-Wno-unused-but-set-variable \
 	-Wno-uninitialized
 endif
-# Clangn Specific
+# Clang Specific
 ifeq ($(HOST_CC), clang++)
 WARNINGS := $(WARNINGS) \
 	-Wno-tautological-constant-out-of-range-compare \
 	-Wno-tautological-compare \
 	-Wno-constant-logical-operand \
-	-Wno-self-assign -Wno-self-assign
-# -Wno-sometimes-uninitialized
+	-Wno-self-assign \
+	-Wno-logical-op-parentheses
 endif
 else
 # Default Warnings
