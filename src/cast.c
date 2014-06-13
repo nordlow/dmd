@@ -3422,8 +3422,8 @@ IntRange getIntRange(Expression *e)
         {
             Expression *ie;
             VarDeclaration* vd = e->var->isVarDeclaration();
-            if (vd && vd->range)
-                range = vd->range->cast(e->type);
+            if (vd && vd->rangeStack)
+                range = vd->rangeStack->range.cast(e->type);
             else if (vd && vd->init && !vd->type->isMutable() &&
                 (ie = vd->getConstInitializer()))
                 ie->accept(this);

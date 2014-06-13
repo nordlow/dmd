@@ -31,6 +31,7 @@
 #include "template.h"
 #include "attrib.h"
 #include "import.h"
+#include "conditionvisitor.h"
 
 bool walkPostorder(Statement *s, StoppableVisitor *v);
 bool isNonAssignmentArrayOp(Expression *e);
@@ -1927,7 +1928,7 @@ Statement *ForeachStatement::semantic(Scope *sc)
                         {
                             error("index type '%s' cannot cover index range 0..%llu", arg->type->toChars(), ta->dim->toInteger());
                         }
-                        key->range = new IntRange(0, dimrange.imax);
+                        key->rangeStack = new IntRangeList(0, dimrange.imax);
                     }
                 }
                 else
@@ -2028,7 +2029,7 @@ Statement *ForeachStatement::semantic(Scope *sc)
                 Parameter *arg = (*arguments)[0];
                 if ((arg->storageClass & STCref) && arg->type->equals(key->type))
                 {
-                    key->range = NULL;
+                    key->rangeStack = NULL;
                     AliasDeclaration *v = new AliasDeclaration(loc, arg->ident, key);
                     body = new CompoundStatement(loc, new ExpStatement(loc, v), body);
                 }
@@ -2038,11 +2039,11 @@ Statement *ForeachStatement::semantic(Scope *sc)
                     VarDeclaration *v = new VarDeclaration(loc, arg->type, arg->ident, ei);
                     v->storage_class |= STCforeach | (arg->storageClass & STCref);
                     body = new CompoundStatement(loc, new ExpStatement(loc, v), body);
-                    if (key->range && !arg->type->isMutable())
+                    if (key->rangeStack && arg->storageClass & (STCimmutable | STCconst))
                     {
                         /* Limit the range of the key to the specified range
                          */
-                        v->range = new IntRange(key->range->imin, key->range->imax - 1);
+                        v->rangeStack = new IntRangeList(key->rangeStack->range.imin, key->rangeStack->range.imax - 1);
                     }
                 }
             }
@@ -2683,7 +2684,7 @@ Statement *ForeachRangeStatement::semantic(Scope *sc)
     SignExtendedNumber upper = getIntRange(upr).imax;
     if (lower <= upper)
     {
-        key->range = new IntRange(lower, upper);
+        key->rangeStack = new IntRangeList(lower, upper);
     }
 
     Identifier *id = Lexer::uniqueId("__limit");
@@ -2742,7 +2743,7 @@ Statement *ForeachRangeStatement::semantic(Scope *sc)
 
     if ((arg->storageClass & STCref) && arg->type->equals(key->type))
     {
-        key->range = NULL;
+        key->rangeStack = NULL;
         AliasDeclaration *v = new AliasDeclaration(loc, arg->ident, key);
         body = new CompoundStatement(loc, new ExpStatement(loc, v), body);
     }
@@ -2752,11 +2753,11 @@ Statement *ForeachRangeStatement::semantic(Scope *sc)
         VarDeclaration *v = new VarDeclaration(loc, arg->type, arg->ident, ie);
         v->storage_class |= STCtemp | STCforeach | (arg->storageClass & STCref);
         body = new CompoundStatement(loc, new ExpStatement(loc, v), body);
-        if (key->range && !arg->type->isMutable())
+        if (key->rangeStack && arg->storageClass & (STCimmutable | STCconst))
         {
             /* Limit the range of the key to the specified range
              */
-            v->range = new IntRange(key->range->imin, key->range->imax - 1);
+            v->rangeStack = new IntRangeList(key->rangeStack->range.imin, key->rangeStack->range.imax - 1);
         }
     }
     if (arg->storageClass & STCref)
@@ -2838,13 +2839,13 @@ Statement *IfStatement::semantic(Scope *sc)
         condition = new CommaExp(loc, de, ve);
         condition = condition->semantic(scd);
 
-       if (match->edtor)
-       {
+        if (match->edtor)
+        {
             Statement *sdtor = new ExpStatement(loc, match->edtor);
             sdtor = new OnScopeStatement(loc, TOKon_scope_exit, sdtor);
             ifbody = new CompoundStatement(loc, sdtor, ifbody);
             match->noscope = 1;
-       }
+        }
     }
     else
     {
@@ -2859,19 +2860,30 @@ Statement *IfStatement::semantic(Scope *sc)
     // where S is a struct that defines opCast!bool.
     condition = condition->checkToBoolean(sc);
 
+    ConditionVisitor v;
+    condition->accept(&v);
+
     // If we can short-circuit evaluate the if statement, don't do the
     // semantic analysis of the skipped code.
     // This feature allows a limited form of conditional compilation.
     condition = condition->optimize(WANTflags);
+
     ifbody = ifbody->semanticNoScope(scd);
     scd->pop();
+    v.popRanges();
 
     cs1 = sc->callSuper;
     fi1 = sc->fieldinit;
     sc->callSuper = cs0;
     sc->fieldinit = fi0;
     if (elsebody)
+    {
+        ConditionVisitor vi;
+        vi.invert = true;
+        condition->accept(&vi);
         elsebody = elsebody->semanticScope(sc, NULL, NULL);
+        vi.popRanges();
+    }
     sc->mergeCallSuper(loc, cs1);
     sc->mergeFieldInit(loc, fi1);
 
@@ -3065,6 +3077,20 @@ Statement *PragmaStatement::semantic(Scope *sc)
                 body = body->semantic(sc);
             }
             return this;
+        }
+    }
+    else if (ident == Id::valueRange)
+    {
+        if (args)
+        {
+            for (size_t i = 0; i < args->dim; i++)
+            {
+                Expression *e = (*args)[i];
+
+                e = e->semantic(sc);
+                e = resolveProperties(sc, e);
+                getIntRange(e).dump("pragma(intrange)", e);
+            }
         }
     }
     else
