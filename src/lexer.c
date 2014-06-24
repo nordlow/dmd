@@ -398,7 +398,6 @@ void Token::printDoc(unsigned token_length) const
     case TOKexport: doc = NULL; break;
 
     case TOKstatic: doc = "Static Qualifier"; break;
-    case TOKvirtual: doc = "Virtual Function Qualifier"; break;
     case TOKfinal: doc = "Final Qualifier"; break;
     case TOKconst: doc = "Constant value never changed in current scope (thread)"; break;
     case TOKabstract: doc = "Abstract Qualifier"; break;
