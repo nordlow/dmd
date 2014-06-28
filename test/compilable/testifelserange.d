@@ -17,13 +17,13 @@ void test(T,int Q)(bool unknown)
       static assert(Q || __traits(valueRange, i) == Tuple!(-1, 33));
     else
     {
-      //static assert(i == 0);
+      static assert(i == 0);
       static assert(__traits(valueRange, i) == Tuple!(0, 0));
     }
 
     if (i == 33)
     {
-      //static assert(i == 33);
+      static assert(i == 33);
       static assert(__traits(valueRange, i) == Tuple!(33, 33));
     }
     else
@@ -33,7 +33,7 @@ void test(T,int Q)(bool unknown)
       static assert(Q || __traits(valueRange, i) == Tuple!(-1, 32));
     else
     {
-      //static assert(i == 33);
+      static assert(i == 33);
       static assert(__traits(valueRange, i) == Tuple!(33, 33));
     }
 
@@ -49,7 +49,7 @@ void test(T,int Q)(bool unknown)
 
     if (!i)
     {
-      //static assert(i == 0);
+      static assert(i == 0);
       static assert(__traits(valueRange, i) == Tuple!(0, 0));
     }
     else
