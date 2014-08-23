@@ -343,9 +343,9 @@ Msgtable msgtable[] =
     { "getFunctionAttributes" },
     { "getUnitTests" },
     { "getVirtualIndex" },
-
     // For C++ mangling
     { "allocator" },
+    { "valueRange" }
 };
 
 

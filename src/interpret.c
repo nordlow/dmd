@@ -2353,6 +2353,13 @@ public:
                     return EXP_CANT_INTERPRET;
             }
 
+            if (v->rangeStack && v->rangeStack->range.imin == v->rangeStack->range.imax)
+            {
+                /* Variable only has a single possible value in this scope
+                 */
+                return new IntegerExp(loc, v->rangeStack->range.imax.value, v->type);
+            }
+
             if ((v->isConst() || v->isImmutable() || v->storage_class & STCmanifest) &&
                 !hasValue(v) &&
                 v->init && !v->isCTFE())
