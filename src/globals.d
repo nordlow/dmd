@@ -49,6 +49,8 @@ alias BOUNDSCHECKoff = BOUNDSCHECK.BOUNDSCHECKoff;
 alias BOUNDSCHECKon = BOUNDSCHECK.BOUNDSCHECKon;
 alias BOUNDSCHECKsafeonly = BOUNDSCHECK.BOUNDSCHECKsafeonly;
 
+enum UseUnitTests { none, all, top }
+
 // Put command line switches in here
 struct Param
 {
@@ -90,7 +92,7 @@ struct Param
     bool useOut;            // generate postcondition checks
     bool stackstomp;        // add stack stomping code
     bool useSwitchError;    // check for switches without a default
-    bool useUnitTests;      // generate unittest code
+    UseUnitTests useUnitTests;  // generate unittest code
     bool useInline;         // inline expand functions
     bool useDIP25;          // implement http://wiki.dlang.org/DIP25
     bool release;           // build release version

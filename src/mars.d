@@ -233,7 +233,7 @@ Usage:
   -shared        generate shared library (DLL)
   -transition=id help with language change identified by 'id'
   -transition=?  list all language changes
-  -unittest      compile in unit tests
+  -unittest=[top]    compile in unit tests, if argument is 'top' only for current module
   -v             verbose
   -vcolumns      print character (column) numbers in diagnostics
   -verrors=num   limit the number of error messages (0 means unlimited)
@@ -830,8 +830,28 @@ Language changes listed by -transition=id:
                 else
                     goto Lerror;
             }
-            else if (strcmp(p + 1, "unittest") == 0)
-                global.params.useUnitTests = true;
+            else if (memcmp(p + 1, cast(char*)"unittest", 8) == 0)
+                // Parse:
+                //      -unittest=[none|all|top]
+                if (p[9] == '=')
+                {
+                    if (strcmp(p + 13, "none") == 0)
+                    {
+                        global.params.useUnitTests = UseUnitTests.none;
+                    }
+                    else if (strcmp(p + 13, "all") == 0)
+                    {
+                        global.params.useUnitTests = UseUnitTests.all;
+                    }
+                    else if (strcmp(p + 13, "top") == 0)
+                    {
+                        global.params.useUnitTests = UseUnitTests.top;
+                    }
+                    else
+                        goto Lerror;
+                }
+                else
+                    global.params.useUnitTests = UseUnitTests.all;
             else if (p[1] == 'I')
             {
                 if (!global.params.imppath)
