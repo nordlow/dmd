@@ -1381,6 +1381,12 @@ extern (C++) Expression doCopyOrMove(Scope *sc, Expression e)
     {
         e = e.isLvalue() ? callCpCtor(sc, e) : valueNoDtor(e);
     }
+
+    if (sc.enclosing) { printf("sc.enclosing: %p\n", sc.enclosing); }
+    if (e.isLvalue())
+        printf("Lvalue: %s\n", e.toChars());
+    else
+        printf("Rvalue: %s\n", e.toChars());
     return e;
 }
 
