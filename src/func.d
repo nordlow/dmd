@@ -2399,8 +2399,14 @@ extern (C++) class FuncDeclaration : Declaration
                 if (type.ty == Tfunction && (cast(TypeFunction)type).iswild & 2)
                     v.storage_class |= STCreturn;
             }
-            if (type.ty == Tfunction && (cast(TypeFunction)type).isreturn)
-                v.storage_class |= STCreturn;
+            if (type.ty == Tfunction)
+            {
+                TypeFunction tf = cast(TypeFunction)type;
+                if (tf.isreturn)
+                    v.storage_class |= STCreturn;
+                if (tf.isscope)
+                    v.storage_class |= STCscope;
+            }
 
             v.semantic(sc);
             if (!sc.insert(v))
