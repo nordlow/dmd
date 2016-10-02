@@ -1382,11 +1382,60 @@ extern (C++) Expression doCopyOrMove(Scope *sc, Expression e)
         e = e.isLvalue() ? callCpCtor(sc, e) : valueNoDtor(e);
     }
 
-    if (sc.enclosing) { printf("sc.enclosing: %p\n", sc.enclosing); }
-    if (e.isLvalue())
-        printf("Lvalue: %s\n", e.toChars());
-    else
-        printf("Rvalue: %s\n", e.toChars());
+    // check if this the last reference to symbol
+    extern (C++) final class IsLastParamRef : StoppableVisitor
+    {
+        alias visit = super.visit;
+    public:
+        override void visit(Expression e)
+        {
+            // printf("(Expression = %s)\n", e.toChars());
+        }
+
+        override void visit(Dsymbol s)
+        {
+            printf("(Dsymbol = %s)\n", s.toChars());
+        }
+    }
+    scope IsLastParamRef isLast = new IsLastParamRef();
+    auto hit = walkPostorder(e, isLast);
+
+    version(none)
+    {
+        printf("sc: %p\n", sc);
+
+        if (sc.enclosing)
+        {
+            printf("sc.enclosing: %p\n", sc.enclosing);
+        }
+
+        if (sc.func)
+        {
+            printf("sc.func: %p\n", sc.func);
+            if (sc.func.fbody)
+            {
+                printf("sc.func.fbody: %p\n", sc.func.fbody);
+                //printf("sc.func.fbody.loc: %s\n", sc.func.fbody.loc.toChars());
+                auto cs = sc.func.fbody.isCompoundStatement();
+                if (cs)
+                {
+                    printf("cs: %p\n", cs);
+                    for (size_t i = 0; i < cs.statements.dim; ++i)
+                    {
+                        printf("sub-cs: %s\n", (*cs.statements)[i].toChars());
+                    }
+                }
+            }
+            if (sc.func.fensure)
+                printf("sc.func.fensure: %p\n", sc.func.fensure);
+        }
+
+        if (e.isLvalue())
+            printf("Lvalue: %s\n", e.toChars());
+        else
+            printf("Rvalue: %s\n", e.toChars());
+    }
+
     return e;
 }
 
