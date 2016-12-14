@@ -689,6 +689,7 @@ final class Parser : Lexer
                 goto Lstc;
 
             case TOKimmutable:
+            case TOKlet:
                 if (peekNext() == TOKlparen)
                     goto Ldeclaration;
                 stc = STCimmutable;
@@ -3509,6 +3510,7 @@ final class Parser : Lexer
             break;
 
         case TOKimmutable:
+        case TOKlet:
             // immutable(type)
             nextToken();
             check(TOKlparen);
@@ -3955,6 +3957,7 @@ final class Parser : Lexer
                 goto L1;
 
             case TOKimmutable:
+            case TOKlet:
                 if (peek(&token).value == TOKlparen)
                     break;
                 stc = STCimmutable;
@@ -4979,6 +4982,7 @@ final class Parser : Lexer
         case TOKextern:
         case TOKalign:
         case TOKimmutable:
+        case TOKlet:
         case TOKshared:
         case TOKwild:
         case TOKdeprecated:
@@ -5220,6 +5224,7 @@ final class Parser : Lexer
                         break;
 
                     case TOKimmutable:
+                    case TOKlet:
                         if (peekNext() != TOKlparen)
                         {
                             stc = STCimmutable;
@@ -6198,7 +6203,7 @@ final class Parser : Lexer
 
         while (1)
         {
-            if ((t.value == TOKconst || t.value == TOKimmutable || t.value == TOKwild || t.value == TOKshared) && peek(t).value != TOKlparen)
+            if ((t.value == TOKconst || t.value == TOKimmutable || t.value == TOKlet || t.value == TOKwild || t.value == TOKshared) && peek(t).value != TOKlparen)
             {
                 /* const type
                  * immutable type
@@ -6384,6 +6389,7 @@ final class Parser : Lexer
 
         case TOKconst:
         case TOKimmutable:
+        case TOKlet:
         case TOKshared:
         case TOKwild:
             // const(type)  or  immutable(type)  or  shared(type)  or  wild(type)
@@ -6584,6 +6590,7 @@ final class Parser : Lexer
                     {
                     case TOKconst:
                     case TOKimmutable:
+                    case TOKlet:
                     case TOKshared:
                     case TOKwild:
                     case TOKpure:
@@ -6666,6 +6673,7 @@ final class Parser : Lexer
 
             case TOKconst:
             case TOKimmutable:
+            case TOKlet:
             case TOKshared:
             case TOKwild:
                 t = peek(t);

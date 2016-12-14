@@ -7475,6 +7475,7 @@ extern (C++) final class IsExp : Expression
                 break;
 
             case TOKimmutable:
+            case TOKlet:
                 if (!targ.isImmutable())
                     goto Lno;
                 tded = targ;

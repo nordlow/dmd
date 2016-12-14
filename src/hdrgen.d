@@ -3061,6 +3061,7 @@ extern (C++) const(char)* stcToChars(ref StorageClass stc)
         SCstring(STCin, TOKin),
         SCstring(STCmanifest, TOKenum),
         SCstring(STCimmutable, TOKimmutable),
+        SCstring(STCimmutable, TOKlet),
         SCstring(STCshared, TOKshared),
         SCstring(STCnothrow, TOKnothrow),
         SCstring(STCwild, TOKwild),

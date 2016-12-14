@@ -237,6 +237,7 @@ enum TOK : int
     TOKpackage,
     TOKmanifest,
     TOKimmutable,
+    TOKlet,
 
     // 189
     // Statements
@@ -496,6 +497,7 @@ alias TOKauto = TOK.TOKauto;
 alias TOKpackage = TOK.TOKpackage;
 alias TOKmanifest = TOK.TOKmanifest;
 alias TOKimmutable = TOK.TOKimmutable;
+alias TOKlet = TOK.TOKlet;
 alias TOKif = TOK.TOKif;
 alias TOKelse = TOK.TOKelse;
 alias TOKwhile = TOK.TOKwhile;
@@ -696,6 +698,7 @@ extern (C++) struct Token
         TOKprettyfunc: "__PRETTY_FUNCTION__",
         TOKshared: "shared",
         TOKimmutable: "immutable",
+        TOKlet: "let",
 
         TOKeof: "EOF",
         TOKlcurly: "{",
@@ -1188,4 +1191,5 @@ private immutable TOK[] keywords =
     TOKprettyfunc,
     TOKshared,
     TOKimmutable,
+    TOKlet,
 ];
