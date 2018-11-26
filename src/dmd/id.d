@@ -426,6 +426,7 @@ immutable Msgtable[] msgtable =
     { "isFloating" },
     { "isIntegral" },
     { "isScalar" },
+    { "isDynamicArray" },
     { "isStaticArray" },
     { "isUnsigned" },
     { "isVirtualFunction" },
