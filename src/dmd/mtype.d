@@ -7134,7 +7134,7 @@ static bool isAliasType(Type t)
     {
         foreach(f;(cast(TypeStruct)t).sym.fields)
         {
-            if (f.type.isAliasType())
+            if (f.type && f.type.isAliasType())
             {
                 return true;
             }
