@@ -3221,6 +3221,10 @@ extern (C++) final class TypeBasic : Type
         //printf("TypeBasic::size()\n");
         switch (ty)
         {
+        case Talias:
+            size = 0;
+            break;
+
         case Tint8:
         case Tuns8:
             size = 1;
