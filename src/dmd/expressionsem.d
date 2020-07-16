@@ -78,6 +78,8 @@ import dmd.visitor;
 
 enum LOGSEMANTIC = false;
 
+pure:
+
 /********************************************************
  * Perform semantic analysis and CTFE on expressions to produce
  * a string.
@@ -12315,8 +12317,13 @@ VarDeclaration makeThis2Argument(const ref Loc loc, Scope* sc, FuncDeclaration f
  * Returns:
  *      a `bool` indicating if the hook is present.
  */
-bool verifyHookExist(const ref Loc loc, ref Scope sc, Identifier id, string description, Identifier module_ = Id.object)
+bool verifyHookExist(const ref Loc loc, ref Scope sc, Identifier id, string description,
+                     Identifier module_ = null)
 {
+    if (module_ is null)
+    {
+        module_ = id.object;
+    }
     auto rootSymbol = sc.search(loc, Id.empty, null);
     if (auto moduleSymbol = rootSymbol.search(loc, module_))
         if (moduleSymbol.search(loc, id))

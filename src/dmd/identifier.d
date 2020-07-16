@@ -69,28 +69,28 @@ public:
     {
         //printf("Identifier('%s', %d)\n", name, value);
         this.compilation = compilation;
-        this(name.toDString(), TOK.identifier);
+        this(compilation, name.toDString(), TOK.identifier);
     }
 
     /// Sentinel for an anonymous identifier.
-    static Identifier anonymous() nothrow
+    static Identifier anonymous(Compilation compilation) nothrow
     {
         version(pureifyTODO)
         {
             __gshared Identifier anonymous;
             if (anonymous)
                 return anonymous;
-            return anonymous = new Identifier("__anonymous", TOK.identifier);
+            return anonymous = new Identifier(compilation, "__anonymous", TOK.identifier);
         }
         else
         {
-            return new Identifier("__anonymous", TOK.identifier);
+            return new Identifier(compilation, "__anonymous", TOK.identifier);
         }
     }
 
-    static Identifier create(const(char)* name) nothrow
+    static Identifier create(Compilation compilation, const(char)* name) nothrow
     {
-        return new Identifier(name);
+        return new Identifier(compilation, name);
     }
 
 nothrow:

@@ -21,7 +21,10 @@ import dmd.tokens;
  */
 extern (C++) struct Id
 {
-static pure:
+    version(pureifyTODO)
+    {
+        // TODO static pure:
+    }
 
     mixin(msgtable.generate(&identifier));
 
