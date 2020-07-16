@@ -9,6 +9,8 @@
 
 module dmd.parsetimevisitor;
 
+pure:
+
 /** Basic and dumm visitor which implements a visit method for each AST node
   * implemented in AST. This visitor is the parent of strict, transitive
   * and permissive visitors.
@@ -16,6 +18,7 @@ module dmd.parsetimevisitor;
 extern (C++) class ParseTimeVisitor(AST)
 {
 public:
+pure:
     void visit(AST.Dsymbol) { assert(0); }
     void visit(AST.Parameter) { assert(0); }
     void visit(AST.Statement) { assert(0); }

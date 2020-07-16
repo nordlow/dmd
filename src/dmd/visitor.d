@@ -26,6 +26,7 @@ import dmd.root.rootobject;
  */
 extern (C++) class Visitor : ParseTimeVisitor!ASTCodegen
 {
+pure:
     alias visit = ParseTimeVisitor!ASTCodegen.visit;
 public:
     void visit(ASTCodegen.ErrorStatement s) { visit(cast(ASTCodegen.Statement)s); }
@@ -95,6 +96,7 @@ public:
  */
 extern (C++) class SemanticTimePermissiveVisitor : Visitor
 {
+pure:
     alias visit = Visitor.visit;
 
     override void visit(ASTCodegen.Dsymbol){}
@@ -112,6 +114,7 @@ extern (C++) class SemanticTimePermissiveVisitor : Visitor
  */
 extern (C++) class SemanticTimeTransitiveVisitor : SemanticTimePermissiveVisitor
 {
+pure:
     alias visit = SemanticTimePermissiveVisitor.visit;
 
     mixin ParseVisitMethods!ASTCodegen __methods;
@@ -236,6 +239,7 @@ extern (C++) class SemanticTimeTransitiveVisitor : SemanticTimePermissiveVisitor
 
 extern (C++) class StoppableVisitor : Visitor
 {
+pure:
     alias visit = Visitor.visit;
 public:
     bool stop;

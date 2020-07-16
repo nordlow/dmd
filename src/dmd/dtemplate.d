@@ -76,6 +76,8 @@ import dmd.visitor;
 
 import dmd.templateparamsem;
 
+pure:
+
 //debug = FindExistingInstance; // print debug stats of findExistingInstance
 private enum LOG = false;
 
@@ -539,6 +541,7 @@ struct TemplatePrevious
  */
 extern (C++) final class TemplateDeclaration : ScopeDsymbol
 {
+pure:
     import dmd.root.array : Array;
 
     TemplateParameters* parameters;     // array of TemplateParameter's

@@ -382,6 +382,7 @@ enum VarArg : ubyte
  */
 extern (C++) abstract class Type : ASTNode
 {
+pure:
     TY ty;
     MOD mod; // modifiers MODxxxx
     char* deco;
@@ -2758,6 +2759,7 @@ extern (C++) final class TypeError : Type
  */
 extern (C++) abstract class TypeNext : Type
 {
+pure:
     Type next;
 
     final extern (D) this(TY ty, Type next)
@@ -3057,6 +3059,7 @@ extern (C++) abstract class TypeNext : Type
  */
 extern (C++) final class TypeBasic : Type
 {
+pure:
     const(char)* dstring;
     uint flags;
 
@@ -3457,6 +3460,7 @@ extern (C++) final class TypeBasic : Type
  */
 extern (C++) final class TypeVector : Type
 {
+pure:
     Type basetype;
 
     extern (D) this(Type basetype)
@@ -3561,6 +3565,7 @@ extern (C++) final class TypeVector : Type
  */
 extern (C++) abstract class TypeArray : TypeNext
 {
+pure:
     final extern (D) this(TY ty, Type next)
     {
         super(ty, next);
@@ -3577,6 +3582,7 @@ extern (C++) abstract class TypeArray : TypeNext
  */
 extern (C++) final class TypeSArray : TypeArray
 {
+pure:
     Expression dim;
 
     extern (D) this(Type t, Expression dim)
@@ -3759,6 +3765,7 @@ extern (C++) final class TypeSArray : TypeArray
  */
 extern (C++) final class TypeDArray : TypeArray
 {
+pure:
     extern (D) this(Type t)
     {
         super(Tarray, t);
@@ -3856,6 +3863,7 @@ extern (C++) final class TypeDArray : TypeArray
  */
 extern (C++) final class TypeAArray : TypeArray
 {
+pure:
     Type index;     // key type
     Loc loc;
 
@@ -3955,6 +3963,7 @@ extern (C++) final class TypeAArray : TypeArray
  */
 extern (C++) final class TypePointer : TypeNext
 {
+pure:
     extern (D) this(Type t)
     {
         super(Tpointer, t);
@@ -4092,6 +4101,7 @@ extern (C++) final class TypePointer : TypeNext
  */
 extern (C++) final class TypeReference : TypeNext
 {
+pure:
     extern (D) this(Type t)
     {
         super(Treference, t);
@@ -4168,6 +4178,7 @@ enum PURE : int
  */
 extern (C++) final class TypeFunction : TypeNext
 {
+pure:
     // .next is the return type
 
     ParameterList parameterList;   // function parameters

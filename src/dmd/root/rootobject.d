@@ -15,6 +15,8 @@ import core.stdc.stdio;
 
 import dmd.root.outbuffer;
 
+pure:
+
 /***********************************************************
  */
 
@@ -37,6 +39,7 @@ enum DYNCAST : int
 
 extern (C++) class RootObject
 {
+pure:
     this() nothrow pure @nogc @safe
     {
     }

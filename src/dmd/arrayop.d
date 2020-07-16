@@ -30,6 +30,8 @@ import dmd.statement;
 import dmd.tokens;
 import dmd.visitor;
 
+pure:
+
 /**********************************************
  * Check that there are no uses of arrays without [].
  */
@@ -186,6 +188,7 @@ private void buildArrayOp(Scope* sc, Expression e, Objects* tiargs, Expressions*
 {
     extern (C++) final class BuildArrayOpVisitor : Visitor
     {
+        pure:
         alias visit = Visitor.visit;
         Scope* sc;
         Objects* tiargs;

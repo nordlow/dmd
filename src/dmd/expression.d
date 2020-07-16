@@ -69,6 +69,8 @@ import dmd.typesem;
 import dmd.utf;
 import dmd.visitor;
 
+pure:
+
 enum LOGSEMANTIC = false;
 void emplaceExp(T : Expression, Args...)(void* p, Args args)
 {
@@ -647,6 +649,7 @@ enum WANTexpand = 1;    // expand const/immutable variables if possible
  */
 extern (C++) abstract class Expression : ASTNode
 {
+    pure:
     const TOK op;   // to minimize use of dynamic_cast
     ubyte size;     // # of bytes in Expression so we can copy() it
     ubyte parens;   // if this is a parenthesized expression
@@ -1655,6 +1658,7 @@ extern (C++) abstract class Expression : ASTNode
  */
 extern (C++) final class IntegerExp : Expression
 {
+pure:
     private dinteger_t value;
 
     extern (D) this(const ref Loc loc, dinteger_t value, Type type)
@@ -1840,10 +1844,14 @@ extern (C++) final class IntegerExp : Expression
      */
     static IntegerExp literal(int v)()
     {
-        __gshared IntegerExp theConstant;
-        if (!theConstant)
-            theConstant = new IntegerExp(v);
-        return theConstant;
+        version(pureifyTODO)
+        {
+            __gshared IntegerExp theConstant;
+            if (!theConstant)
+                theConstant = new IntegerExp(v);
+            return theConstant;
+        }
+        return new IntegerExp(v);
     }
 
     /**
@@ -1872,6 +1880,7 @@ extern (C++) final class IntegerExp : Expression
  */
 extern (C++) final class ErrorExp : Expression
 {
+pure:
     extern (D) this()
     {
         if (global.errors == 0 && global.gaggedErrors == 0)
@@ -1907,6 +1916,7 @@ extern (C++) final class ErrorExp : Expression
  */
 extern (C++) final class VoidInitExp : Expression
 {
+pure:
     VarDeclaration var; /// the variable from where the void value came from, null if not known
                         /// Useful for error messages
 
@@ -1933,6 +1943,7 @@ extern (C++) final class VoidInitExp : Expression
  */
 extern (C++) final class RealExp : Expression
 {
+pure:
     real_t value;
 
     extern (D) this(const ref Loc loc, real_t value, Type type)
@@ -2008,6 +2019,7 @@ extern (C++) final class RealExp : Expression
  */
 extern (C++) final class ComplexExp : Expression
 {
+pure:
     complex_t value;
 
     extern (D) this(const ref Loc loc, complex_t value, Type type)
@@ -2086,6 +2098,7 @@ extern (C++) final class ComplexExp : Expression
  */
 extern (C++) class IdentifierExp : Expression
 {
+pure:
     Identifier ident;
 
     extern (D) this(const ref Loc loc, Identifier ident)
@@ -2119,6 +2132,7 @@ extern (C++) class IdentifierExp : Expression
  */
 extern (C++) final class DollarExp : IdentifierExp
 {
+pure:
     extern (D) this(const ref Loc loc)
     {
         super(loc, Id.dollar);
@@ -2135,6 +2149,7 @@ extern (C++) final class DollarExp : IdentifierExp
  */
 extern (C++) final class DsymbolExp : Expression
 {
+pure:
     Dsymbol s;
     bool hasOverloads;
 
@@ -2166,6 +2181,7 @@ extern (C++) final class DsymbolExp : Expression
  */
 extern (C++) class ThisExp : Expression
 {
+pure:
     VarDeclaration var;
 
     extern (D) this(const ref Loc loc)
@@ -2237,6 +2253,7 @@ extern (C++) final class SuperExp : ThisExp
  */
 extern (C++) final class NullExp : Expression
 {
+pure:
     extern (D) this(const ref Loc loc, Type type = null)
     {
         super(loc, TOK.null_, __traits(classInstanceSize, NullExp));
@@ -2282,6 +2299,7 @@ extern (C++) final class NullExp : Expression
  */
 extern (C++) final class StringExp : Expression
 {
+pure:
     private union
     {
         char* string;   // if sz == 1
@@ -2694,6 +2712,7 @@ extern (C++) final class StringExp : Expression
  */
 extern (C++) final class TupleExp : Expression
 {
+pure:
     /* Tuple-field access may need to take out its side effect part.
      * For example:
      *      foo().tupleof
@@ -2804,6 +2823,7 @@ extern (C++) final class TupleExp : Expression
  */
 extern (C++) final class ArrayLiteralExp : Expression
 {
+pure:
     /** If !is null, elements[] can be sparse and basis is used for the
      * "default" element value. In other words, non-null elements[i] overrides
      * this 'basis' value.
@@ -2969,6 +2989,7 @@ extern (C++) final class ArrayLiteralExp : Expression
  */
 extern (C++) final class AssocArrayLiteralExp : Expression
 {
+pure:
     Expressions* keys;
     Expressions* values;
 
@@ -3040,6 +3061,7 @@ enum stageToCBuffer         = 0x20; /// toCBuffer is running
  */
 extern (C++) final class StructLiteralExp : Expression
 {
+pure:
     StructDeclaration sd;   /// which aggregate this is for
     Expressions* elements;  /// parallels sd.fields[] with null entries for fields to skip
     Type stype;             /// final type of result (can be different from sd's type)
@@ -3232,6 +3254,7 @@ extern (C++) final class StructLiteralExp : Expression
  */
 extern (C++) final class TypeExp : Expression
 {
+pure:
     extern (D) this(const ref Loc loc, Type type)
     {
         super(loc, TOK.type, __traits(classInstanceSize, TypeExp));
@@ -3272,6 +3295,7 @@ extern (C++) final class TypeExp : Expression
  */
 extern (C++) final class ScopeExp : Expression
 {
+pure:
     ScopeDsymbol sds;
 
     extern (D) this(const ref Loc loc, ScopeDsymbol sds)
@@ -3326,6 +3350,7 @@ extern (C++) final class ScopeExp : Expression
  */
 extern (C++) final class TemplateExp : Expression
 {
+pure:
     TemplateDeclaration td;
     FuncDeclaration fd;
 
@@ -3374,6 +3399,7 @@ extern (C++) final class TemplateExp : Expression
  */
 extern (C++) final class NewExp : Expression
 {
+pure:
     Expression thisexp;         // if !=null, 'this' for class being allocated
     Expressions* newargs;       // Array of Expression's to call new operator
     Type newtype;
@@ -3419,6 +3445,7 @@ extern (C++) final class NewExp : Expression
  */
 extern (C++) final class NewAnonClassExp : Expression
 {
+pure:
     Expression thisexp;     // if !=null, 'this' for class being allocated
     Expressions* newargs;   // Array of Expression's to call new operator
     ClassDeclaration cd;    // class being instantiated
@@ -3448,6 +3475,7 @@ extern (C++) final class NewAnonClassExp : Expression
  */
 extern (C++) class SymbolExp : Expression
 {
+pure:
     Declaration var;
     bool hasOverloads;
     Dsymbol originalScope; // original scope before inlining
@@ -3471,6 +3499,7 @@ extern (C++) class SymbolExp : Expression
  */
 extern (C++) final class SymOffExp : SymbolExp
 {
+pure:
     dinteger_t offset;
 
     extern (D) this(const ref Loc loc, Declaration var, dinteger_t offset, bool hasOverloads = true)
@@ -3602,6 +3631,7 @@ extern (C++) final class VarExp : SymbolExp
  */
 extern (C++) final class OverExp : Expression
 {
+pure:
     OverloadSet vars;
 
     extern (D) this(const ref Loc loc, OverloadSet s)
@@ -3634,6 +3664,7 @@ extern (C++) final class OverExp : Expression
 
 extern (C++) final class FuncExp : Expression
 {
+pure:
     FuncLiteralDeclaration fd;
     TemplateDeclaration td;
     TOK tok;
@@ -3932,6 +3963,7 @@ extern (C++) final class FuncExp : Expression
  */
 extern (C++) final class DeclarationExp : Expression
 {
+pure:
     Dsymbol declaration;
 
     extern (D) this(const ref Loc loc, Dsymbol declaration)
@@ -3965,6 +3997,7 @@ extern (C++) final class DeclarationExp : Expression
  */
 extern (C++) final class TypeidExp : Expression
 {
+pure:
     RootObject obj;
 
     extern (D) this(const ref Loc loc, RootObject o)
@@ -3989,6 +4022,7 @@ extern (C++) final class TypeidExp : Expression
  */
 extern (C++) final class TraitsExp : Expression
 {
+pure:
     Identifier ident;
     Objects* args;
 
@@ -4014,6 +4048,7 @@ extern (C++) final class TraitsExp : Expression
  */
 extern (C++) final class HaltExp : Expression
 {
+pure:
     extern (D) this(const ref Loc loc)
     {
         super(loc, TOK.halt, __traits(classInstanceSize, HaltExp));
@@ -4031,6 +4066,7 @@ extern (C++) final class HaltExp : Expression
  */
 extern (C++) final class IsExp : Expression
 {
+pure:
     Type targ;
     Identifier id;      // can be null
     Type tspec;         // can be null
@@ -4072,6 +4108,7 @@ extern (C++) final class IsExp : Expression
  */
 extern (C++) abstract class UnaExp : Expression
 {
+pure:
     Expression e1;
     Type att1;      // Save alias this type to detect recursion
 
@@ -4142,6 +4179,7 @@ alias fp2_t = bool function(const ref Loc loc, TOK, Expression, Expression);
  */
 extern (C++) abstract class BinExp : Expression
 {
+pure:
     Expression e1;
     Expression e2;
     Type att1;      // Save alias this type to detect recursion
@@ -4470,6 +4508,7 @@ extern (C++) class BinAssignExp : BinExp
  */
 extern (C++) final class CompileExp : Expression
 {
+pure:
     Expressions* exps;
 
     extern (D) this(const ref Loc loc, Expressions* exps)
@@ -5532,6 +5571,7 @@ extern (C++) final class CommaExp : BinExp
  */
 extern (C++) final class IntervalExp : Expression
 {
+pure:
     Expression lwr;
     Expression upr;
 
@@ -6575,6 +6615,7 @@ extern (C++) final class CondExp : BinExp
  */
 extern (C++) class DefaultInitExp : Expression
 {
+pure:
     TOK subop;      // which of the derived classes this is
 
     extern (D) this(const ref Loc loc, TOK subop, int size)
@@ -6742,6 +6783,7 @@ extern (C++) final class PrettyFuncInitExp : DefaultInitExp
  */
 extern (C++) final class ObjcClassReferenceExp : Expression
 {
+pure:
     ClassDeclaration classDeclaration;
 
     extern (D) this(const ref Loc loc, ClassDeclaration classDeclaration)

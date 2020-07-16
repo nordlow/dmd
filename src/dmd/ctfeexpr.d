@@ -41,6 +41,7 @@ import dmd.visitor;
  */
 extern (C++) final class ClassReferenceExp : Expression
 {
+pure:
     StructLiteralExp value;
 
     extern (D) this(const ref Loc loc, StructLiteralExp lit, Type type)
@@ -126,6 +127,7 @@ int findFieldIndexByName(const StructDeclaration sd, const VarDeclaration v) pur
  */
 extern (C++) final class ThrownExceptionExp : Expression
 {
+pure:
     ClassReferenceExp thrown;   // the thing being tossed
 
     extern (D) this(const ref Loc loc, ClassReferenceExp victim)
@@ -166,6 +168,7 @@ extern (C++) final class ThrownExceptionExp : Expression
  */
 extern (C++) final class CTFEExp : Expression
 {
+pure:
     extern (D) this(TOK tok)
     {
         super(Loc.initial, tok, __traits(classInstanceSize, CTFEExp));
