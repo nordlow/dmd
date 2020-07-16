@@ -41,6 +41,12 @@ extern (C++) __gshared
     Modules compiledImports;
 }
 
+/**
+ * A data structure that holds all global state related to a compilation instance.
+ */
+extern (C++) struct Compilation
+{
+}
 
 /**
  * A data structure that describes a back-end compiler and implements
