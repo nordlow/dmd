@@ -12,10 +12,12 @@
 
 #include "root/dcompat.h"
 #include "root/root.h"
+#include "compiler.h"
 
 class Identifier : public RootObject
 {
 private:
+    Compilation compilation;
     int value;
     DString string;
 

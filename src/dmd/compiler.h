@@ -12,6 +12,7 @@
 
 #include "root/array.h"
 #include "root/bitarray.h"
+#include "id.h"
 
 // This file contains a data structure that describes a back-end compiler
 // and implements compiler-specific actions.
@@ -29,6 +30,12 @@ extern bool includeImports;
 // array of module patterns used to include/exclude imported modules
 extern Array<const char*> includeModulePatterns;
 extern Array<Module *> compiledImports;
+
+class Compilation
+{
+public:
+    Id id;
+};
 
 struct Compiler
 {

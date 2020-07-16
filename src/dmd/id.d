@@ -21,7 +21,7 @@ import dmd.tokens;
  */
 extern (C++) struct Id
 {
-    static __gshared:
+static pure:
 
     mixin(msgtable.generate(&identifier));
 

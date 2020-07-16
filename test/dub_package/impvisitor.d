@@ -96,7 +96,8 @@ void main()
         string fn = f.name;
         //writeln("Processing ", fn);
 
-        Id.initialize();
+        compilation = new Compilation();
+        compilation.id.initialize();
         global._init();
         global.params.isLinux = true;
         global.params.is64bit = (size_t.sizeof == 8);

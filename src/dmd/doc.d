@@ -361,7 +361,10 @@ private TemplateDeclaration getEponymousParent(Dsymbol s)
     return (td && getEponymousMember(td)) ? td : null;
 }
 
-private immutable ddoc_default = import("default_ddoc_theme.ddoc");
+version(pureifyTODO)
+{
+    private immutable ddoc_default = import("res/default_ddoc_theme.ddoc");
+}
 private immutable ddoc_decl_s = "$(DDOC_DECL ";
 private immutable ddoc_decl_e = ")\n";
 private immutable ddoc_decl_dd_s = "$(DDOC_DECL_DD ";

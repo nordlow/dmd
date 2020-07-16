@@ -44,8 +44,9 @@ extern (C++) __gshared
 /**
  * A data structure that holds all global state related to a compilation instance.
  */
-extern (C++) struct Compilation
+extern (C++) class Compilation
 {
+    Id id;
 }
 
 /**

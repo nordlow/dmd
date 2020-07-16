@@ -22,13 +22,17 @@ import dmd.root.string;
 import dmd.root.stringtable;
 import dmd.tokens;
 import dmd.utf;
+import dmd.compiler;
 
+pure:
 
 /***********************************************************
  */
 extern (C++) final class Identifier : RootObject
 {
+pure:
 private:
+    Compilation compilation;
     const int value;
     const char[] name;
 
@@ -45,35 +49,43 @@ public:
          length = the length of `name`, excluding the terminating `'\0'`
          value = Identifier value (e.g. `Id.unitTest`) or `TOK.identifier`
      */
-    extern (D) this(const(char)* name, size_t length, int value) nothrow
+    extern (D) this(Compilation compilation, const(char)* name, size_t length, int value) nothrow
     {
         //printf("Identifier('%s', %d)\n", name, value);
+        this.compilation = compilation;
         this.name = name[0 .. length];
         this.value = value;
     }
 
-    extern (D) this(const(char)[] name, int value) nothrow
+    extern (D) this(Compilation compilation, const(char)[] name, int value) nothrow
     {
         //printf("Identifier('%.*s', %d)\n", cast(int)name.length, name.ptr, value);
+        this.compilation = compilation;
         this.name = name;
         this.value = value;
     }
 
-    extern (D) this(const(char)* name) nothrow
+    extern (D) this(Compilation compilation, const(char)* name) nothrow
     {
         //printf("Identifier('%s', %d)\n", name, value);
+        this.compilation = compilation;
         this(name.toDString(), TOK.identifier);
     }
 
     /// Sentinel for an anonymous identifier.
     static Identifier anonymous() nothrow
     {
-        __gshared Identifier anonymous;
-
-        if (anonymous)
-            return anonymous;
-
-        return anonymous = new Identifier("__anonymous", TOK.identifier);
+        version(pureifyTODO)
+        {
+            __gshared Identifier anonymous;
+            if (anonymous)
+                return anonymous;
+            return anonymous = new Identifier("__anonymous", TOK.identifier);
+        }
+        else
+        {
+            return new Identifier("__anonymous", TOK.identifier);
+        }
     }
 
     static Identifier create(const(char)* name) nothrow
@@ -100,19 +112,19 @@ nothrow:
     const(char)* toHChars2() const
     {
         const(char)* p = null;
-        if (this == Id.ctor)
+        if (this == compilation.id.ctor)
             p = "this";
-        else if (this == Id.dtor)
+        else if (this == compilation.id.dtor)
             p = "~this";
-        else if (this == Id.unitTest)
+        else if (this == compilation.id.unitTest)
             p = "unittest";
-        else if (this == Id.dollar)
+        else if (this == compilation.id.dollar)
             p = "$";
-        else if (this == Id.withSym)
+        else if (this == compilation.id.withSym)
             p = "with";
-        else if (this == Id.result)
+        else if (this == compilation.id.result)
             p = "result";
-        else if (this == Id.returnLabel)
+        else if (this == compilation.id.returnLabel)
             p = "return";
         else
         {
@@ -139,8 +151,15 @@ nothrow:
 
     extern(D) static Identifier generateId(const(char)[] prefix)
     {
-        __gshared size_t i;
-        return generateId(prefix, ++i);
+        version(pureifyTODO)
+        {
+            __gshared size_t i;
+            return generateId(prefix, ++i);
+        }
+        else
+        {
+            return generateId(prefix, 0);
+        }
     }
 
     extern(D) static Identifier generateId(const(char)[] prefix, size_t i)
@@ -202,14 +221,17 @@ nothrow:
         }
         else
         {
-            const key = Key(loc, prefix);
-            if (auto pCounter = key in counters)
+            version(pureifyTODO)
             {
-                idBuf.writestring("_");
-                idBuf.print((*pCounter)++);
+                const key = Key(loc, prefix);
+                if (auto pCounter = key in counters) // same key already found
+                {
+                    idBuf.writestring("_");
+                    idBuf.print((*pCounter)++);
+                }
+                else
+                    counters[key] = 1;
             }
-            else
-                counters[key] = 1;
         }
 
         return idPool(idBuf[]);
