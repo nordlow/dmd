@@ -252,6 +252,11 @@ public:
         return find(ptr) != size_t.max;
     }
 
+    bool empty() const @safe nothrow pure @nogc
+    {
+        return length == 0;
+    }
+
     ref inout(T) opIndex(size_t i) inout nothrow pure
     {
         debug

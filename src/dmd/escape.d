@@ -300,7 +300,10 @@ bool checkParamArgumentEscape(Scope* sc, FuncDeclaration fdc, Parameter par, Exp
 
     escapeByValue(arg, &er);
 
-    if (!er.byref.dim && !er.byvalue.dim && !er.byfunc.dim && !er.byexp.dim)
+    if (er.byref.empty &&
+        er.byvalue.empty &&
+        er.byfunc.empty &&
+        er.byexp.empty)
         return false;
 
     bool result = false;
@@ -467,7 +470,7 @@ bool checkConstructorEscape(Scope* sc, CallExp ce, bool gag)
     if (!tthis.hasPointers())
         return false;
 
-    if (!ce.arguments && ce.arguments.dim)
+    if (!ce.arguments && !ce.arguments.empty)
         return false;
 
     assert(ce.e1.op == TOK.dotVariable);
@@ -532,6 +535,7 @@ bool checkAssignEscape(Scope* sc, Expression e, bool gag)
         e.op != TOK.concatenateAssign && e.op != TOK.concatenateElemAssign && e.op != TOK.concatenateDcharAssign)
         return false;
     auto ae = cast(BinExp)e;
+    assert(ae);
     Expression e1 = ae.e1;
     Expression e2 = ae.e2;
     //printf("type = %s, %d\n", e1.type.toChars(), e1.type.hasPointers());
@@ -1207,7 +1211,7 @@ private bool checkReturnEscapeImpl(Scope* sc, Expression e, bool refs, bool gag)
     else
         escapeByValue(e, &er);
 
-    if (!er.byref.dim && !er.byvalue.dim && !er.byexp.dim)
+    if (er.byref.empty && er.byvalue.empty && er.byexp.empty)
         return false;
 
     bool result = false;
