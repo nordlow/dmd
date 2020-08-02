@@ -185,10 +185,12 @@ extern (D) elem *incUsageElem(IRState *irs, const ref Loc loc)
     }
 
     /* Generate: *(m.cov + linnum * 4) += 1
+     *
+     * Because `m.cov` is a byte address, and `uint` has size 4 byte
      */
     elem *e;
     e = el_ptr(m.cov);
-    e = el_bin(OPadd, TYnptr, e, el_long(TYuint, linnum * 4));
+    e = el_bin(OPadd, TYnptr, e, el_long(TYuint, linnum * 4)); // `* 4` because each count is an `uint` meaning 4 bytes
     e = el_una(OPind, TYuint, e);
     e = el_bin(OPaddass, TYuint, e, el_long(TYuint, 1));
     return e;
