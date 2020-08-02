@@ -114,7 +114,6 @@ private block *block_calloc(Blockx *blx)
 
 private void incUsage(IRState *irs, const ref Loc loc)
 {
-
     if (irs.params.cov && loc.linnum)
     {
         block_appendexp(irs.blx.curblock, incUsageElem(irs, loc));
