@@ -50,6 +50,7 @@ import dmd.mtype;
 import dmd.target;
 import dmd.tocvdebug;
 import dmd.tocsym;
+import dmd.errors;
 
 alias toSymbol = dmd.tocsym.toSymbol;
 alias toSymbol = dmd.glue.toSymbol;
@@ -148,7 +149,7 @@ extern (C++):
 
 /*********************************************
  * Produce elem which increments the usage count for a particular line.
- * Sets corresponding bit in bitmap `m.covb[linnum]`.
+ * Sets corresponding bit in bitmap `m.covb[linnum][charnum]`.
  * Used to implement -cov switch (coverage analysis).
  * Params:
  *      irs = context
@@ -160,7 +161,9 @@ extern (C++):
  */
 extern (D) elem *incUsageElem(IRState *irs, const ref Loc loc)
 {
+    message(loc, "incUsageElem");
     uint linnum = loc.linnum;
+    uint charnum = loc.charnum;
 
     Module m = cast(Module)irs.blx._module;
     if (!m.cov || !linnum ||
