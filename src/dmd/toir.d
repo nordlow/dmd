@@ -149,7 +149,7 @@ extern (C++):
 
 /*********************************************
  * Produce elem which increments the usage count for a particular line.
- * Sets corresponding bit in bitmap `m.covb[linnum][charnum]`.
+ * Sets corresponding bit in bitmap `m.covb[linnum]`.
  * Used to implement -cov switch (coverage analysis).
  * Params:
  *      irs = context
