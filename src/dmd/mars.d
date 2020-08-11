@@ -2283,14 +2283,13 @@ bool parseCommandLine(const ref Strings arguments, const size_t argc, ref Param 
         else if (startsWith(p + 1, "unittest")) // selective unittest
         {
             // Parse:
-            //      -unittest=[MODULE_NAME*]
+            //      -unittest=[MODULE_PATH*]
             if (p[9] == '=')
             {
-                if (!global.params.selectedUnitTestModules)
-                    global.params.selectedUnitTestModules = new Strings();
+                if (!global.params.selectedUnitTestModulePaths)
+                    global.params.selectedUnitTestModulePaths = new Strings();
                 const mname = p + 10;
-                // printf("Selected module: %s\n", mname);
-                global.params.selectedUnitTestModules.push(mname);
+                global.params.selectedUnitTestModulePaths.push(mname);
             }
             else
                 goto Lerror;

@@ -631,13 +631,14 @@ final class Parser(AST) : Lexer
                 goto Lerror;
 
             case TOK.unittest_:
-                if ((!global.params.selectedUnitTestModules ||
+                if ((!global.params.selectedUnitTestModulePaths ||
                      (md &&
-                      canFind((*global.params.selectedUnitTestModules),
-                              md.toChars()))) &&
+                      // TODO remove `~` and `..` in paths before passed to `canFind`
+                      canFind((*global.params.selectedUnitTestModulePaths),
+                              md.loc.filename))) &&
                     (global.params.useUnitTests || global.params.doDocComments || global.params.doHdrGeneration))
                 {
-                    // printf("Compiling unittests for module: %s\n", md.toChars());
+                    // printf("Compiling unittests for module: %s %s\n", md.toChars(), md.loc.filename);
                     s = parseUnitTest(pAttrs);
                     if (*pLastDecl)
                         (*pLastDecl).ddocUnittest = cast(AST.UnitTestDeclaration)s;
