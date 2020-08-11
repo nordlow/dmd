@@ -273,6 +273,15 @@ private bool writeMixin(const(char)[] s, ref Loc loc)
     return true;
 }
 
+static private bool canFind(scope const ref Strings strings,
+                            scope const(char)* ptr) nothrow pure
+{
+    for (size_t i = 0; i < strings.dim; ++i)
+        if (strcmp(strings[i], ptr) == 0)
+            return true;
+    return false;
+}
+
 /***********************************************************
  */
 final class Parser(AST) : Lexer
@@ -622,8 +631,14 @@ final class Parser(AST) : Lexer
                 goto Lerror;
 
             case TOK.unittest_:
-                if (global.params.useUnitTests || global.params.doDocComments || global.params.doHdrGeneration)
+                if ((!global.params.selectedUnitTestModules ||
+                     (md &&
+                      md.id &&
+                      canFind((*global.params.selectedUnitTestModules),
+                              md.id.toChars()))) &&
+                    (global.params.useUnitTests || global.params.doDocComments || global.params.doHdrGeneration))
                 {
+                    // printf("Compiling unittests for module: %s\n", md.id.toChars());
                     s = parseUnitTest(pAttrs);
                     if (*pLastDecl)
                         (*pLastDecl).ddocUnittest = cast(AST.UnitTestDeclaration)s;

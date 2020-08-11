@@ -229,6 +229,9 @@ struct Param
 
     DString moduleDepsFile;     // filename for deps output
     OutBuffer *moduleDeps;      // contents to be written to deps file
+
+    Strings selectedUnitTestModules; // module names whose unittests shall be selective compiled
+
     MessageStyle messageStyle;  // style of file/line annotations on messages
 
     // Hidden debug switches

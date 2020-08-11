@@ -2280,6 +2280,22 @@ bool parseCommandLine(const ref Strings arguments, const size_t argc, ref Param 
         }
         else if (arg == "-unittest")
             params.useUnitTests = true;
+        else if (startsWith(p + 1, "unittest")) // selective unittest
+        {
+            // Parse:
+            //      -unittest=[MODULE_NAME*]
+            if (p[9] == '=')
+            {
+                if (!global.params.selectedUnitTestModules)
+                    global.params.selectedUnitTestModules = new Strings();
+                const mname = p + 10;
+                // printf("Selected module: %s\n", mname);
+                global.params.selectedUnitTestModules.push(mname);
+            }
+            else
+                goto Lerror;
+            global.params.useUnitTests = true;
+        }
         else if (p[1] == 'I')              // https://dlang.org/dmd.html#switch-I
         {
             if (!params.imppath)
