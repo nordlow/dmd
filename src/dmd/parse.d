@@ -633,12 +633,11 @@ final class Parser(AST) : Lexer
             case TOK.unittest_:
                 if ((!global.params.selectedUnitTestModules ||
                      (md &&
-                      md.id &&
                       canFind((*global.params.selectedUnitTestModules),
-                              md.id.toChars()))) &&
+                              md.toChars()))) &&
                     (global.params.useUnitTests || global.params.doDocComments || global.params.doHdrGeneration))
                 {
-                    // printf("Compiling unittests for module: %s\n", md.id.toChars());
+                    // printf("Compiling unittests for module: %s\n", md.toChars());
                     s = parseUnitTest(pAttrs);
                     if (*pLastDecl)
                         (*pLastDecl).ddocUnittest = cast(AST.UnitTestDeclaration)s;
