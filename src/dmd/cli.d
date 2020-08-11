@@ -640,6 +640,11 @@ dmd -cov -unittest myprog.d
             `Compile in $(LINK2 spec/unittest.html, unittest) code, turns on asserts, and sets the
              $(D unittest) $(LINK2 spec/version.html#PredefinedVersions, version identifier)`,
         ),
+        Option("unittest=[MODULE_PATH],...",
+            "compile in unit tests for selected MODULE_PATH(s)",
+            `Compile in $(LINK2 spec/unittest.html, unittest) code, turns on asserts, and sets the
+             $(D unittest) $(LINK2 spec/version.html#PredefinedVersions, version identifier)`,
+        ),
         Option("v",
             "verbose",
             `Enable verbose output for each compiler pass`,
