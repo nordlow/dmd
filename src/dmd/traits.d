@@ -547,31 +547,33 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         });
     }
 
-    if (e.ident == Id.isArithmetic)
+    switch (e.ident.toString)
+    {
+    case "isArithmetic":
     {
         return isTypeX(t => t.isintegral() || t.isfloating());
     }
-    if (e.ident == Id.isFloating)
+    case "isFloating":
     {
         return isTypeX(t => t.isfloating());
     }
-    if (e.ident == Id.isIntegral)
+    case "isIntegral":
     {
         return isTypeX(t => t.isintegral());
     }
-    if (e.ident == Id.isScalar)
+    case "isScalar":
     {
         return isTypeX(t => t.isscalar());
     }
-    if (e.ident == Id.isUnsigned)
+    case "isUnsigned":
     {
         return isTypeX(t => t.isunsigned());
     }
-    if (e.ident == Id.isAssociativeArray)
+    case "isAssociativeArray":
     {
         return isTypeX(t => t.toBasetype().ty == Taarray);
     }
-    if (e.ident == Id.isDeprecated)
+    case "isDeprecated":
     {
         if (global.params.vcomplex)
         {
@@ -580,25 +582,25 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         }
         return isDsymX(t => t.isDeprecated());
     }
-    if (e.ident == Id.isFuture)
+    case "isFuture":
     {
        return isDeclX(t => t.isFuture());
     }
-    if (e.ident == Id.isStaticArray)
+    case "isStaticArray":
     {
         return isTypeX(t => t.toBasetype().ty == Tsarray);
     }
-    if (e.ident == Id.isAbstractClass)
+    case "isAbstractClass":
     {
         return isTypeX(t => t.toBasetype().ty == Tclass &&
                             (cast(TypeClass)t.toBasetype()).sym.isAbstract());
     }
-    if (e.ident == Id.isFinalClass)
+    case "isFinalClass":
     {
         return isTypeX(t => t.toBasetype().ty == Tclass &&
                             ((cast(TypeClass)t.toBasetype()).sym.storage_class & STC.final_) != 0);
     }
-    if (e.ident == Id.isTemplate)
+    case "isTemplate":
     {
         if (dim != 1)
             return dimError(1);
@@ -611,7 +613,7 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
                 sm => sm.isTemplateDeclaration() !is null) != 0;
         });
     }
-    if (e.ident == Id.isPOD)
+    case "isPOD":
     {
         if (dim != 1)
             return dimError(1);
@@ -632,7 +634,8 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         }
         return True();
     }
-    if (e.ident == Id.hasCopyConstructor || e.ident == Id.hasPostblit)
+    case "hasCopyConstructor":
+    case "hasPostblit":
     {
         if (dim != 1)
             return dimError(1);
@@ -654,7 +657,7 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         }
         return False();
     }
-    if (e.ident == Id.isCopyable)
+    case "isCopyable":
     {
         if (dim != 1)
             return dimError(1);
@@ -678,7 +681,7 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         return isCopyable(t) ? True() : False();
     }
 
-    if (e.ident == Id.isNested)
+    case "isNested":
     {
         if (dim != 1)
             return dimError(1);
@@ -700,91 +703,91 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         e.error("aggregate or function expected instead of `%s`", o.toChars());
         return ErrorExp.get();
     }
-    if (e.ident == Id.isDisabled)
+    case "isDisabled":
     {
         if (dim != 1)
             return dimError(1);
 
         return isDeclX(f => f.isDisabled());
     }
-    if (e.ident == Id.isAbstractFunction)
+    case "isAbstractFunction":
     {
         if (dim != 1)
             return dimError(1);
 
         return isFuncX(f => f.isAbstract());
     }
-    if (e.ident == Id.isVirtualFunction)
+    case "isVirtualFunction":
     {
         if (dim != 1)
             return dimError(1);
 
         return isFuncX(f => f.isVirtual());
     }
-    if (e.ident == Id.isVirtualMethod)
+    case "isVirtualMethod":
     {
         if (dim != 1)
             return dimError(1);
 
         return isFuncX(f => f.isVirtualMethod());
     }
-    if (e.ident == Id.isFinalFunction)
+    case "isFinalFunction":
     {
         if (dim != 1)
             return dimError(1);
 
         return isFuncX(f => f.isFinalFunc());
     }
-    if (e.ident == Id.isOverrideFunction)
+    case "isOverrideFunction":
     {
         if (dim != 1)
             return dimError(1);
 
         return isFuncX(f => f.isOverride());
     }
-    if (e.ident == Id.isStaticFunction)
+    case "isStaticFunction":
     {
         if (dim != 1)
             return dimError(1);
 
         return isFuncX(f => !f.needThis() && !f.isNested());
     }
-    if (e.ident == Id.isModule)
+    case "isModule":
     {
         if (dim != 1)
             return dimError(1);
 
         return isPkgX(p => p.isModule() || p.isPackageMod());
     }
-    if (e.ident == Id.isPackage)
+    case "isPackage":
     {
         if (dim != 1)
             return dimError(1);
 
         return isPkgX(p => p.isModule() is null);
     }
-    if (e.ident == Id.isRef)
+    case "isRef":
     {
         if (dim != 1)
             return dimError(1);
 
         return isDeclX(d => d.isRef());
     }
-    if (e.ident == Id.isOut)
+    case "isOut":
     {
         if (dim != 1)
             return dimError(1);
 
         return isDeclX(d => d.isOut());
     }
-    if (e.ident == Id.isLazy)
+    case "isLazy":
     {
         if (dim != 1)
             return dimError(1);
 
         return isDeclX(d => (d.storage_class & STC.lazy_) != 0);
     }
-    if (e.ident == Id.identifier)
+    case "identifier":
     {
         // Get identifier for symbol as a string literal
         /* Specify 0 for bit 0 of the flags argument to semanticTiargs() so that
@@ -821,7 +824,7 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         auto se = new StringExp(e.loc, id.toString());
         return se.expressionSemantic(sc);
     }
-    if (e.ident == Id.getProtection)
+    case "getProtection":
     {
         if (dim != 1)
             return dimError(1);
@@ -849,7 +852,7 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         auto se = new StringExp(e.loc, protName);
         return se.expressionSemantic(sc);
     }
-    if (e.ident == Id.parent)
+    case "parent":
     {
         if (dim != 1)
             return dimError(1);
@@ -912,7 +915,7 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         }
         return symbolToExp(s, e.loc, sc, false);
     }
-    if (e.ident == Id.child)
+    case "child":
     {
         if (dim != 2)
             return dimError(2);
@@ -950,11 +953,11 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         ex = ex.expressionSemantic(sc);
         return ex;
     }
-    if (e.ident == Id.hasMember ||
-        e.ident == Id.getMember ||
-        e.ident == Id.getOverloads ||
-        e.ident == Id.getVirtualMethods ||
-        e.ident == Id.getVirtualFunctions)
+    case "hasMember":
+    case "getMember":
+    case "getOverloads":
+    case "getVirtualMethods":
+    case "getVirtualFunctions":
     {
         if (dim != 2 && !(dim == 3 && e.ident == Id.getOverloads))
             return dimError(2);
@@ -1192,7 +1195,7 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         else
             assert(0);
     }
-    if (e.ident == Id.classInstanceSize)
+    case "classInstanceSize":
     {
         if (dim != 1)
             return dimError(1);
@@ -1217,7 +1220,7 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
 
         return new IntegerExp(e.loc, cd.structsize, Type.tsize_t);
     }
-    if (e.ident == Id.getAliasThis)
+    case "getAliasThis":
     {
         if (dim != 1)
             return dimError(1);
@@ -1233,7 +1236,7 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         ex = ex.expressionSemantic(sc);
         return ex;
     }
-    if (e.ident == Id.getAttributes)
+    case "getAttributes":
     {
         /* Specify 0 for bit 0 of the flags argument to semanticTiargs() so that
          * a symbol should not be folded to a constant.
@@ -1281,7 +1284,7 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         auto tup = new TupleExp(e.loc, exps);
         return tup.expressionSemantic(sc);
     }
-    if (e.ident == Id.getFunctionAttributes)
+    case "getFunctionAttributes":
     {
         /* Extract all function attributes as a tuple (const/shared/inout/pure/nothrow/etc) except UDAs.
          * https://dlang.org/spec/traits.html#getFunctionAttributes
@@ -1310,7 +1313,7 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         auto tup = new TupleExp(e.loc, mods);
         return tup.expressionSemantic(sc);
     }
-    if (e.ident == Id.isReturnOnStack)
+    case "isReturnOnStack":
     {
         /* Extract as a boolean if function return value is on the stack
          * https://dlang.org/spec/traits.html#isReturnOnStack
@@ -1331,7 +1334,7 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         bool value = target.isReturnOnStack(tf, fd && fd.needThis());
         return IntegerExp.createBool(value);
     }
-    if (e.ident == Id.getFunctionVariadicStyle)
+    case "getFunctionVariadicStyle":
     {
         /* Accept a symbol or a type. Returns one of the following:
          *  "none"      not a variadic function
@@ -1377,7 +1380,7 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         auto se = new StringExp(e.loc, style);
         return se.expressionSemantic(sc);
     }
-    if (e.ident == Id.getParameterStorageClasses)
+    case "getParameterStorageClasses":
     {
         /* Accept a function symbol or a type, followed by a parameter index.
          * Returns a tuple of strings of the parameter's storage classes.
@@ -1467,7 +1470,7 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         auto tup = new TupleExp(e.loc, exps);
         return tup.expressionSemantic(sc);
     }
-    if (e.ident == Id.getLinkage)
+    case "getLinkage":
     {
         // get symbol linkage as a string
         if (dim != 1)
@@ -1525,8 +1528,8 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         auto se = new StringExp(e.loc, linkage.toDString());
         return se.expressionSemantic(sc);
     }
-    if (e.ident == Id.allMembers ||
-        e.ident == Id.derivedMembers)
+    case "allMembers":
+    case "derivedMembers":
     {
         if (dim != 1)
             return dimError(1);
@@ -1664,7 +1667,7 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         ex = ex.expressionSemantic(sc);
         return ex;
     }
-    if (e.ident == Id.compiles)
+    case "compiles":
     {
         /* Determine if all the objects - types, expressions, or symbols -
          * compile without error
@@ -1760,7 +1763,7 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         }
         return True();
     }
-    if (e.ident == Id.isSame)
+    case "isSame":
     {
         /* Determine if two symbols are the same
          */
@@ -1789,7 +1792,7 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
                 return False();
         return True();
     }
-    if (e.ident == Id.getUnitTests)
+    case "getUnitTests":
     {
         if (dim != 1)
             return dimError(1);
@@ -1844,7 +1847,7 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         auto te = new TupleExp(e.loc, exps);
         return te.expressionSemantic(sc);
     }
-    if (e.ident == Id.getVirtualIndex)
+    case "getVirtualIndex":
     {
         if (dim != 1)
             return dimError(1);
@@ -1862,11 +1865,11 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         fd = fd.toAliasFunc(); // Necessary to support multiple overloads.
         return new IntegerExp(e.loc, fd.vtblIndex, Type.tptrdiff_t);
     }
-    if (e.ident == Id.getPointerBitmap)
+    case "getPointerBitmap":
     {
         return pointerBitmap(e);
     }
-    if (e.ident == Id.isZeroInit)
+    case "isZeroInit":
     {
         if (dim != 1)
             return dimError(1);
@@ -1883,7 +1886,7 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         Type tb = t.baseElemOf();
         return tb.isZeroInit(e.loc) ? True() : False();
     }
-    if (e.ident == Id.getTargetInfo)
+    case "getTargetInfo":
     {
         if (dim != 1)
             return dimError(1);
@@ -1907,7 +1910,7 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         }
         return r.expressionSemantic(sc);
     }
-    if (e.ident == Id.getLocation)
+    case "getLocation":
     {
         if (dim != 1)
             return dimError(1);
@@ -1937,6 +1940,9 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         (*exps)[2] = new IntegerExp(e.loc, s.loc.charnum,Type.tint32);
         auto tup = new TupleExp(e.loc, exps);
         return tup.expressionSemantic(sc);
+    }
+    default:
+        break;
     }
 
     static const(char)[] trait_search_fp(const(char)[] seed, ref int cost)
