@@ -107,6 +107,7 @@ shared static this()
         "isIntegral",
         "isScalar",
         "isStaticArray",
+        "isAggregate",
         "isUnsigned",
         "isVirtualFunction",
         "isVirtualMethod",
@@ -588,6 +589,11 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
     if (e.ident == Id.isStaticArray)
     {
         return isTypeX(t => t.toBasetype().ty == Tsarray);
+    }
+    if (e.ident == Id.isAggregate)
+    {
+        import dmd.mtype : isAggregate;
+        return isTypeX(t => t.isAggregate);
     }
     if (e.ident == Id.isAbstractClass)
     {
