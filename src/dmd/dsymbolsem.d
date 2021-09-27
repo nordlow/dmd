@@ -5508,6 +5508,8 @@ void addEnumMembers(EnumDeclaration ed, Scope* sc, ScopeDsymbol sds)
     });
 }
 
+__gshared size_t g_countTemplateInstance;
+
 void templateInstanceSemantic(TemplateInstance tempinst, Scope* sc, Expressions* fargs)
 {
     //printf("[%s] TemplateInstance.dsymbolSemantic('%s', this=%p, gag = %d, sc = %p)\n", tempinst.loc.toChars(), tempinst.toChars(), tempinst, global.gag, sc);
@@ -5596,6 +5598,8 @@ void templateInstanceSemantic(TemplateInstance tempinst, Scope* sc, Expressions*
     }
     TemplateDeclaration tempdecl = tempinst.tempdecl.isTemplateDeclaration();
     assert(tempdecl);
+
+    g_countTemplateInstance += 1;
 
     TemplateStats.incInstance(tempdecl, tempinst);
 
@@ -6145,6 +6149,8 @@ Laftersemantic:
     }
 }
 
+__gshared size_t g_countAliasSeq;
+
 /******************************************************
  * Do template instance semantic for isAliasSeq templates.
  * This is a greatly simplified version of templateInstanceSemantic().
@@ -6152,6 +6158,7 @@ Laftersemantic:
 private
 void aliasSeqInstanceSemantic(TemplateInstance tempinst, Scope* sc, TemplateDeclaration tempdecl)
 {
+    g_countAliasSeq += 1;
     //printf("[%s] aliasSeqInstance.dsymbolSemantic('%s')\n", tempinst.loc.toChars(), tempinst.toChars());
     Scope* paramscope = sc.push();
     paramscope.stc = 0;

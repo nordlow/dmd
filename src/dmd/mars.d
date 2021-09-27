@@ -640,6 +640,12 @@ private int tryMain(size_t argc, const(char)** argv, ref Param params)
     if (global.errors || global.warnings)
         removeHdrFilesAndFail(params, modules);
 
+    if (g_countAliasSeq)
+        printf("Found %llu/%llu number of AliasSeq/TemplateInstances taking %llu bytes\n",
+               g_countAliasSeq,
+               g_countTemplateInstance,
+               g_countAliasSeq * (__traits(classInstanceSize, TemplateInstance) + __traits(classInstanceSize, TupleExp)));
+
     return status;
 }
 
