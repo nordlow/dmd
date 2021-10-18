@@ -302,7 +302,6 @@ struct ASTBase
         LINK linkage;
         Type type;
         short inuse;
-        ubyte adFlags;
 
         final extern (D) this(Identifier id)
         {

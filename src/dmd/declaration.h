@@ -118,7 +118,6 @@ public:
     Visibility visibility;
     LINK linkage;
     short inuse;                // used to detect cycles
-    uint8_t adFlags;
     DString mangleOverride;     // overridden symbol with pragma(mangle, "...")
 
     const char *kind() const;

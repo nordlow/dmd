@@ -5527,10 +5527,6 @@ public:
     Visibility visibility;
     LINK linkage;
     int16_t inuse;
-    uint8_t adFlags;
-    enum : int32_t { wasRead = 1 };
-
-    enum : int32_t { ignoreRead = 2 };
 
     _d_dynamicArray< const char > mangleOverride;
     const char* kind() const;
