@@ -2188,7 +2188,7 @@ private bool functionParameters(const ref Loc loc, Scope* sc,
             if (arg.op == TOK.symbolOffset)
             {
                 SymOffExp se = cast(SymOffExp)arg;
-                if (se.hasOverloads && !se.var.isFuncDeclaration().isUnique())
+                if (se.hasOverloads && !se.var.isFuncDeclaration().isUniqueOverload())
                 {
                     arg.error("function `%s` is overloaded", arg.toChars());
                     err = true;

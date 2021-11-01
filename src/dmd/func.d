@@ -609,11 +609,11 @@ extern (C++) class FuncDeclaration : Declaration
             }
 
             bool b1 = fa1 !is null;
-            if (b1 && faf1.isUnique() && !fa1.hasOverloads)
+            if (b1 && faf1.isUniqueOverload() && !fa1.hasOverloads)
                 b1 = false;
 
             bool b2 = fa2 !is null;
-            if (b2 && faf2.isUnique() && !fa2.hasOverloads)
+            if (b2 && faf2.isUniqueOverload() && !fa2.hasOverloads)
                 b2 = false;
 
             if (b1 != b2)
@@ -1807,7 +1807,7 @@ extern (C++) class FuncDeclaration : Declaration
      * Returns:
      *  true if there are no overloads of this function
      */
-    final bool isUnique() const
+    final bool isUniqueOverload() const
     {
         bool result = false;
         overloadApply(cast() this, (Dsymbol s)
@@ -2861,6 +2861,9 @@ auto MODMatchToBuffer(OutBuffer* buf, ubyte lhsMod, ubyte rhsMod)
     bool bothMutable = ((lhsMod & rhsMod) == 0);
     bool sharedMismatch = ((lhsMod ^ rhsMod) & MODFlags.shared_) != 0;
     bool sharedMismatchOnly = ((lhsMod ^ rhsMod) == MODFlags.shared_);
+
+    if (lhsMod & MODFlags.unique_)
+        buf.writestring("`unique` ");
 
     if (lhsMod & MODFlags.shared_)
         buf.writestring("`shared` ");

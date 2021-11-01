@@ -194,6 +194,7 @@ enum
     mTYmutable      = 0,             // need to add support
     mTYunaligned    = 0,             // non-zero for PowerPC
 
+    mTYunique       = 0x00040000,    // unique data. TODO: is 0x00040000 already reserved?
     mTYimmutable    = 0x00080000,    // immutable data
     mTYshared       = 0x00100000,    // shared data
     mTYnothrow      = 0x00200000,    // nothrow function

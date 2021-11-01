@@ -62,6 +62,9 @@ tym_t modToTym(MOD mod) pure
         case MODFlags.immutable_:
             return mTYimmutable;
 
+        case MODFlags.unique_:
+            return mTYunique;
+
         default:
             assert(0);
     }

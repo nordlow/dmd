@@ -1499,6 +1499,8 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
             push("shared");
         if (stc & STC.scope_ && !(stc & STC.scopeinferred))
             push("scope");
+        if (stc & STC.unique_)
+            push("unique");
 
         auto tup = new TupleExp(e.loc, exps);
         return tup.expressionSemantic(sc);

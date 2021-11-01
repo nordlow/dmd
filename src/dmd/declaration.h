@@ -214,7 +214,7 @@ public:
     bool overloadInsert(Dsymbol *s);
 
     Dsymbol *toAlias();
-    Dsymbol *isUnique();
+    Dsymbol *isUniqueOverload();
     bool isOverloadable() const;
 
     OverDeclaration *isOverDeclaration() { return this; }
@@ -664,7 +664,7 @@ public:
     virtual bool addPreInvariant();
     virtual bool addPostInvariant();
     const char *kind() const;
-    bool isUnique();
+    bool isUniqueOverload();
     bool needsClosure();
     bool hasNestedFrameRefs();
     ParameterList getParameterList();

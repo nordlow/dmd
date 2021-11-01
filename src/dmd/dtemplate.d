@@ -6789,7 +6789,7 @@ extern (C++) class TemplateInstance : ScopeDsymbol
                 if (FuncAliasDeclaration fa = sa.isFuncAliasDeclaration())
                 {
                     FuncDeclaration f = fa.toAliasFunc();
-                    if (!fa.hasOverloads && f.isUnique())
+                    if (!fa.hasOverloads && f.isUniqueOverload())
                     {
                         // Strip FuncAlias only when the aliased function
                         // does not have any overloads.

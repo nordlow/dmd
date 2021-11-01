@@ -761,6 +761,12 @@ class Parser(AST) : Lexer
                 stc = STC.immutable_;
                 goto Lstc;
 
+            case TOK.unique_:
+                if (peekNext() == TOK.leftParenthesis)
+                    goto Ldeclaration;
+                stc = STC.unique_;
+                goto Lstc;
+
             case TOK.shared_:
                 {
                     const next = peekNext();
@@ -1428,6 +1434,12 @@ class Parser(AST) : Lexer
             if (u & (u - 1))
                 error("conflicting attribute `%s`", Token.toChars(token.value));
         }
+        if (added & (STC.unique_))
+        {
+            StorageClass u = orig & (STC.unique_);
+            if (u & (u - 1))
+                error("conflicting attribute `%s`", Token.toChars(token.value));
+        }
         if (added & STC.safeGroup)
         {
             StorageClass u = orig & STC.safeGroup;
@@ -1512,6 +1524,10 @@ class Parser(AST) : Lexer
                 stc = STC.immutable_;
                 break;
 
+            case TOK.unique_:
+                stc = STC.unique_;
+                break;
+
             case TOK.shared_:
                 stc = STC.shared_;
                 break;
@@ -1581,6 +1597,10 @@ class Parser(AST) : Lexer
 
             case TOK.immutable_:
                 stc = STC.immutable_;
+                break;
+
+            case TOK.unique_:
+                stc = STC.unique_;
                 break;
 
             case TOK.shared_:
@@ -2880,7 +2900,7 @@ class Parser(AST) : Lexer
         StorageClass varargsStc;
 
         // Attributes allowed for ...
-        enum VarArgsStc = STC.const_ | STC.immutable_ | STC.shared_ | STC.scope_ | STC.return_;
+        enum VarArgsStc = STC.const_ | STC.immutable_ | STC.unique_ | STC.shared_ | STC.scope_ | STC.return_;
 
         check(TOK.leftParenthesis);
         while (1)
@@ -2924,6 +2944,12 @@ class Parser(AST) : Lexer
                     if (peekNext() == TOK.leftParenthesis)
                         goto default;
                     stc = STC.immutable_;
+                    goto L2;
+
+                case TOK.unique_:
+                    if (peekNext() == TOK.leftParenthesis)
+                        goto default;
+                    stc = STC.unique_;
                     goto L2;
 
                 case TOK.shared_:
@@ -3621,6 +3647,13 @@ class Parser(AST) : Lexer
                 nextToken();
                 continue;
 
+            case TOK.unique_:
+                if (peekNext() == TOK.leftParenthesis)
+                    break;
+                stc |= STC.unique_;
+                nextToken();
+                continue;
+
             case TOK.shared_:
                 if (peekNext() == TOK.leftParenthesis)
                     break;
@@ -3838,6 +3871,14 @@ class Parser(AST) : Lexer
             nextToken();
             check(TOK.leftParenthesis);
             t = parseType().addSTC(STC.immutable_);
+            check(TOK.rightParenthesis);
+            break;
+
+        case TOK.unique_:
+            // unique(type)
+            nextToken();
+            check(TOK.leftParenthesis);
+            t = parseType().addSTC(STC.unique_);
             check(TOK.rightParenthesis);
             break;
 
@@ -4311,6 +4352,12 @@ class Parser(AST) : Lexer
                 if (peekNext() == TOK.leftParenthesis)
                     break;
                 stc = STC.immutable_;
+                goto L1;
+
+            case TOK.unique_:
+                if (peekNext() == TOK.leftParenthesis)
+                    break;
+                stc = STC.unique_;
                 goto L1;
 
             case TOK.shared_:
@@ -5443,6 +5490,14 @@ class Parser(AST) : Lexer
                     }
                     break;
 
+                case TOK.unique_:
+                    if (peekNext() != TOK.leftParenthesis)
+                    {
+                        stc = STC.unique_;
+                        goto Lagain;
+                    }
+                    break;
+
                 case TOK.shared_:
                     if (peekNext() != TOK.leftParenthesis)
                     {
@@ -5590,6 +5645,14 @@ LagainStc:
             if (peekNext() != TOK.leftParenthesis)
             {
                 stc = STC.immutable_;
+                goto LagainStc;
+            }
+            break;
+
+        case TOK.unique_:
+            if (peekNext() != TOK.leftParenthesis)
+            {
+                stc = STC.unique_;
                 goto LagainStc;
             }
             break;
@@ -5840,6 +5903,7 @@ LagainStc:
         case TOK.extern_:
         case TOK.align_:
         case TOK.immutable_:
+        case TOK.unique_:
         case TOK.shared_:
         case TOK.inout_:
         case TOK.deprecated_:
@@ -6848,7 +6912,7 @@ LagainStc:
 
         nextToken();
         StorageClass stc = parsePostfix(STC.undefined_, null);
-        if (stc & (STC.const_ | STC.immutable_ | STC.shared_ | STC.wild))
+        if (stc & (STC.const_ | STC.immutable_ | STC.unique_ | STC.shared_ | STC.wild))
             error("`const`/`immutable`/`shared`/`inout` attributes are not allowed on `asm` blocks");
 
         check(TOK.leftCurly);
@@ -7020,7 +7084,7 @@ LagainStc:
 
         while (1)
         {
-            if ((t.value == TOK.const_ || t.value == TOK.immutable_ || t.value == TOK.inout_ || t.value == TOK.shared_) && peek(t).value != TOK.leftParenthesis)
+            if ((t.value == TOK.const_ || t.value == TOK.immutable_ || t.value == TOK.unique_ || t.value == TOK.inout_ || t.value == TOK.shared_) && peek(t).value != TOK.leftParenthesis)
             {
                 /* const type
                  * immutable type
@@ -7224,6 +7288,7 @@ LagainStc:
 
         case TOK.const_:
         case TOK.immutable_:
+        case TOK.unique_:
         case TOK.shared_:
         case TOK.inout_:
             // const(type)  or  immutable(type)  or  shared(type)  or  wild(type)
@@ -7424,6 +7489,7 @@ LagainStc:
                     {
                     case TOK.const_:
                     case TOK.immutable_:
+                    case TOK.unique_:
                     case TOK.shared_:
                     case TOK.inout_:
                     case TOK.pure_:
@@ -7536,6 +7602,7 @@ LagainStc:
 
             case TOK.const_:
             case TOK.immutable_:
+            case TOK.unique_:
             case TOK.shared_:
             case TOK.inout_:
                 t = peek(t);
@@ -7759,6 +7826,7 @@ LagainStc:
             {
             case TOK.const_:
             case TOK.immutable_:
+            case TOK.unique_:
             case TOK.shared_:
             case TOK.inout_:
             case TOK.final_:
@@ -8282,6 +8350,7 @@ LagainStc:
                             || token.value == TOK.argumentTypes || token.value == TOK.parameters
                             || token.value == TOK.const_ && peekNext() == TOK.rightParenthesis
                             || token.value == TOK.immutable_ && peekNext() == TOK.rightParenthesis
+                            || token.value == TOK.unique_ && peekNext() == TOK.rightParenthesis
                             || token.value == TOK.shared_ && peekNext() == TOK.rightParenthesis
                             || token.value == TOK.inout_ && peekNext() == TOK.rightParenthesis || token.value == TOK.function_
                             || token.value == TOK.delegate_ || token.value == TOK.return_
@@ -8542,6 +8611,13 @@ LagainStc:
                         nextToken();
                         continue;
 
+                    case TOK.unique_:
+                        if (peekNext() == TOK.leftParenthesis)
+                            break;
+                        m |= MODFlags.unique_;
+                        nextToken();
+                        continue;
+
                     case TOK.shared_:
                         if (peekNext() == TOK.leftParenthesis)
                             break;
@@ -8580,7 +8656,8 @@ LagainStc:
         case TOK.inout_:
         case TOK.shared_:
         case TOK.const_:
-        case TOK.immutable_: // immutable(type)(arguments) / immutable(type).init
+        case TOK.immutable_:
+        case TOK.unique_: // immutable(type)(arguments) / immutable(type).init
             {
                 StorageClass stc = parseTypeCtor();
 

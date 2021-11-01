@@ -535,6 +535,11 @@ extern (C++) abstract class Declaration : Dsymbol
         return (storage_class & STC.future) != 0;
     }
 
+    final bool isUnique() const pure nothrow @nogc @safe
+    {
+        return (storage_class & STC.unique_) != 0;
+    }
+
     override final Visibility visible() pure nothrow @nogc @safe
     {
         return visibility;
@@ -1005,7 +1010,7 @@ extern (C++) final class OverDeclaration : Declaration
         return true;
     }
 
-    Dsymbol isUnique()
+    Dsymbol isUniqueOverload()
     {
         Dsymbol result = null;
         overloadApply(aliassym, (Dsymbol s)

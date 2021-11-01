@@ -804,7 +804,7 @@ public:
      */
     override void visit(FuncDeclaration fd)
     {
-        if (fd.isUnique())
+        if (fd.isUniqueOverload())
             mangleExact(fd);
         else
             visit(cast(Dsymbol)fd);
@@ -837,7 +837,7 @@ public:
         }
         if (FuncDeclaration fd = od.aliassym.isFuncDeclaration())
         {
-            if (fd.isUnique())
+            if (fd.isUniqueOverload())
             {
                 mangleExact(fd);
                 return;

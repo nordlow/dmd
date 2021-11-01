@@ -34,6 +34,7 @@ enum MODFlags : int
     wild         = 8,    // type is wild
     wildconst    = (MODFlags.wild | MODFlags.const_), // type is wild const
     mutable      = 0x10, // type is mutable (only used in wildcard matching)
+    unique_      = 0x20, // type is unique (cannot be aliased)
 }
 
 alias MOD = ubyte;
@@ -111,9 +112,11 @@ enum STC : ulong  // transfer changes to declaration.h
     register            = 0x20_0000_0000_0000,   /// `register` storage class (ImportC)
     volatile_           = 0x40_0000_0000_0000,   /// destined for volatile in the back end
 
+    unique_             = 0x80_0000_0000_0000, /// unique
+
     safeGroup = STC.safe | STC.trusted | STC.system,
     IOR  = STC.in_ | STC.ref_ | STC.out_,
-    TYPECTOR = (STC.const_ | STC.immutable_ | STC.shared_ | STC.wild),
+    TYPECTOR = (STC.const_ | STC.immutable_ | STC.shared_ | STC.wild | STC.unique_),
     FUNCATTR = (STC.ref_ | STC.nothrow_ | STC.nogc | STC.pure_ | STC.property | STC.live |
                 safeGroup),
 
@@ -123,7 +126,7 @@ enum STC : ulong  // transfer changes to declaration.h
         (STC.auto_ | STC.scope_ | STC.static_ | STC.extern_ | STC.const_ | STC.final_ | STC.abstract_ | STC.synchronized_ |
          STC.deprecated_ | STC.future | STC.override_ | STC.lazy_ | STC.alias_ | STC.out_ | STC.in_ | STC.manifest |
          STC.immutable_ | STC.shared_ | STC.wild | STC.nothrow_ | STC.nogc | STC.pure_ | STC.ref_ | STC.return_ | STC.tls | STC.gshared |
-         STC.property | STC.safeGroup | STC.disable | STC.local | STC.live),
+         STC.property | STC.safeGroup | STC.disable | STC.local | STC.live | STC.unique_),
 
     /* These storage classes "flow through" to the inner scope of a Dsymbol
      */
@@ -156,7 +159,7 @@ extern (C++) __gshared const(StorageClass) STCStorageClass =
      STC.alias_ | STC.out_ | STC.in_ | STC.manifest | STC.immutable_ | STC.shared_ |
      STC.wild | STC.nothrow_ | STC.nogc | STC.pure_ | STC.ref_ | STC.return_ | STC.tls |
      STC.gshared | STC.property | STC.live |
-     STC.safeGroup | STC.disable);
+     STC.safeGroup | STC.disable | STC.unique_);
 
 enum TY : ubyte
 {
@@ -303,7 +306,7 @@ enum PURE : ubyte
     fwdref      = 1,    // it's pure, but not known which level yet
     weak        = 2,    // no mutable globals are read or written
     const_      = 3,    // parameters are values or const
-    strong      = 4,    // parameters are values or immutable
+    strong      = 4,    // parameters are values or immutable (TODO: or unique_?)
 }
 
 // Whether alias this dependency is recursive or not

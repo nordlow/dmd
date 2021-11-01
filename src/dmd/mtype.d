@@ -221,6 +221,8 @@ StorageClass ModToStc(uint mod) pure nothrow @nogc @safe
         stc |= STC.wild;
     if (mod & MODFlags.shared_)
         stc |= STC.shared_;
+    if (mod & MODFlags.unique_)
+        stc |= STC.unique_;
     return stc;
 }
 

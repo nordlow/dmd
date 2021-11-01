@@ -993,7 +993,7 @@ Initializer inferType(Initializer init, Scope* sc)
             {
                 return new ErrorInitializer();
             }
-            if (hasOverloads && !f.isUnique())
+            if (hasOverloads && !f.isUniqueOverload())
             {
                 init.exp.error("cannot infer type from overloaded function symbol `%s`", init.exp.toChars());
                 return new ErrorInitializer();

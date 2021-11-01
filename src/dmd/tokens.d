@@ -221,9 +221,10 @@ enum TOK : ushort
     auto_,
     package_,
     immutable_,
+    unique_,
 
     // Statements
-    if_ = 181,
+    if_ = 182,
     else_,
     while_,
     for_,
@@ -249,7 +250,7 @@ enum TOK : ushort
     onScopeSuccess,
 
     // Contracts
-    invariant_ = 205,
+    invariant_ = 206,
 
     // Testing
     unittest_,
@@ -259,7 +260,7 @@ enum TOK : ushort
     ref_,
     macro_,
 
-    parameters = 210,
+    parameters = 211,
     traits,
     overloadSet,
     pure_,
@@ -279,7 +280,7 @@ enum TOK : ushort
     vector,
     pound,
 
-    interval = 229,
+    interval = 230,
     voidExpression,
     cantExpression,
     showCtfeContext,
@@ -448,6 +449,7 @@ private immutable TOK[] keywords =
     TOK.prettyFunction,
     TOK.shared_,
     TOK.immutable_,
+    TOK.unique_,
 
     // C only keywords
     TOK.inline,
@@ -653,6 +655,7 @@ extern (C++) struct Token
         TOK.prettyFunction: "__PRETTY_FUNCTION__",
         TOK.shared_: "shared",
         TOK.immutable_: "immutable",
+        TOK.unique_: "unique",
 
         TOK.endOfFile: "End of File",
         TOK.leftCurly: "{",
