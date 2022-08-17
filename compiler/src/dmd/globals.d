@@ -83,6 +83,14 @@ enum FeatureState : byte
     enabled = 1    /// Specified as `-preview=`
 }
 
+/// Uses of unittest
+enum UseUnittests : ubyte
+{
+    none = 0,                   /// Compile no unittests
+    all = 1,                    /// Compile all unittests
+    explicit = 2, /// Only compile unittests in modules explicit fed to the commandline
+}
+
 extern(C++) struct Output
 {
     bool doOutput;      // Output is enabled
@@ -114,7 +122,7 @@ extern (C++) struct Param
     bool vcomplex = true;   // identify complex/imaginary type usage
     bool vin;               // identify 'in' parameters
     DiagnosticReporting useDeprecated = DiagnosticReporting.inform;  // how use of deprecated features are handled
-    bool useUnitTests;          // generate unittest code
+    UseUnittests useUnitTests;  // generate unittest code
     bool useInline = false;     // inline expand functions
     bool release;           // build release version
     bool preservePaths;     // true means don't strip path from source file

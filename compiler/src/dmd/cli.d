@@ -744,8 +744,8 @@ dmd -cov -unittest myprog.d
         Option("transition=[h|help|?]",
             "list all language changes"
         ),
-        Option("unittest",
-            "compile in unit tests",
+        Option("unittest=[explicit]",
+            "compile in unit tests, if argument is 'explicit' only for modules explicitly included in the commandline arguments",
             `Compile in $(LINK2 spec/unittest.html, unittest) code, turns on asserts, and sets the
              $(D unittest) $(LINK2 spec/version.html#PredefinedVersions, version identifier)`,
         ),

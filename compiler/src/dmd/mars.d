@@ -2334,8 +2334,25 @@ bool parseCommandLine(const ref Strings arguments, const size_t argc, ref Param 
             else
                 goto Lerror;
         }
-        else if (arg == "-unittest")
-            params.useUnitTests = true;
+        else if (startsWith(p + 1, "unittest"))
+        {
+            // Parse:
+            //      -unittest=[explicit]
+            if (p[9] == '=')
+            {
+                const flag = arg[10 .. $];
+                switch (flag)
+                {
+                case "explicit":
+                    global.params.useUnitTests = UseUnittests.explicit;
+                    break;
+                default:
+                    goto Lerror;
+                }
+            }
+            else
+                global.params.useUnitTests = UseUnittests.all;
+        }
         else if (p[1] == 'I')              // https://dlang.org/dmd.html#switch-I
         {
             if (!params.imppath)
