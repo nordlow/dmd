@@ -1301,6 +1301,16 @@ elem* toElem(Expression e, IRState *irs)
             }
             e = el_combine(ezprefix, e);
         }
+        else if (auto taa = t.isTypeAArray())
+        {
+            Symbol *s = aaGetSymbol(taa, "New", 0);
+            elem *ti = getTypeInfo(ne, t, irs);
+            // aaNew(ti)
+            elem *ep = el_params(ti, null);
+            e = el_bin(OPcall, TYnptr, el_var(s), ep);
+            elem_setLoc(e, ne.loc);
+            return e;
+        }
         else
         {
             ne.error("internal compiler error: cannot new type `%s`\n", t.toChars());
@@ -2302,22 +2312,7 @@ elem* toElem(Expression e, IRState *irs)
                 else if ((postblit || destructor) &&
                     ae.op != EXP.blit &&
                     ae.op != EXP.construct)
-                {
-                    /* Generate:
-                     *     _d_arrayassign(ti, efrom, eto)
-                     */
-                    el_free(esize);
-                    elem *eti = getTypeInfo(ae.e1, t1.nextOf().toBasetype(), irs);
-                    if (irs.target.os == Target.OS.Windows && irs.target.is64bit)
-                    {
-                        eto   = addressElem(eto,   Type.tvoid.arrayOf());
-                        efrom = addressElem(efrom, Type.tvoid.arrayOf());
-                    }
-                    elem *ep = el_params(eto, efrom, eti, null);
-                    auto rtl = RTLSYM.ARRAYASSIGN;
-                    elem* e = el_bin(OPcall, totym(ae.type), el_var(getRtlsym(rtl)), ep);
-                    return setResult(e);
-                }
+                    assert(0, "Trying to reference `_d_arrayassign`, this should not happen!");
                 else
                 {
                     // Generate:
@@ -2626,27 +2621,10 @@ elem* toElem(Expression e, IRState *irs)
             }
             else
             {
-                e1 = sarray_toDarray(ae.e1.loc, ae.e1.type, null, e1);
-                e2 = sarray_toDarray(ae.e2.loc, ae.e2.type, null, e2);
-
-                Symbol *stmp = symbol_genauto(Type_toCtype(t1b.nextOf()));
-                elem *etmp = el_una(OPaddr, TYnptr, el_var(stmp));
-
-                /* Generate:
-                 *      _d_arrayassign_l(ti, e2, e1, etmp)
-                 * or:
-                 *      _d_arrayassign_r(ti, e2, e1, etmp)
-                 */
-                elem *eti = getTypeInfo(ae.e1, t1b.nextOf().toBasetype(), irs);
-                if (irs.target.os == Target.OS.Windows && irs.target.is64bit)
-                {
-                    e1 = addressElem(e1, Type.tvoid.arrayOf());
-                    e2 = addressElem(e2, Type.tvoid.arrayOf());
-                }
-                elem *ep = el_params(etmp, e1, e2, eti, null);
-                const rtl = lvalueElem ? RTLSYM.ARRAYASSIGN_L : RTLSYM.ARRAYASSIGN_R;
-                elem* e = el_bin(OPcall, TYdarray, el_var(getRtlsym(rtl)), ep);
-                return setResult2(e);
+                if (ae.e2.isLvalue)
+                    assert(0, "Trying to reference `_d_arrayassign_l`, this should not happen!");
+                else
+                    assert(0, "Trying to reference `_d_arrayassign_r`, this should not happen!");
             }
         }
         else
@@ -5779,7 +5757,25 @@ bool elemIsLvalue(elem* e)
         return elemIsLvalue(ec.EV.E1) && elemIsLvalue(ec.EV.E2);
     }
 
-    return e.Eoper == OPvar || e.Eoper == OPind;
+    if (e.Eoper == OPvar)
+        return true;
+
+    /* Match *(&__tmpfordtor+0) which is being destroyed
+     */
+    elem* ev;
+    if (e.Eoper == OPind &&
+        e.EV.E1.Eoper == OPadd &&
+        e.EV.E1.EV.E2.Eoper == OPconst &&
+        e.EV.E1.EV.E1.Eoper == OPaddr &&
+        (ev = e.EV.E1.EV.E1.EV.E1).Eoper == OPvar)
+    {
+        if (strncmp(ev.EV.Vsym.Sident.ptr, Id.__tmpfordtor.toChars(), 12) == 0)
+        {
+            return false; // don't make reference to object being destroyed
+        }
+    }
+
+    return e.Eoper == OPind && !OTcall(e.EV.E1.Eoper);
 }
 
 /*****************************************
@@ -6577,7 +6573,7 @@ elem *appendDtors(IRState *irs, elem *er, size_t starti, size_t endi)
             }
             else
             {
-                elem *e = el_same(&erx);
+                elem *e = el_copytotmp(&erx);
                 erx = el_combine(erx, edtors);
                 *pe = el_combine(erx, e);
             }

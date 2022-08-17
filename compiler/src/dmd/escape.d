@@ -351,7 +351,7 @@ bool checkParamArgumentEscape(Scope* sc, FuncDeclaration fdc, Parameter par, STC
         {
             unsafeAssign!"scope variable"(v);
         }
-        else if (v.storage_class & STC.variadic && p == sc.func)
+        else if (v.isTypesafeVariadicParameter && p == sc.func)
         {
             Type tb = v.type.toBasetype();
             if (tb.ty == Tarray || tb.ty == Tsarray)
@@ -366,7 +366,7 @@ bool checkParamArgumentEscape(Scope* sc, FuncDeclaration fdc, Parameter par, STC
              */
             if (log) printf("no infer for %s in %s loc %s, fdc %s, %d\n",
                 v.toChars(), sc.func.ident.toChars(), sc.func.loc.toChars(), fdc.ident.toChars(),  __LINE__);
-            v.doNotInferScope = true;
+            doNotInferScope(v);
         }
     }
 
@@ -553,7 +553,16 @@ bool checkAssignEscape(Scope* sc, Expression e, bool gag, bool byRef)
         return false;
 
     if (e1.isSliceExp())
-        return false;
+    {
+        if (VarDeclaration va = expToVariable(e1))
+        {
+            if (!va.type.toBasetype().isTypeSArray() || // treat static array slice same as a variable
+                !va.type.hasPointers())
+                return false;
+        }
+        else
+            return false;
+    }
 
     /* The struct literal case can arise from the S(e2) constructor call:
      *    return S(e2);
@@ -649,7 +658,8 @@ bool checkAssignEscape(Scope* sc, Expression e, bool gag, bool byRef)
         Dsymbol p = v.toParent2();
 
         if (va && !vaIsRef && !va.isScope() && !v.isScope() &&
-            (va.storage_class & v.storage_class & (STC.maybescope | STC.variadic)) == STC.maybescope &&
+            !v.isTypesafeVariadicParameter && !va.isTypesafeVariadicParameter &&
+            (va.isParameter() && va.maybeScope && v.isParameter() && v.maybeScope) &&
             p == fd)
         {
             /* Add v to va's list of dependencies
@@ -659,11 +669,12 @@ bool checkAssignEscape(Scope* sc, Expression e, bool gag, bool byRef)
         }
 
         if (vaIsFirstRef &&
-            (v.isScope() || (v.storage_class & STC.maybescope)) &&
+            (v.isScope() || v.maybeScope) &&
             !(v.storage_class & STC.return_) &&
             v.isParameter() &&
             fd.flags & FUNCFLAG.returnInprocess &&
-            p == fd)
+            p == fd &&
+            !v.isTypesafeVariadicParameter)
         {
             if (log) printf("inferring 'return' for parameter %s in function %s\n", v.toChars(), fd.toChars());
             inferReturn(fd, v, /*returnScope:*/ true); // infer addition of 'return' to make `return scope`
@@ -680,7 +691,7 @@ bool checkAssignEscape(Scope* sc, Expression e, bool gag, bool byRef)
                 if (va.isScope())
                     continue;
 
-                if (!va.doNotInferScope)
+                if (va.maybeScope)
                 {
                     if (log) printf("inferring scope for lvalue %s\n", va.toChars());
                     va.storage_class |= STC.scope_ | STC.scopeinferred;
@@ -709,7 +720,7 @@ bool checkAssignEscape(Scope* sc, Expression e, bool gag, bool byRef)
                 }
             }
 
-            if (va && !va.isDataseg() && !va.doNotInferScope)
+            if (va && !va.isDataseg() && (va.isScope() || va.maybeScope))
             {
                 if (!va.isScope())
                 {   /* v is scope, and va is not scope, so va needs to
@@ -735,12 +746,12 @@ bool checkAssignEscape(Scope* sc, Expression e, bool gag, bool byRef)
             }
             result |= sc.setUnsafeDIP1000(gag, ae.loc, "scope variable `%s` assigned to non-scope `%s`", v, e1);
         }
-        else if (v.storage_class & STC.variadic && p == fd)
+        else if (v.isTypesafeVariadicParameter && p == fd)
         {
             Type tb = v.type.toBasetype();
             if (tb.ty == Tarray || tb.ty == Tsarray)
             {
-                if (va && !va.isDataseg() && !va.doNotInferScope)
+                if (va && !va.isDataseg() && (va.isScope() || va.maybeScope))
                 {
                     if (!va.isScope())
                     {   //printf("inferring scope for %s\n", va.toChars());
@@ -757,7 +768,7 @@ bool checkAssignEscape(Scope* sc, Expression e, bool gag, bool byRef)
              * It may escape via that assignment, therefore, v can never be 'scope'.
              */
             //printf("no infer for %s in %s, %d\n", v.toChars(), fd.ident.toChars(), __LINE__);
-            v.doNotInferScope = true;
+            doNotInferScope(v);
         }
     }
 
@@ -815,7 +826,7 @@ bool checkAssignEscape(Scope* sc, Expression e, bool gag, bool byRef)
         if (p != sc.func)
             continue;
 
-        if (va && !va.isDataseg() && !va.doNotInferScope)
+        if (va && !va.isDataseg() && (va.isScope() || va.maybeScope))
         {
             if (!va.isScope())
             {   //printf("inferring scope for %s\n", va.toChars());
@@ -858,7 +869,7 @@ bool checkAssignEscape(Scope* sc, Expression e, bool gag, bool byRef)
             if (!(v.isReference() || v.isScope()) || p != fd)
                 continue;
 
-            if (va && !va.isDataseg() && !va.doNotInferScope)
+            if (va && !va.isDataseg() && (va.isScope() || va.maybeScope))
             {
                 /* Don't infer STC.scope_ for va, because then a closure
                  * won't be generated for fd.
@@ -889,7 +900,7 @@ bool checkAssignEscape(Scope* sc, Expression e, bool gag, bool byRef)
         }
 
         if (ee.op == EXP.call && ee.type.toBasetype().isTypeStruct() &&
-            (!va || !(va.storage_class & STC.temp)))
+            (!va || !(va.storage_class & STC.temp) && !va.isScope()))
         {
             if (sc.setUnsafeDIP1000(gag, ee.loc, "address of struct temporary returned by `%s` assigned to longer lived variable `%s`", ee, e1))
             {
@@ -908,7 +919,7 @@ bool checkAssignEscape(Scope* sc, Expression e, bool gag, bool byRef)
             }
         }
 
-        if (va && !va.isDataseg() && !va.doNotInferScope)
+        if (va && !va.isDataseg() && (va.isScope() || va.maybeScope))
         {
             if (!va.isScope())
             {   //printf("inferring scope for %s\n", va.toChars());
@@ -962,7 +973,7 @@ bool checkThrowEscape(Scope* sc, Expression e, bool gag)
         else
         {
             //printf("no infer for %s in %s, %d\n", v.toChars(), sc.func.ident.toChars(), __LINE__);
-            v.doNotInferScope = true;
+            notMaybeScope(v);
         }
     }
     return result;
@@ -1022,7 +1033,7 @@ bool checkNewEscape(Scope* sc, Expression e, bool gag)
                 continue;
             }
         }
-        else if (v.storage_class & STC.variadic && p == sc.func)
+        else if (v.isTypesafeVariadicParameter && p == sc.func)
         {
             Type tb = v.type.toBasetype();
             if (tb.ty == Tarray || tb.ty == Tsarray)
@@ -1034,7 +1045,7 @@ bool checkNewEscape(Scope* sc, Expression e, bool gag)
         else
         {
             //printf("no infer for %s in %s, %d\n", v.toChars(), sc.func.ident.toChars(), __LINE__);
-            v.doNotInferScope = true;
+            notMaybeScope(v);
         }
     }
 
@@ -1189,12 +1200,13 @@ private bool checkReturnEscapeImpl(Scope* sc, Expression e, bool refs, bool gag)
 
         Dsymbol p = v.toParent2();
 
-        if ((v.isScope() || (v.storage_class & STC.maybescope)) &&
+        if ((v.isScope() || v.maybeScope) &&
             !(v.storage_class & STC.return_) &&
             v.isParameter() &&
             !v.doNotInferReturn &&
             sc.func.flags & FUNCFLAG.returnInprocess &&
-            p == sc.func)
+            p == sc.func &&
+            !v.isTypesafeVariadicParameter)
         {
             inferReturn(sc.func, v, /*returnScope:*/ true); // infer addition of 'return'
             continue;
@@ -1250,7 +1262,7 @@ private bool checkReturnEscapeImpl(Scope* sc, Expression e, bool refs, bool gag)
                 }
             }
         }
-        else if (v.storage_class & STC.variadic && p == sc.func)
+        else if (v.isTypesafeVariadicParameter && p == sc.func)
         {
             Type tb = v.type.toBasetype();
             if (tb.ty == Tarray || tb.ty == Tsarray)
@@ -1263,7 +1275,7 @@ private bool checkReturnEscapeImpl(Scope* sc, Expression e, bool refs, bool gag)
         else
         {
             //printf("no infer for %s in %s, %d\n", v.toChars(), sc.func.ident.toChars(), __LINE__);
-            v.doNotInferScope = true;
+            doNotInferScope(v);
         }
     }
 
@@ -1627,7 +1639,7 @@ void escapeByValue(Expression e, EscapeByResults* er, bool live = false, bool re
             {
                 if (tb.ty == Tsarray)
                     return;
-                if (v.storage_class & STC.variadic)
+                if (v.isTypesafeVariadicParameter)
                 {
                     er.byvalue.push(v);
                     return;
@@ -1943,7 +1955,7 @@ void escapeByRef(Expression e, EscapeByResults* er, bool live = false, bool retR
             VarDeclaration v = ve.var.isVarDeclaration();
             if (tb.ty == Tarray || tb.ty == Tsarray)
             {
-                if (v && v.storage_class & STC.variadic)
+                if (v && v.isTypesafeVariadicParameter)
                 {
                     er.pushRef(v, retRefTransition);
                     return;
@@ -2223,9 +2235,9 @@ public void findAllOuterAccessedVariables(FuncDeclaration fd, VarDeclarations* v
 }
 
 /***********************************
- * Turn off `STC.maybescope` for variable `v`.
+ * Turn off `maybeScope` for variable `v`.
  *
- * This exists in order to find where `STC.maybescope` is getting turned off.
+ * This exists in order to find where `maybeScope` is getting turned off.
  * Params:
  *      v = variable
  */
@@ -2234,15 +2246,31 @@ version (none)
     private void notMaybeScope(string file = __FILE__, int line = __LINE__)(VarDeclaration v)
     {
         printf("%.*s(%d): notMaybeScope('%s')\n", cast(int)file.length, file.ptr, line, v.toChars());
-        v.storage_class &= ~STC.maybescope;
+        v.maybeScope = false;
     }
 }
 else
 {
     private void notMaybeScope(VarDeclaration v)
     {
-        v.storage_class &= ~STC.maybescope;
+        v.maybeScope = false;
     }
+}
+
+/***********************************
+ * Turn off `maybeScope` for variable `v` if it's not a parameter.
+ *
+ * This is for compatibility with the old system with both `STC.maybescope` and `VarDeclaration.doNotInferScope`,
+ * which is now just `VarDeclaration.maybeScope`.
+ * This function should probably be removed in future refactors.
+ *
+ * Params:
+ *      v = variable
+ */
+private void doNotInferScope(VarDeclaration v)
+{
+    if (!v.isParameter)
+        v.maybeScope = false;
 }
 
 /***********************************
@@ -2256,6 +2284,7 @@ else
  */
 void finishScopeParamInference(FuncDeclaration funcdecl, ref TypeFunction f)
 {
+
     if (funcdecl.flags & FUNCFLAG.returnInprocess)
     {
         funcdecl.flags &= ~FUNCFLAG.returnInprocess;
@@ -2270,6 +2299,8 @@ void finishScopeParamInference(FuncDeclaration funcdecl, ref TypeFunction f)
         }
     }
 
+    if (!(funcdecl.flags & FUNCFLAG.inferScope))
+        return;
     funcdecl.flags &= ~FUNCFLAG.inferScope;
 
     // Eliminate maybescope's
@@ -2302,18 +2333,17 @@ void finishScopeParamInference(FuncDeclaration funcdecl, ref TypeFunction f)
         foreach (u, p; f.parameterList)
         {
             auto v = (*funcdecl.parameters)[u];
-            if (v.storage_class & STC.maybescope)
+            if (v.maybeScope)
             {
                 //printf("Inferring scope for %s\n", v.toChars());
                 notMaybeScope(v);
                 v.storage_class |= STC.scope_ | STC.scopeinferred;
                 p.storageClass |= STC.scope_ | STC.scopeinferred;
-                assert(!(p.storageClass & STC.maybescope));
             }
         }
     }
 
-    if (funcdecl.vthis && funcdecl.vthis.storage_class & STC.maybescope)
+    if (funcdecl.vthis && funcdecl.vthis.maybeScope)
     {
         notMaybeScope(funcdecl.vthis);
         funcdecl.vthis.storage_class |= STC.scope_ | STC.scopeinferred;
@@ -2355,14 +2385,14 @@ private void eliminateMaybeScopes(VarDeclaration[] array)
         foreach (va; array)
         {
             if (log) printf("  va = %s\n", va.toChars());
-            if (!(va.storage_class & (STC.maybescope | STC.scope_)))
+            if (!(va.maybeScope || va.isScope()))
             {
                 if (va.maybes)
                 {
                     foreach (v; *va.maybes)
                     {
                         if (log) printf("    v = %s\n", v.toChars());
-                        if (v.storage_class & STC.maybescope)
+                        if (v.maybeScope)
                         {
                             // v cannot be scope since it is assigned to a non-scope va
                             notMaybeScope(v);
@@ -2482,7 +2512,7 @@ private bool enclosesLifetimeOf(const VarDeclaration va, const VarDeclaration v)
  * analysis for the function is completed. Thus, we save the data
  * until then.
  * Params:
- *     v = an `STC.maybescope` variable that was assigned to `this`
+ *     v = a variable with `maybeScope == true` that was assigned to `this`
  */
 private void addMaybe(VarDeclaration va, VarDeclaration v)
 {
@@ -2567,8 +2597,7 @@ private bool checkScopeVarAddr(VarDeclaration v, Expression e, Scope* sc, bool g
 
     if (!v.isScope())
     {
-        v.storage_class &= ~STC.maybescope;
-        v.doNotInferScope = true;
+        notMaybeScope(v);
         return false;
     }
 
@@ -2585,4 +2614,16 @@ private bool checkScopeVarAddr(VarDeclaration v, Expression e, Scope* sc, bool g
     // take address of `scope` variable not allowed, requires transitive scope
     return sc.setUnsafeDIP1000(gag, e.loc,
         "cannot take address of `scope` variable `%s` since `scope` applies to first indirection only", v);
+}
+
+/****************************
+ * Determine if `v` is a typesafe variadic parameter.
+ * Params:
+ *      v = variable to check
+ * Returns:
+ *      true if `v` is a variadic parameter
+ */
+bool isTypesafeVariadicParameter(VarDeclaration v)
+{
+    return !!(v.storage_class & STC.variadic);
 }

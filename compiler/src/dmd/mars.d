@@ -441,7 +441,6 @@ private int tryMain(size_t argc, const(char)** argv, ref Param params)
     }
     //if (global.errors)
     //    fatal();
-    Module.dprogress = 1;
     Module.runDeferredSemantic();
     if (Module.deferred.dim)
     {
@@ -2370,6 +2369,10 @@ bool parseCommandLine(const ref Strings arguments, const size_t argc, ref Param 
                 {
                     if (!params.debuglevel.parseDigits(p.toDString()[7 .. $]))
                         goto Lerror;
+
+                    // @@@DEPRECATED_2.111@@@
+                    // Deprecated in 2.101, remove in 2.111
+                    deprecation(Loc.initial, "`-debug=number` is deprecated, use debug identifiers instead");
                 }
                 else if (Identifier.isValidIdentifier(p + 7))
                 {
@@ -2396,9 +2399,14 @@ bool parseCommandLine(const ref Strings arguments, const size_t argc, ref Param 
                 {
                     if (!params.versionlevel.parseDigits(p.toDString()[9 .. $]))
                         goto Lerror;
+
+                    // @@@DEPRECATED_2.111@@@
+                    // Deprecated in 2.101, remove in 2.111
+                    deprecation(Loc.initial, "`-version=number` is deprecated, use version identifiers instead");
                 }
                 else if (Identifier.isValidIdentifier(p + 9))
                 {
+
                     if (!params.versionids)
                         params.versionids = new Array!(const(char)*);
                     params.versionids.push(p + 9);
@@ -2595,18 +2603,6 @@ private void reconcileCommands(ref Param params, ref Target target)
                 break;
             }
         }
-
-        if (!driverParams.mscrtlib)
-        {
-            version (Windows)
-            {
-                VSOptions vsopt;
-                vsopt.initialize();
-                driverParams.mscrtlib = vsopt.defaultRuntimeLibrary(target.is64bit).toDString;
-            }
-            else
-                error(Loc.initial, "must supply `-mscrtlib` manually when cross compiling to windows");
-        }
     }
     else
     {
@@ -2693,6 +2689,25 @@ private void reconcileLinkRunLib(ref Param params, size_t numSrcFiles, const cha
 {
     if (!params.obj || driverParams.lib)
         driverParams.link = false;
+
+    if (target.os == Target.OS.Windows)
+    {
+        if (!driverParams.mscrtlib)
+        {
+            version (Windows)
+            {
+                VSOptions vsopt;
+                vsopt.initialize();
+                driverParams.mscrtlib = vsopt.defaultRuntimeLibrary(target.is64bit).toDString;
+            }
+            else
+            {
+                if (driverParams.link)
+                    error(Loc.initial, "must supply `-mscrtlib` manually when cross compiling to windows");
+            }
+        }
+    }
+
     if (driverParams.link)
     {
         params.exefile = params.objname;
