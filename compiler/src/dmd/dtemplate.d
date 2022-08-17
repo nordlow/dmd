@@ -7511,6 +7511,7 @@ extern (C++) class TemplateInstance : ScopeDsymbol
         v.visit(this);
     }
 }
+pragma(msg, __FILE__, "(", __LINE__, ",1): Debug: ", __traits(classInstanceSize, TemplateInstance));
 
 /**************************************
  * IsExpression can evaluate the specified type speculatively, and even if
