@@ -8442,22 +8442,28 @@ extern(C++) final class TemplateInstanceWalker : SemanticTimeTransitiveVisitor {
     alias visit = SemanticTimeTransitiveVisitor.visit;
 public:
     uint depth = 0;             ///< Instance depth.
+    // AA:
+    // key: current TemplateInstance
+    // value: list of TemplateInstance (at one level)
+    TemplateInstanceWalker[][TemplateInstance] aa1; // TI => TI[]
+    TemplateInstanceWalker[][Dsymbol] aa2;          // TD => TI[]
     override void visit(TemplateInstance ti)
     {
-        putcharN(depth);
-        message(ti.loc, "TI");
-        depth += 1;
-        ti.tempdecl.accept(this);
-        depth -= 1;
+        // inject this visit() into semantic3 : timestamp, self-time,cumulative
+        // use timing code at https://github.com/UplinkCoder/dmd/tree/dmd_tracing_20942
+        // put into text file
+        // phases: semantic(), semantic3()
+        aa1[ti.tinst] ~= ti;
+        aa2[ti.tempdecl] ~= ti;
     }
-    override void visit(TemplateDeclaration td)
-    {
-        putcharN(depth);
-        message(td.loc, "TD");
-    }
-    static void putcharN(uint n)
-    {
-        foreach (_; 0 .. n)
-            putchar(' ');
-    }
+    // override void visit(TemplateDeclaration td)
+    // {
+    //     putcharN(depth);
+    //     message(td.loc, "TD");
+    // }
+    // static void putcharN(uint n)
+    // {
+    //     foreach (_; 0 .. n)
+    //         putchar(' ');
+    // }
 }
