@@ -8282,13 +8282,13 @@ MATCH matchArg(TemplateParameter tp, Scope* sc, RootObject oarg, size_t i, Templ
 struct TemplateStats
 {
     __gshared TemplateStats[const void*] stats; // TemplateDeclaration => stats
-    __gshared TemplateInstances[TemplateInstance] subInstantiations; // TemplateInstances => sub  TemplateInstances
+    __gshared TemplateInstances[TemplateInstance] subInstantiations; // TemplateInstance => sub-instances
 
-    uint numInstantiations;     // number of instantiations of the template
+    uint numInstantiations;      // number of instantiations of the template
     uint distinctInstantiations; // number of distinct instantiations of the template
-    uint numSubInstantiations; // number of sub instantiations of the template
+    uint numSubInstantiations;   // number of sub instantiations of the template
 
-    TemplateInstances* allInstances;
+    TemplateInstances allInstances;
 
     /*******************************
      * Add this instance
