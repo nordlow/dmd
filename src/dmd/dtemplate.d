@@ -8282,6 +8282,7 @@ MATCH matchArg(TemplateParameter tp, Scope* sc, RootObject oarg, size_t i, Templ
 struct TemplateStats
 {
     __gshared TemplateStats[const void*] stats; // TemplateDeclaration => stats
+    __gshared TemplateInstances[TemplateInstance] subInstantiations; // TemplateInstances => sub  TemplateInstances
 
     uint numInstantiations;     // number of instantiations of the template
     uint distinctInstantiations; // number of distinct instantiations of the template
@@ -8302,6 +8303,9 @@ struct TemplateStats
                 ts.allInstances = new TemplateInstances();
             if (global.params.vtemplatesListInstances)
                 ts.allInstances.push(cast() ti);
+            if (ti.tinst) {
+                subInstantiations[cast() ti.tinst].push(cast() ti);
+            }
         }
 
     // message(ti.loc, "incInstance %p %p", td, ti);
