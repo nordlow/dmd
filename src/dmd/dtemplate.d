@@ -8445,16 +8445,16 @@ public:
     // AA:
     // key: current TemplateInstance
     // value: list of TemplateInstance (at one level)
-    TemplateInstanceWalker[][TemplateInstance] aa1; // TI => TI[]
-    TemplateInstanceWalker[][Dsymbol] aa2;          // TD => TI[]
+    TemplateInstances[TemplateInstance] aa1; // TI => TI[]
+    TemplateInstances[Dsymbol] aa2;          // TD => TI[]
     override void visit(TemplateInstance ti)
     {
         // inject this visit() into semantic3 : timestamp, self-time,cumulative
         // use timing code at https://github.com/UplinkCoder/dmd/tree/dmd_tracing_20942
         // put into text file
         // phases: semantic(), semantic3()
-        aa1[ti.tinst] ~= ti;
-        aa2[ti.tempdecl] ~= ti;
+        aa1[ti.tinst].push(ti);
+        aa2[ti.tempdecl].push(ti);
     }
     // override void visit(TemplateDeclaration td)
     // {
