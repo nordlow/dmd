@@ -8288,7 +8288,9 @@ struct TemplateStats
     uint distinctInstantiations; // number of distinct instantiations of the template
     uint numSubInstantiations;   // number of sub instantiations of the template
 
-    TemplateInstances allInstances;
+    /* Needs to be a pointer because TemplateInstances is not copyable and
+     * TemplateStats needs to be copyable. */
+    TemplateInstances* allInstances;
 
     /*******************************
      * Add this instance
