@@ -38,19 +38,37 @@ final class FileManager
 
 nothrow:
     /********************************************
-    * Look for the source file if it's different from filename.
-    * Look for .di, .d, directory, and along global.path.
-    * Does not open the file.
-    * Params:
-    *      filename = as supplied by the user
-    *      path = path to look for filename
-    * Returns:
-    *      the found file name or
-    *      `null` if it is not different from filename.
-    */
+     *
+     * Check for the existance of a source file matching `filename` in the set
+     * of directory paths stored in `path`.
+     *
+     * `filename` can either be a path to a source file without extension or a
+     * complete path including extension. The sources extensions tried are .di,
+     * .d and .c.
+     *
+     * If `filename` is a directory the presence for file
+     * `filename`/package.d is checked for and if it is present it will be
+     * returned.
+     *
+     * Look for the source file if it's different from `filename`.
+     * Look for .di, .d, directory, and along global.path.
+     *
+     * No file is ever opened nor read.
+     *
+     * Params:
+     *      `filename` = as supplied by the user
+     *      `path` = set of directories to look for `filename`
+     * Returns:
+     *      the found file name or
+     *      `null` if it is not different from filename.
+     */
     static const(char)[] lookForSourceFile(const char[] filename, const char*[] path)
     {
-        //printf("lookForSourceFile(`%.*s`)\n", cast(int)filename.length, filename.ptr);
+        import core.stdc.stdio;
+        printf("lookForSourceFile(`%.*s`)\n", cast(int)filename.length, filename.ptr);
+        foreach (p; path) {
+            printf("p: %s\n", p);
+        }
         /* Search along path[] for .di file, then .d file, then .i file, then .c file.
         */
         const sdi = FileName.forceExt(filename, hdr_ext);

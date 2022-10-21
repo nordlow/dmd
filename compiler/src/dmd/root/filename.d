@@ -837,7 +837,10 @@ nothrow:
      */
     extern (C++) static int exists(const(char)* name)
     {
-        return exists(name.toDString);
+        import core.stdc.stdio;
+        const ret = exists(name.toDString);
+        printf("exists(`%s`) => %d\n", name, ret);
+        return ret;
     }
 
     /// Ditto
