@@ -781,7 +781,7 @@ public:
                 if (t.ty == Tstruct)
                     semanticTypeInfo(null, t);
             }
-            else if (t1.ty == Taarray)
+            else if (t1.isTypeAArray)
             {
                 semanticTypeInfo(null, t1);
             }

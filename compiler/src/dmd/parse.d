@@ -3774,7 +3774,7 @@ class Parser(AST, Lexer = dmd.lexer.Lexer) : Lexer
                                 dimStack.push(a.dim.syntaxCopy());
                                 t = a.next.syntaxCopy();
                             }
-                            else if (t.ty == Taarray)
+                            else if (t.isTypeAArray)
                             {
                                 // The index expression is a Type. It will be interpreted as an expression at semantic time.
                                 AST.TypeAArray a = cast(AST.TypeAArray)t;
@@ -9381,7 +9381,7 @@ LagainStc:
         auto t = parseBasicType(true);
         t = parseTypeSuffixes(t);
         t = t.addSTC(stc);
-        if (t.ty == Taarray)
+        if (t.isTypeAArray)
         {
             AST.TypeAArray taa = cast(AST.TypeAArray)t;
             AST.Type index = taa.index;

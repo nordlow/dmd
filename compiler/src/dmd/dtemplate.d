@@ -1850,7 +1850,7 @@ extern (C++) final class TemplateDeclaration : ScopeDsymbol
                         /* Allow expressions that have CT-known boundaries and type [] to match with [dim]
                          */
                         Type taai;
-                        if (argtype.ty == Tarray && (prmtype.ty == Tsarray || prmtype.ty == Taarray && (taai = (cast(TypeAArray)prmtype).index).ty == Tident && (cast(TypeIdentifier)taai).idents.dim == 0))
+                        if (argtype.ty == Tarray && (prmtype.ty == Tsarray || prmtype.isTypeAArray && (taai = (cast(TypeAArray)prmtype).index).ty == Tident && (cast(TypeIdentifier)taai).idents.dim == 0))
                         {
                             if (farg.op == EXP.string_)
                             {
@@ -1938,7 +1938,7 @@ extern (C++) final class TemplateDeclaration : ScopeDsymbol
                     {
                         if (!farg.isLvalue())
                         {
-                            if ((farg.op == EXP.string_ || farg.op == EXP.slice) && (prmtype.ty == Tsarray || prmtype.ty == Taarray))
+                            if ((farg.op == EXP.string_ || farg.op == EXP.slice) && (prmtype.ty == Tsarray || prmtype.isTypeAArray))
                             {
                                 // Allow conversion from T[lwr .. upr] to ref T[upr-lwr]
                             }
@@ -1992,7 +1992,7 @@ extern (C++) final class TemplateDeclaration : ScopeDsymbol
                             if (sz != nfargs - argi)
                                 return nomatch();
                         }
-                        else if (tb.ty == Taarray)
+                        else if (tb.isTypeAArray)
                         {
                             TypeAArray taa = cast(TypeAArray)tb;
                             Expression dim = new IntegerExp(instLoc, nfargs - argi, Type.tsize_t);
@@ -3766,7 +3766,7 @@ MATCH deduceType(RootObject o, Scope* sc, Type tparam, TemplateParameters* param
                 }
 
                 Type tpn = tparam.nextOf();
-                if (wm && t.ty == Taarray && tparam.isWild())
+                if (wm && t.isTypeAArray && tparam.isWild())
                 {
                     // https://issues.dlang.org/show_bug.cgi?id=12403
                     // In IFTI, stop inout matching on transitive part of AA types.
@@ -3833,7 +3833,7 @@ MATCH deduceType(RootObject o, Scope* sc, Type tparam, TemplateParameters* param
                     else
                         edim = tsa.dim;
                 }
-                else if (tparam.ty == Taarray)
+                else if (tparam.isTypeAArray)
                 {
                     TypeAArray taa = cast(TypeAArray)tparam;
                     i = templateParameterLookup(taa.index, parameters);
@@ -3870,7 +3870,7 @@ MATCH deduceType(RootObject o, Scope* sc, Type tparam, TemplateParameters* param
         override void visit(TypeAArray t)
         {
             // Extra check that index type must match
-            if (tparam && tparam.ty == Taarray)
+            if (tparam && tparam.isTypeAArray)
             {
                 TypeAArray tp = cast(TypeAArray)tparam;
                 if (!deduceType(t.index, sc, tp.index, parameters, dedtypes))
@@ -4364,7 +4364,7 @@ MATCH deduceType(RootObject o, Scope* sc, Type tparam, TemplateParameters* param
                 return;
             }
             Type tb = t.toBasetype();
-            if (tb.ty == tparam.ty || tb.ty == Tsarray && tparam.ty == Taarray)
+            if (tb.ty == tparam.ty || tb.ty == Tsarray && tparam.isTypeAArray)
             {
                 result = deduceType(tb, sc, tparam, parameters, dedtypes, wm);
                 if (result == MATCH.exact)
@@ -4572,7 +4572,7 @@ MATCH deduceType(RootObject o, Scope* sc, Type tparam, TemplateParameters* param
             {
                 auto tb = t.baseElemOf();
                 return tb.ty == Tclass ||
-                       tb.ty == Taarray ||
+                       tb.isTypeAArray ||
                        tb.ty == Tstruct && tb.hasPointers();
             }
 
@@ -4721,7 +4721,7 @@ MATCH deduceType(RootObject o, Scope* sc, Type tparam, TemplateParameters* param
         override void visit(StringExp e)
         {
             Type taai;
-            if (e.type.ty == Tarray && (tparam.ty == Tsarray || tparam.ty == Taarray && (taai = (cast(TypeAArray)tparam).index).ty == Tident && (cast(TypeIdentifier)taai).idents.dim == 0))
+            if (e.type.ty == Tarray && (tparam.ty == Tsarray || tparam.isTypeAArray && (taai = (cast(TypeAArray)tparam).index).ty == Tident && (cast(TypeIdentifier)taai).idents.dim == 0))
             {
                 // Consider compile-time known boundaries
                 e.type.nextOf().sarrayOf(e.len).accept(this);
@@ -4769,7 +4769,7 @@ MATCH deduceType(RootObject o, Scope* sc, Type tparam, TemplateParameters* param
             }
 
             Type taai;
-            if (e.type.ty == Tarray && (tparam.ty == Tsarray || tparam.ty == Taarray && (taai = (cast(TypeAArray)tparam).index).ty == Tident && (cast(TypeIdentifier)taai).idents.dim == 0))
+            if (e.type.ty == Tarray && (tparam.ty == Tsarray || tparam.isTypeAArray && (taai = (cast(TypeAArray)tparam).index).ty == Tident && (cast(TypeIdentifier)taai).idents.dim == 0))
             {
                 // Consider compile-time known boundaries
                 e.type.nextOf().sarrayOf(e.elements.dim).accept(this);
@@ -4780,7 +4780,7 @@ MATCH deduceType(RootObject o, Scope* sc, Type tparam, TemplateParameters* param
 
         override void visit(AssocArrayLiteralExp e)
         {
-            if (tparam.ty == Taarray && e.keys && e.keys.dim)
+            if (tparam.isTypeAArray && e.keys && e.keys.dim)
             {
                 TypeAArray taa = cast(TypeAArray)tparam;
                 result = MATCH.exact;
@@ -4885,7 +4885,7 @@ MATCH deduceType(RootObject o, Scope* sc, Type tparam, TemplateParameters* param
         override void visit(SliceExp e)
         {
             Type taai;
-            if (e.type.ty == Tarray && (tparam.ty == Tsarray || tparam.ty == Taarray && (taai = (cast(TypeAArray)tparam).index).ty == Tident && (cast(TypeIdentifier)taai).idents.dim == 0))
+            if (e.type.ty == Tarray && (tparam.ty == Tsarray || tparam.isTypeAArray && (taai = (cast(TypeAArray)tparam).index).ty == Tident && (cast(TypeIdentifier)taai).idents.dim == 0))
             {
                 // Consider compile-time known boundaries
                 if (Type tsa = toStaticArrayType(e))

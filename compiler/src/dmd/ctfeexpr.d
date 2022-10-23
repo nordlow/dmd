@@ -329,7 +329,7 @@ UnionExp copyLiteral(Expression e)
             if (!m)
                 m = voidInitLiteral(v.type, v).copy();
 
-            if (v.type.ty == Tarray || v.type.ty == Taarray)
+            if (v.type.ty == Tarray || v.type.isTypeAArray)
             {
                 // Don't have to copy array references
             }
@@ -712,7 +712,7 @@ bool isSafePointerCast(Type srcPointee, Type destPointee)
     if (destPointee.ty == Tvoid)
         return true;
     // It's OK to cast from V[K] to void*
-    if (srcPointee.ty == Taarray && destPointee == Type.tvoidptr)
+    if (srcPointee.isTypeAArray && destPointee == Type.tvoidptr)
         return true;
     // It's OK if they are the same size (static array of) integers, eg:
     //     int*     --> uint*
@@ -1858,7 +1858,7 @@ bool isCtfeValueValid(Expression newval)
             return tb.ty == Tnull    ||
                    tb.ty == Tpointer ||
                    tb.ty == Tarray   ||
-                   tb.ty == Taarray  ||
+                   tb.isTypeAArray  ||
                    tb.ty == Tclass   ||
                    tb.ty == Tdelegate;
 

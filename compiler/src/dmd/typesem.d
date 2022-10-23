@@ -627,7 +627,7 @@ extern(C++) Type typeSemantic(Type type, const ref Loc loc, Scope* sc)
                      tbn.ty == Tpointer ||
                      tbn.ty == Tarray ||
                      tbn.ty == Tsarray ||
-                     tbn.ty == Taarray ||
+                     tbn.isTypeAArray ||
                      (tbn.ty == Tstruct && tbn.isTypeStruct().sym.sizeok == Sizeok.done) ||
                      tbn.ty == Tclass)
             {

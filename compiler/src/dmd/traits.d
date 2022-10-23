@@ -565,7 +565,7 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
     }
     if (e.ident == Id.isAssociativeArray)
     {
-        return isTypeX(t => t.toBasetype().ty == Taarray);
+        return isTypeX(t => t.toBasetype().ty == Tarray); // TODO: use isTypeAArray here
     }
     if (e.ident == Id.isDeprecated)
     {

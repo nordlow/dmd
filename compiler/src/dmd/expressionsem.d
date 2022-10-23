@@ -527,7 +527,7 @@ private Expression resolveUFCS(Scope* sc, CallExp ce)
              * It is necessary in: e.init()
              */
         }
-        else if (t.ty == Taarray)
+        else if (t.isTypeAArray)
         {
             if (ident == Id.remove)
             {
@@ -3924,7 +3924,7 @@ private extern (C++) final class ExpressionSemanticVisitor : Visitor
 
             exp.type = exp.type.pointerTo();
         }
-        else if (tb.ty == Taarray)
+        else if (tb.isTypeAArray)
         {
             // e.g. `new Alias(args)`
             if (nargs)
@@ -9353,7 +9353,7 @@ private extern (C++) final class ExpressionSemanticVisitor : Visitor
             }
             else if (exp.op == EXP.assign)
             {
-                if (e1x.op == EXP.index && (cast(IndexExp)e1x).e1.type.toBasetype().ty == Taarray)
+                if (e1x.op == EXP.index && (cast(IndexExp)e1x).e1.type.toBasetype().isTypeAArray)
                 {
                     /*
                      * Rewrite:
@@ -11789,7 +11789,7 @@ private extern (C++) final class ExpressionSemanticVisitor : Visitor
             exp.error("compare not defined for complex operands");
             return setError();
         }
-        else if (t1.ty == Taarray || t2.ty == Taarray)
+        else if (t1.isTypeAArray || t2.isTypeAArray)
         {
             exp.error("`%s` is not defined for associative arrays", EXPtoString(exp.op).ptr);
             return setError();
@@ -12087,7 +12087,7 @@ private extern (C++) final class ExpressionSemanticVisitor : Visitor
             return;
         }
 
-        if (exp.e1.type.toBasetype().ty == Taarray)
+        if (exp.e1.type.toBasetype().isTypeAArray)
             semanticTypeInfo(sc, exp.e1.type.toBasetype());
 
 
@@ -13004,7 +13004,7 @@ Expression semanticY(DotTemplateInstanceExp exp, Scope* sc, int flag)
     {
         exp.e1 = die.e1; // take back
         Type t1b = exp.e1.type.toBasetype();
-        if (t1b.ty == Tarray || t1b.ty == Tsarray || t1b.ty == Taarray || t1b.ty == Tnull || (t1b.isTypeBasic() && t1b.ty != Tvoid))
+        if (t1b.ty == Tarray || t1b.ty == Tsarray || t1b.isTypeAArray || t1b.ty == Tnull || (t1b.isTypeBasic() && t1b.ty != Tvoid))
         {
             /* No built-in type has templatized properties, so do shortcut.
              * It is necessary in: 1024.max!"a < b"

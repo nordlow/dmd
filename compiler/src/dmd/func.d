@@ -3443,7 +3443,7 @@ Type getIndirection(Type t)
     t = t.baseElemOf();
     if (t.ty == Tarray || t.ty == Tpointer)
         return t.nextOf().toBasetype();
-    if (t.ty == Taarray || t.ty == Tclass)
+    if (t.isTypeAArray || t.ty == Tclass)
         return t;
     if (t.ty == Tstruct)
         return t.hasPointers() ? t : null; // TODO
@@ -3531,7 +3531,7 @@ private bool traverseIndirections(Type ta, Type tb)
                     return false;
             }
         }
-        else if (tb.ty == Tarray || tb.ty == Taarray || tb.ty == Tpointer)
+        else if (tb.ty == Tarray || tb.isTypeAArray || tb.ty == Tpointer)
         {
             Type tind = tb.nextOf();
             if (!traverse(ta, tind, table, reversePass))

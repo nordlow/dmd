@@ -4575,7 +4575,7 @@ extern (C++) abstract class BinExp : Expression
             }
             ie = ie1;
         }
-        assert(ie.e1.type.toBasetype().ty == Taarray);
+        assert(ie.e1.type.toBasetype().isTypeAArray);
 
         Expression de;
         ie.e1 = extractSideEffect(sc, "__aatmp", de, ie.e1);
@@ -5888,7 +5888,7 @@ extern (C++) final class IndexExp : BinExp
 
     extern (D) Expression markSettingAAElem()
     {
-        if (e1.type.toBasetype().ty == Taarray)
+        if (e1.type.toBasetype().isTypeAArray)
         {
             Type t2b = e2.type.toBasetype();
             if (t2b.ty == Tarray && t2b.nextOf().isMutable())
@@ -7177,7 +7177,7 @@ extern(D) Modifiable checkModifiable(Expression exp, Scope* sc, ModifyFlags flag
             auto indexExp = cast(IndexExp)exp;
             auto e1 = indexExp.e1;
             if (e1.type.ty == Tsarray ||
-                e1.type.ty == Taarray ||
+                e1.type.isTypeAArray ||
                 (e1.op == EXP.index && e1.type.ty != Tarray) ||
                 e1.op == EXP.slice)
             {

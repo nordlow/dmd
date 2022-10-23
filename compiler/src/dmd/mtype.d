@@ -6281,7 +6281,7 @@ extern (C++) final class TypeNull : Type
         //if (type.ty == Tpointer && type.nextOf().ty == Tvoid)
         {
             Type tb = to.toBasetype();
-            if (tb.ty == Tnull || tb.ty == Tpointer || tb.ty == Tarray || tb.ty == Taarray || tb.ty == Tclass || tb.ty == Tdelegate)
+            if (tb.ty == Tnull || tb.ty == Tpointer || tb.ty == Tarray || tb.isTypeAArray || tb.ty == Tclass || tb.ty == Tdelegate)
                 return MATCH.constant;
         }
 
@@ -6945,7 +6945,7 @@ extern (C++) AggregateDeclaration isAggregate(Type t)
 bool isIndexableNonAggregate(Type t)
 {
     t = t.toBasetype();
-    return (t.ty == Tpointer || t.ty == Tsarray || t.ty == Tarray || t.ty == Taarray ||
+    return (t.ty == Tpointer || t.ty == Tsarray || t.ty == Tarray || t.isTypeAArray ||
             t.ty == Ttuple || t.ty == Tvector);
 }
 

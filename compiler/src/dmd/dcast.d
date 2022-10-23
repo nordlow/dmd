@@ -826,7 +826,7 @@ MATCH implicitConvTo(Expression e, Type t)
         auto taa = t.toBasetype().isTypeAArray();
         Type typeb = e.type.toBasetype();
 
-        if (!(taa && typeb.ty == Taarray))
+        if (!(taa && typeb.isTypeAArray))
             return visit(e);
 
         auto result = MATCH.exact;
@@ -1566,8 +1566,8 @@ Expression castTo(Expression e, Scope* sc, Type t, Type att = null)
         const(bool) t1b_isFR = (t1b.ty == Tarray || t1b.ty == Tdelegate);
 
         // Reference types
-        const(bool) tob_isR = (tob_isFR || tob.ty == Tpointer || tob.ty == Taarray || tob.ty == Tclass);
-        const(bool) t1b_isR = (t1b_isFR || t1b.ty == Tpointer || t1b.ty == Taarray || t1b.ty == Tclass);
+        const(bool) tob_isR = (tob_isFR || tob.ty == Tpointer || tob.isTypeAArray || tob.ty == Tclass);
+        const(bool) t1b_isR = (t1b_isFR || t1b.ty == Tpointer || t1b.isTypeAArray || t1b.ty == Tclass);
 
         // Arithmetic types (== valueable basic types)
         const(bool) tob_isA = ((tob.isintegral() || tob.isfloating()) && tob.ty != Tvector);
@@ -2316,7 +2316,7 @@ Expression castTo(Expression e, Scope* sc, Type t, Type att = null)
         Type tb = t.toBasetype();
         Type typeb = e.type.toBasetype();
 
-        if (tb.ty == Taarray && typeb.ty == Taarray &&
+        if (tb.isTypeAArray && typeb.isTypeAArray &&
             tb.nextOf().toBasetype().ty != Tvoid)
         {
             AssocArrayLiteralExp ae = e.copy().isAssocArrayLiteralExp();
@@ -3386,9 +3386,9 @@ LmodCompare:
         return coerce(t1.castMod(mod));
     }
 
-    if (t2.ty == Tnull && (t1.ty == Tpointer || t1.ty == Taarray || t1.ty == Tarray))
+    if (t2.ty == Tnull && (t1.ty == Tpointer || t1.isTypeAArray || t1.ty == Tarray))
         return convert(e2, t1);
-    if (t1.ty == Tnull && (t2.ty == Tpointer || t2.ty == Taarray || t2.ty == Tarray))
+    if (t1.ty == Tnull && (t2.ty == Tpointer || t2.isTypeAArray || t2.ty == Tarray))
         return convert(e1, t2);
 
     /// Covers array operations for user-defined types
@@ -3562,7 +3562,7 @@ Expression typeCombine(BinExp be, Scope* sc)
             return errorReturn();
         else if (t1.ty == Tclass && t2.ty == Tclass)
             return errorReturn();
-        else if (t1.ty == Taarray && t2.ty == Taarray)
+        else if (t1.isTypeAArray && t2.isTypeAArray)
             return errorReturn();
     }
 

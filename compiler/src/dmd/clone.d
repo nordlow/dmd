@@ -439,7 +439,7 @@ bool needOpEquals(StructDeclaration sd)
         }
         if (tvbase.ty == Tarray)
             goto Lneed;
-        if (tvbase.ty == Taarray)
+        if (tvbase.isTypeAArray)
             goto Lneed;
         if (tvbase.ty == Tclass)
             goto Lneed;
@@ -764,7 +764,7 @@ private bool needToHash(StructDeclaration sd)
         }
         if (tvbase.ty == Tarray)
             goto Lneed;
-        if (tvbase.ty == Taarray)
+        if (tvbase.isTypeAArray)
             goto Lneed;
         if (tvbase.ty == Tclass)
             goto Lneed;

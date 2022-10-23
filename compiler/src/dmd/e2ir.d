@@ -1996,7 +1996,7 @@ elem* toElem(Expression e, IRState *irs)
                 e = el_bin(OPxor, TYint, e, el_long(TYint, 1));
             elem_setLoc(e,ee.loc);
         }
-        else if (t1.ty == Taarray && t2.ty == Taarray)
+        else if (t1.isTypeAArray && t2.isTypeAArray)
         {
             TypeAArray taa = cast(TypeAArray)t1;
             Symbol *s = aaGetSymbol(taa, "Equal", 0);
@@ -3996,7 +3996,7 @@ elem* toElem(Expression e, IRState *irs)
             // call _d_assocarrayliteralTX(TypeInfo_AssociativeArray ti, void[] keys, void[] values)
             // Prefer this to avoid the varargs fiasco in 64 bit code
 
-            assert(t.ty == Taarray);
+            assert(t.isTypeAArray);
             Type ta = t;
 
             Symbol *skeys = null;

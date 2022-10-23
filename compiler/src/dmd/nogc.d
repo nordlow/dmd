@@ -162,7 +162,7 @@ public:
     override void visit(IndexExp e)
     {
         Type t1b = e.e1.type.toBasetype();
-        if (t1b.ty == Taarray)
+        if (t1b.isTypeAArray)
         {
             if (f.setGC())
             {

@@ -3392,7 +3392,7 @@ public:
         AssocArrayLiteralExp existingAA = null;
         Expression lastIndex = null;
         Expression oldval = null;
-        if (e1.op == EXP.index && e1.isIndexExp().e1.type.toBasetype().ty == Taarray)
+        if (e1.op == EXP.index && e1.isIndexExp().e1.type.toBasetype().isTypeAArray)
         {
             // ---------------------------------------
             //      Deal with AA index assignment
@@ -3406,7 +3406,7 @@ public:
              */
             IndexExp ie = e1.isIndexExp();
             int depth = 0; // how many nested AA indices are there?
-            while (ie.e1.op == EXP.index && ie.e1.isIndexExp().e1.type.toBasetype().ty == Taarray)
+            while (ie.e1.op == EXP.index && ie.e1.isIndexExp().e1.type.toBasetype().isTypeAArray)
             {
                 assert(ie.modifiable);
                 ie = ie.e1.isIndexExp();
@@ -3480,7 +3480,7 @@ public:
                 oldval = copyLiteral(e.e1.type.defaultInitLiteral(e.loc)).copy();
 
                 Expression newaae = oldval;
-                while (e1.op == EXP.index && e1.isIndexExp().e1.type.toBasetype().ty == Taarray)
+                while (e1.op == EXP.index && e1.isIndexExp().e1.type.toBasetype().isTypeAArray)
                 {
                     Expression ekey = interpretRegion(e1.isIndexExp().e2, istate);
                     if (exceptionOrCant(ekey))
@@ -3551,7 +3551,7 @@ public:
             if (exceptionOrCant(e1))
                 return;
 
-            if (e1.op == EXP.index && e1.isIndexExp().e1.type.toBasetype().ty == Taarray)
+            if (e1.op == EXP.index && e1.isIndexExp().e1.type.toBasetype().isTypeAArray)
             {
                 IndexExp ie = e1.isIndexExp();
                 assert(ie.e1.op == EXP.assocArrayLiteral);
@@ -5462,14 +5462,14 @@ public:
             }
         }
 
-        if (e.e1.type.toBasetype().ty == Taarray)
+        if (e.e1.type.toBasetype().isTypeAArray)
         {
             Expression e1 = interpretRegion(e.e1, istate);
             if (exceptionOrCant(e1))
                 return;
             if (e1.op == EXP.null_)
             {
-                if (goal == CTFEGoal.LValue && e1.type.ty == Taarray && e.modifiable)
+                if (goal == CTFEGoal.LValue && e1.type.isTypeAArray && e.modifiable)
                 {
                     assert(0); // does not reach here?
                 }

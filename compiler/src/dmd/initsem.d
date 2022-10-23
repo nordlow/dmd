@@ -292,7 +292,7 @@ extern(C++) Initializer initializerSemantic(Initializer init, Scope* sc, ref Typ
             {
                 Expression e;
                 // note: MyStruct foo = [1:2, 3:4] is correct code if MyStruct has a this(int[int])
-                if (t.ty == Taarray || i.isAssociativeArray())
+                if (t.isTypeAArray || i.isAssociativeArray())
                     e = i.toAssocArrayLiteral();
                 else
                     e = i.initializerToExpression();
