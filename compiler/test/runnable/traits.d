@@ -19,320 +19,418 @@ module traits;
 import core.stdc.stdio;
 
 alias int myint;
-struct S { void bar() { } int x = 4; static int z = 5; }
-class C { void bar() { } final void foo() { } static void abc() { } }
+struct S { void bar() { } void tbar()() { } int x = 4; static int z = 5; }
+class C { void bar() { } void tbar()() { } final void foo() { } static void abc() { } void delegate() del; }
 abstract class AC { }
 class AC2 { abstract void foo(); }
 class AC3 : AC2 { }
 final class FC { void foo() { } }
 enum E { EMEM }
 struct D1 { @disable void true_(); void false_(){} }
+union U {}
+interface I {}
+
+private alias AliasSeq(T...) = T;
+private alias UnsignedTypes = AliasSeq!(ubyte, ushort, uint, ulong,
+                                        char, wchar, dchar);
+private alias SignedTypes = AliasSeq!(byte, short, int, long);
+private alias IntegralTypes = AliasSeq!(byte, ubyte, short, ushort, int, uint, long, ulong,
+                                        char, wchar, dchar);
+private alias FloatingTypes = AliasSeq!(float, double, real);
+private alias ScalarTypes = AliasSeq!(byte, ubyte, short, ushort, int, uint, long, ulong,
+                                      float, double, real,
+                                      char, wchar, dchar,
+                                      char*, void*);
+private alias ArithmeticTypes = AliasSeq!(byte, ubyte, short, ushort, int, uint, long, ulong,
+                                          float, double, real,
+                                          char, wchar, dchar);
 
 /********************************************************/
 
-void test1()
+void test_isArithmetic()
 {
     auto t = __traits(isArithmetic, int);
     assert(t == true);
 
-    assert(__traits(isArithmetic) == false);
-    assert(__traits(isArithmetic, myint) == true);
-    assert(__traits(isArithmetic, S) == false);
-    assert(__traits(isArithmetic, C) == false);
-    assert(__traits(isArithmetic, E) == true);
-    assert(__traits(isArithmetic, void*) == false);
-    assert(__traits(isArithmetic, void[]) == false);
-    assert(__traits(isArithmetic, void[3]) == false);
-    assert(__traits(isArithmetic, int[char]) == false);
-    assert(__traits(isArithmetic, int, int) == true);
-    assert(__traits(isArithmetic, int, S) == false);
-
-    assert(__traits(isArithmetic, void) == false);
-    assert(__traits(isArithmetic, byte) == true);
-    assert(__traits(isArithmetic, ubyte) == true);
-    assert(__traits(isArithmetic, short) == true);
-    assert(__traits(isArithmetic, ushort) == true);
-    assert(__traits(isArithmetic, int) == true);
-    assert(__traits(isArithmetic, uint) == true);
-    assert(__traits(isArithmetic, long) == true);
-    assert(__traits(isArithmetic, ulong) == true);
-    assert(__traits(isArithmetic, float) == true);
-    assert(__traits(isArithmetic, double) == true);
-    assert(__traits(isArithmetic, real) == true);
-    assert(__traits(isArithmetic, char) == true);
-    assert(__traits(isArithmetic, wchar) == true);
-    assert(__traits(isArithmetic, dchar) == true);
-
+    static assert(__traits(isArithmetic) == false);
+    static assert(__traits(isArithmetic, myint) == true);
+    static assert(__traits(isArithmetic, S) == false);
+    static assert(__traits(isArithmetic, C) == false);
+    static assert(__traits(isArithmetic, E) == true);
+    static assert(__traits(isArithmetic, void*) == false);
+    static assert(__traits(isArithmetic, void[]) == false);
+    static assert(__traits(isArithmetic, void[3]) == false);
+    static assert(__traits(isArithmetic, int[char]) == false);
+    static assert(__traits(isArithmetic, int, int) == true);
+    static assert(__traits(isArithmetic, int, S) == false);
+    static assert(__traits(isArithmetic, void) == false);
+    static foreach (T; ArithmeticTypes)
+        static assert(__traits(isArithmetic, T) == true);
     int i;
-    assert(__traits(isArithmetic, i, i+1, int) == true);
-    assert(__traits(isArithmetic) == false);
+    static assert(__traits(isArithmetic, i, i+1, int) == true);
+    static assert(__traits(isArithmetic) == false);
 }
 
 /********************************************************/
 
-void test2()
+void test_isScalar()
 {
     auto t = __traits(isScalar, int);
     assert(t == true);
 
-    assert(__traits(isScalar) == false);
-    assert(__traits(isScalar, myint) == true);
-    assert(__traits(isScalar, S) == false);
-    assert(__traits(isScalar, C) == false);
-    assert(__traits(isScalar, E) == true);
-    assert(__traits(isScalar, void*) == true);
-    assert(__traits(isScalar, void[]) == false);
-    assert(__traits(isScalar, void[3]) == false);
-    assert(__traits(isScalar, int[char]) == false);
-    assert(__traits(isScalar, int, int) == true);
-    assert(__traits(isScalar, int, S) == false);
-
-    assert(__traits(isScalar, void) == false);
-    assert(__traits(isScalar, byte) == true);
-    assert(__traits(isScalar, ubyte) == true);
-    assert(__traits(isScalar, short) == true);
-    assert(__traits(isScalar, ushort) == true);
-    assert(__traits(isScalar, int) == true);
-    assert(__traits(isScalar, uint) == true);
-    assert(__traits(isScalar, long) == true);
-    assert(__traits(isScalar, ulong) == true);
-    assert(__traits(isScalar, float) == true);
-    assert(__traits(isScalar, double) == true);
-    assert(__traits(isScalar, real) == true);
-    assert(__traits(isScalar, char) == true);
-    assert(__traits(isScalar, wchar) == true);
-    assert(__traits(isScalar, dchar) == true);
+    static assert(__traits(isScalar) == false);
+    static assert(__traits(isScalar, myint) == true);
+    static assert(__traits(isScalar, S) == false);
+    static assert(__traits(isScalar, C) == false);
+    static assert(__traits(isScalar, E) == true);
+    static assert(__traits(isScalar, void[]) == false);
+    static assert(__traits(isScalar, void[3]) == false);
+    static assert(__traits(isScalar, int[char]) == false);
+    static assert(__traits(isScalar, int, int) == true);
+    static assert(__traits(isScalar, int, S) == false);
+    static assert(__traits(isScalar, void) == false);
+    static foreach (T; ScalarTypes)
+        static assert(__traits(isScalar, T) == true);
 }
 
 /********************************************************/
 
-void test3()
+void test_isIntegral()
 {
-    assert(__traits(isIntegral) == false);
-    assert(__traits(isIntegral, myint) == true);
-    assert(__traits(isIntegral, S) == false);
-    assert(__traits(isIntegral, C) == false);
-    assert(__traits(isIntegral, E) == true);
-    assert(__traits(isIntegral, void*) == false);
-    assert(__traits(isIntegral, void[]) == false);
-    assert(__traits(isIntegral, void[3]) == false);
-    assert(__traits(isIntegral, int[char]) == false);
-    assert(__traits(isIntegral, int, int) == true);
-    assert(__traits(isIntegral, int, S) == false);
-
-    assert(__traits(isIntegral, void) == false);
-    assert(__traits(isIntegral, byte) == true);
-    assert(__traits(isIntegral, ubyte) == true);
-    assert(__traits(isIntegral, short) == true);
-    assert(__traits(isIntegral, ushort) == true);
-    assert(__traits(isIntegral, int) == true);
-    assert(__traits(isIntegral, uint) == true);
-    assert(__traits(isIntegral, long) == true);
-    assert(__traits(isIntegral, ulong) == true);
-    assert(__traits(isIntegral, float) == false);
-    assert(__traits(isIntegral, double) == false);
-    assert(__traits(isIntegral, real) == false);
-    assert(__traits(isIntegral, char) == true);
-    assert(__traits(isIntegral, wchar) == true);
-    assert(__traits(isIntegral, dchar) == true);
+    static assert(__traits(isIntegral) == false);
+    static assert(__traits(isIntegral, myint) == true);
+    static assert(__traits(isIntegral, S) == false);
+    static assert(__traits(isIntegral, C) == false);
+    static assert(__traits(isIntegral, E) == true);
+    static assert(__traits(isIntegral, void*) == false);
+    static assert(__traits(isIntegral, void[]) == false);
+    static assert(__traits(isIntegral, void[3]) == false);
+    static assert(__traits(isIntegral, int[char]) == false);
+    static assert(__traits(isIntegral, int, int) == true);
+    static assert(__traits(isIntegral, short, int) == true);
+    static assert(__traits(isIntegral, int, S) == false);
+    static assert(__traits(isIntegral, S, int) == false);
+    static assert(__traits(isIntegral, void) == false);
+    static foreach (T; IntegralTypes)
+        static assert(__traits(isIntegral, T) == true);
 }
 
 /********************************************************/
 
-void test4()
+void test_isFloating()
 {
-    assert(__traits(isFloating) == false);
-    assert(__traits(isFloating, S) == false);
-    assert(__traits(isFloating, C) == false);
-    assert(__traits(isFloating, E) == false);
-    assert(__traits(isFloating, void*) == false);
-    assert(__traits(isFloating, void[]) == false);
-    assert(__traits(isFloating, void[3]) == false);
-    assert(__traits(isFloating, int[char]) == false);
-    assert(__traits(isFloating, float, float) == true);
-    assert(__traits(isFloating, float, S) == false);
-
-    assert(__traits(isFloating, void) == false);
-    assert(__traits(isFloating, byte) == false);
-    assert(__traits(isFloating, ubyte) == false);
-    assert(__traits(isFloating, short) == false);
-    assert(__traits(isFloating, ushort) == false);
-    assert(__traits(isFloating, int) == false);
-    assert(__traits(isFloating, uint) == false);
-    assert(__traits(isFloating, long) == false);
-    assert(__traits(isFloating, ulong) == false);
-    assert(__traits(isFloating, float) == true);
-    assert(__traits(isFloating, double) == true);
-    assert(__traits(isFloating, real) == true);
-    assert(__traits(isFloating, char) == false);
-    assert(__traits(isFloating, wchar) == false);
-    assert(__traits(isFloating, dchar) == false);
+    static assert(__traits(isFloating) == false);
+    static assert(__traits(isFloating, S) == false);
+    static assert(__traits(isFloating, C) == false);
+    static assert(__traits(isFloating, E) == false);
+    static assert(__traits(isFloating, void*) == false);
+    static assert(__traits(isFloating, void[]) == false);
+    static assert(__traits(isFloating, void[3]) == false);
+    static assert(__traits(isFloating, int[char]) == false);
+    static assert(__traits(isFloating, FloatingTypes[0], FloatingTypes[0]) == true);
+    static assert(__traits(isFloating, float, S) == false);
+    static assert(__traits(isFloating, S, float) == false);
+    static assert(__traits(isFloating, void) == false);
+    static foreach (T; IntegralTypes)
+        static assert(__traits(isFloating, T) == false);
+    static foreach (T; FloatingTypes)
+        static assert(__traits(isFloating, T) == true);
 }
 
 /********************************************************/
 
-void test5()
+void test_isUnsigned()
 {
-    assert(__traits(isUnsigned) == false);
-    assert(__traits(isUnsigned, S) == false);
-    assert(__traits(isUnsigned, C) == false);
-    assert(__traits(isUnsigned, E) == false);
-    assert(__traits(isUnsigned, void*) == false);
-    assert(__traits(isUnsigned, void[]) == false);
-    assert(__traits(isUnsigned, void[3]) == false);
-    assert(__traits(isUnsigned, int[char]) == false);
-    assert(__traits(isUnsigned, float, float) == false);
-    assert(__traits(isUnsigned, float, S) == false);
-
-    assert(__traits(isUnsigned, void) == false);
-    assert(__traits(isUnsigned, byte) == false);
-    assert(__traits(isUnsigned, ubyte) == true);
-    assert(__traits(isUnsigned, short) == false);
-    assert(__traits(isUnsigned, ushort) == true);
-    assert(__traits(isUnsigned, int) == false);
-    assert(__traits(isUnsigned, uint) == true);
-    assert(__traits(isUnsigned, long) == false);
-    assert(__traits(isUnsigned, ulong) == true);
-    assert(__traits(isUnsigned, float) == false);
-    assert(__traits(isUnsigned, double) == false);
-    assert(__traits(isUnsigned, real) == false);
-    assert(__traits(isUnsigned, char) == true);
-    assert(__traits(isUnsigned, wchar) == true);
-    assert(__traits(isUnsigned, dchar) == true);
+    static assert(__traits(isUnsigned) == false);
+    static assert(__traits(isUnsigned, S) == false);
+    static assert(__traits(isUnsigned, C) == false);
+    static assert(__traits(isUnsigned, E) == false);
+    static assert(__traits(isUnsigned, void*) == false);
+    static assert(__traits(isUnsigned, void[]) == false);
+    static assert(__traits(isUnsigned, void[3]) == false);
+    static assert(__traits(isUnsigned, int[char]) == false);
+    static assert(__traits(isUnsigned, FloatingTypes[0], FloatingTypes[0]) == false);
+    static assert(__traits(isUnsigned, UnsignedTypes[0], UnsignedTypes[0]) == true);
+    static assert(__traits(isUnsigned, float, S) == false);
+    static assert(__traits(isUnsigned, S, float) == false);
+    static assert(__traits(isUnsigned, void) == false);
+    static assert(__traits(isUnsigned, byte) == false);
+    static assert(__traits(isUnsigned, ubyte) == true);
+    static assert(__traits(isUnsigned, short) == false);
+    static assert(__traits(isUnsigned, ushort) == true);
+    static assert(__traits(isUnsigned, int) == false);
+    static assert(__traits(isUnsigned, uint) == true);
+    static assert(__traits(isUnsigned, long) == false);
+    static assert(__traits(isUnsigned, ulong) == true);
+    static assert(__traits(isUnsigned, char) == true);
+    static assert(__traits(isUnsigned, wchar) == true);
+    static assert(__traits(isUnsigned, dchar) == true);
+    static foreach (T; FloatingTypes)
+        static assert(__traits(isUnsigned, T) == false);
+    static foreach (T; UnsignedTypes)
+        static assert(__traits(isUnsigned, T) == true);
 }
 
-/********************************************************/
-
-void test6()
+void test_isSigned()
 {
-    assert(__traits(isAssociativeArray) == false);
-    assert(__traits(isAssociativeArray, S) == false);
-    assert(__traits(isAssociativeArray, C) == false);
-    assert(__traits(isAssociativeArray, E) == false);
-    assert(__traits(isAssociativeArray, void*) == false);
-    assert(__traits(isAssociativeArray, void[]) == false);
-    assert(__traits(isAssociativeArray, void[3]) == false);
-    assert(__traits(isAssociativeArray, int[char]) == true);
-    assert(__traits(isAssociativeArray, float, float) == false);
-    assert(__traits(isAssociativeArray, float, S) == false);
-
-    assert(__traits(isAssociativeArray, void) == false);
-    assert(__traits(isAssociativeArray, byte) == false);
-    assert(__traits(isAssociativeArray, ubyte) == false);
-    assert(__traits(isAssociativeArray, short) == false);
-    assert(__traits(isAssociativeArray, ushort) == false);
-    assert(__traits(isAssociativeArray, int) == false);
-    assert(__traits(isAssociativeArray, uint) == false);
-    assert(__traits(isAssociativeArray, long) == false);
-    assert(__traits(isAssociativeArray, ulong) == false);
-    assert(__traits(isAssociativeArray, float) == false);
-    assert(__traits(isAssociativeArray, double) == false);
-    assert(__traits(isAssociativeArray, real) == false);
-    assert(__traits(isAssociativeArray, char) == false);
-    assert(__traits(isAssociativeArray, wchar) == false);
-    assert(__traits(isAssociativeArray, dchar) == false);
+    static assert(__traits(isSigned) == false);
+    static assert(__traits(isSigned, S) == false);
+    static assert(__traits(isSigned, C) == false);
+    static assert(__traits(isSigned, E) == true);
+    static assert(__traits(isSigned, void*) == false);
+    static assert(__traits(isSigned, void[]) == false);
+    static assert(__traits(isSigned, void[3]) == false);
+    static assert(__traits(isSigned, int[char]) == false);
+    static assert(__traits(isSigned, FloatingTypes[0], FloatingTypes[0]) == false);
+    static assert(__traits(isSigned, SignedTypes[0], SignedTypes[0]) == true);
+    static assert(__traits(isSigned, float, S) == false);
+    static assert(__traits(isSigned, S, float) == false);
+    static assert(__traits(isSigned, void) == false);
+    static assert(__traits(isSigned, byte) == true);
+    static assert(__traits(isSigned, ubyte) == false);
+    static assert(__traits(isSigned, short) == true);
+    static assert(__traits(isSigned, ushort) == false);
+    static assert(__traits(isSigned, int) == true);
+    static assert(__traits(isSigned, uint) == false);
+    static assert(__traits(isSigned, long) == true);
+    static assert(__traits(isSigned, ulong) == false);
+    static assert(__traits(isSigned, char) == false);
+    static assert(__traits(isSigned, wchar) == false);
+    static assert(__traits(isSigned, dchar) == false);
+    static foreach (T; FloatingTypes)
+        static assert(__traits(isSigned, T) == false);
+    static foreach (T; SignedTypes)
+        static assert(__traits(isSigned, T) == true);
 }
 
 /********************************************************/
 
-void test7()
+void test_isAssociativeArray()
 {
-    assert(__traits(isStaticArray) == false);
-    assert(__traits(isStaticArray, S) == false);
-    assert(__traits(isStaticArray, C) == false);
-    assert(__traits(isStaticArray, E) == false);
-    assert(__traits(isStaticArray, void*) == false);
-    assert(__traits(isStaticArray, void[]) == false);
-    assert(__traits(isStaticArray, void[3]) == true);
-    assert(__traits(isStaticArray, int[char]) == false);
-    assert(__traits(isStaticArray, float, float) == false);
-    assert(__traits(isStaticArray, float, S) == false);
-
-    assert(__traits(isStaticArray, void) == false);
-    assert(__traits(isStaticArray, byte) == false);
-    assert(__traits(isStaticArray, ubyte) == false);
-    assert(__traits(isStaticArray, short) == false);
-    assert(__traits(isStaticArray, ushort) == false);
-    assert(__traits(isStaticArray, int) == false);
-    assert(__traits(isStaticArray, uint) == false);
-    assert(__traits(isStaticArray, long) == false);
-    assert(__traits(isStaticArray, ulong) == false);
-    assert(__traits(isStaticArray, float) == false);
-    assert(__traits(isStaticArray, double) == false);
-    assert(__traits(isStaticArray, real) == false);
-    assert(__traits(isStaticArray, char) == false);
-    assert(__traits(isStaticArray, wchar) == false);
-    assert(__traits(isStaticArray, dchar) == false);
+    static assert(__traits(isAssociativeArray) == false);
+    static assert(__traits(isAssociativeArray, S) == false);
+    static assert(__traits(isAssociativeArray, C) == false);
+    static assert(__traits(isAssociativeArray, E) == false);
+    static assert(__traits(isAssociativeArray, void*) == false);
+    static assert(__traits(isAssociativeArray, void[]) == false);
+    static assert(__traits(isAssociativeArray, void[3]) == false);
+    static assert(__traits(isAssociativeArray, int[char]) == true);
+    static assert(__traits(isAssociativeArray, int[char]) == true);
+    static assert(__traits(isAssociativeArray, int[char], int[int]) == true);
+    static assert(__traits(isAssociativeArray, float, float) == false);
+    static assert(__traits(isAssociativeArray, float, S) == false);
+    static assert(__traits(isAssociativeArray, S, float) == false);
+    static assert(__traits(isAssociativeArray, void) == false);
+    static assert(__traits(isAssociativeArray, byte) == false);
+    static assert(__traits(isAssociativeArray, ubyte) == false);
+    static assert(__traits(isAssociativeArray, short) == false);
+    static assert(__traits(isAssociativeArray, ushort) == false);
+    static assert(__traits(isAssociativeArray, int) == false);
+    static assert(__traits(isAssociativeArray, uint) == false);
+    static assert(__traits(isAssociativeArray, long) == false);
+    static assert(__traits(isAssociativeArray, ulong) == false);
+    static assert(__traits(isAssociativeArray, float) == false);
+    static assert(__traits(isAssociativeArray, double) == false);
+    static assert(__traits(isAssociativeArray, real) == false);
+    static assert(__traits(isAssociativeArray, char) == false);
+    static assert(__traits(isAssociativeArray, wchar) == false);
+    static assert(__traits(isAssociativeArray, dchar) == false);
 }
 
 /********************************************************/
 
-void test8()
+void test_isStaticArray()
 {
-    assert(__traits(isAbstractClass) == false);
-    assert(__traits(isAbstractClass, S) == false);
-    assert(__traits(isAbstractClass, C) == false);
-    assert(__traits(isAbstractClass, AC) == true);
-    assert(__traits(isAbstractClass, E) == false);
-    assert(__traits(isAbstractClass, void*) == false);
-    assert(__traits(isAbstractClass, void[]) == false);
-    assert(__traits(isAbstractClass, void[3]) == false);
-    assert(__traits(isAbstractClass, int[char]) == false);
-    assert(__traits(isAbstractClass, float, float) == false);
-    assert(__traits(isAbstractClass, float, S) == false);
-
-    assert(__traits(isAbstractClass, void) == false);
-    assert(__traits(isAbstractClass, byte) == false);
-    assert(__traits(isAbstractClass, ubyte) == false);
-    assert(__traits(isAbstractClass, short) == false);
-    assert(__traits(isAbstractClass, ushort) == false);
-    assert(__traits(isAbstractClass, int) == false);
-    assert(__traits(isAbstractClass, uint) == false);
-    assert(__traits(isAbstractClass, long) == false);
-    assert(__traits(isAbstractClass, ulong) == false);
-    assert(__traits(isAbstractClass, float) == false);
-    assert(__traits(isAbstractClass, double) == false);
-    assert(__traits(isAbstractClass, real) == false);
-    assert(__traits(isAbstractClass, char) == false);
-    assert(__traits(isAbstractClass, wchar) == false);
-    assert(__traits(isAbstractClass, dchar) == false);
-
-    assert(__traits(isAbstractClass, AC2) == true);
-    assert(__traits(isAbstractClass, AC3) == true);
+    static assert(__traits(isStaticArray) == false);
+    static assert(__traits(isStaticArray, S) == false);
+    static assert(__traits(isStaticArray, C) == false);
+    static assert(__traits(isStaticArray, E) == false);
+    static assert(__traits(isStaticArray, void*) == false);
+    static assert(__traits(isStaticArray, void[]) == false);
+    static assert(__traits(isStaticArray, void[3]) == true);
+    static assert(__traits(isStaticArray, void[3], void[3]) == true);
+    static assert(__traits(isStaticArray, int[char]) == false);
+    static assert(__traits(isStaticArray, float, float) == false);
+    static assert(__traits(isStaticArray, float, S) == false);
+    static assert(__traits(isStaticArray, S, float) == false);
+    static assert(__traits(isStaticArray, void) == false);
+    static foreach (T; ScalarTypes)
+        static assert(__traits(isStaticArray, T) == false);
 }
 
-/********************************************************/
-
-void test9()
+void test_isDynamicArray()
 {
-    assert(__traits(isFinalClass) == false);
-    assert(__traits(isFinalClass, C) == false);
-    assert(__traits(isFinalClass, FC) == true);
+    static assert(__traits(isDynamicArray) == false);
+    static assert(__traits(isDynamicArray, S) == false);
+    static assert(__traits(isDynamicArray, C) == false);
+    static assert(__traits(isDynamicArray, E) == false);
+    static assert(__traits(isDynamicArray, void*) == false);
+    static assert(__traits(isDynamicArray, void[]) == true);
+    static assert(__traits(isDynamicArray, void[], void[]) == true);
+    static assert(__traits(isDynamicArray, void[], float) == false);
+    static assert(__traits(isDynamicArray, void[3]) == false);
+    static assert(__traits(isDynamicArray, int[char]) == false);
+    static assert(__traits(isDynamicArray, float, float) == false);
+    static assert(__traits(isDynamicArray, float, S) == false);
+    static assert(__traits(isDynamicArray, void) == false);
+    static foreach (T; ScalarTypes)
+        static assert(__traits(isDynamicArray, T) == false);
 }
 
-/********************************************************/
-
-void test11()
+void test_isArray()
 {
-    assert(__traits(isAbstractFunction, C.bar) == false);
-    assert(__traits(isAbstractFunction, S.bar) == false);
-    assert(__traits(isAbstractFunction, AC2.foo) == true);
+    static assert(__traits(isArray) == false);
+    static assert(__traits(isArray, S) == false);
+    static assert(__traits(isArray, C) == false);
+    static assert(__traits(isArray, E) == false);
+    static assert(__traits(isArray, void*) == false);
+    static assert(__traits(isArray, void[]) == true);
+    static assert(__traits(isArray, void[3]) == true);
+    static assert(__traits(isArray, void[3], void[3]) == true);
+    static assert(__traits(isArray, void[3], S) == false);
+    static assert(__traits(isArray, S, void[3]) == false);
+    static assert(__traits(isArray, float, float) == false);
+    static assert(__traits(isArray, float, S) == false);
+    static assert(__traits(isArray, void) == false);
+    static foreach (T; ScalarTypes)
+        static assert(__traits(isArray, T) == false);
 }
 
-/********************************************************/
-
-void test12()
+void test_isAggregate()
 {
-    assert(__traits(isFinalFunction, C.bar) == false);
-    assert(__traits(isFinalFunction, S.bar) == false);
-    assert(__traits(isFinalFunction, AC2.foo) == false);
-    assert(__traits(isFinalFunction, FC.foo) == true);
-    assert(__traits(isFinalFunction, C.foo) == true);
+    static assert(__traits(isAggregate) == false);
+    static assert(__traits(isAggregate, S) == true);
+    static assert(__traits(isAggregate, C) == true);
+    static assert(__traits(isAggregate, U) == true);
+    static assert(__traits(isAggregate, I) == true);
+    static assert(__traits(isAggregate, E) == false);
+    static assert(__traits(isAggregate, void*) == false);
+    static assert(__traits(isAggregate, float, float) == false);
+    static assert(__traits(isAggregate, float, S) == false);
+    static assert(__traits(isAggregate, S, float) == false);
+    static assert(__traits(isAggregate, S, S) == true);
+    static assert(__traits(isAggregate, void) == false);
+    static foreach (T; ScalarTypes)
+        static assert(__traits(isAggregate, T) == false);
 }
 
 /********************************************************/
 
-void test13()
+void test_isAbstractClass()
+{
+    static assert(__traits(isAbstractClass) == false);
+    static assert(__traits(isAbstractClass, S) == false);
+    static assert(__traits(isAbstractClass, C) == false);
+    static assert(__traits(isAbstractClass, AC) == true);
+    static assert(__traits(isAbstractClass, AC, AC) == true);
+    static assert(__traits(isAbstractClass, E) == false);
+    static assert(__traits(isAbstractClass, void*) == false);
+    static assert(__traits(isAbstractClass, void[]) == false);
+    static assert(__traits(isAbstractClass, void[3]) == false);
+    static assert(__traits(isAbstractClass, int[char]) == false);
+    static assert(__traits(isAbstractClass, float, float) == false);
+    static assert(__traits(isAbstractClass, float, S) == false);
+    static assert(__traits(isAbstractClass, S, float) == false);
+    static assert(__traits(isAbstractClass, void) == false);
+    static assert(__traits(isAbstractClass, AC2) == true);
+    static assert(__traits(isAbstractClass, AC3) == true);
+    static foreach (T; ScalarTypes)
+        static assert(__traits(isAbstractClass, T) == false);
+}
+
+/********************************************************/
+
+void test_isFinalClass()
+{
+    static assert(__traits(isFinalClass) == false);
+    static assert(__traits(isFinalClass, C) == false);
+    static assert(__traits(isFinalClass, FC) == true);
+    static assert(__traits(isFinalClass, FC, FC) == true);
+    static assert(__traits(isFinalClass, C, FC) == false);
+    static assert(__traits(isFinalClass, FC, C) == false);
+}
+
+/********************************************************/
+
+void test_isAbstractFunction()
+{
+    static assert(__traits(isAbstractFunction) == false);
+    static assert(__traits(isAbstractFunction, C.bar) == false);
+    static assert(__traits(isAbstractFunction, C.tbar) == false);
+    static assert(__traits(isAbstractFunction, C.tbar!()) == false);
+    static assert(__traits(isAbstractFunction, S.bar) == false);
+    static assert(__traits(isAbstractFunction, S.tbar) == false);
+    static assert(__traits(isAbstractFunction, S.tbar!()) == false);
+    static assert(__traits(isAbstractFunction, AC2.foo) == true);
+    static assert(__traits(isAbstractFunction, AC2.foo, AC2.foo) == true);
+    static assert(__traits(isAbstractFunction, C.bar, AC2.foo) == false);
+    static assert(__traits(isAbstractFunction, AC2.foo, C.bar) == false);
+}
+
+/********************************************************/
+
+void test_isFinalFunction()
+{
+    static assert(__traits(isFinalFunction) == false);
+    static assert(__traits(isFinalFunction, C.bar) == false);
+    static assert(__traits(isFinalFunction, C.tbar) == false);
+    static assert(__traits(isFinalFunction, S.bar) == false);
+    static assert(__traits(isFinalFunction, S.tbar) == false);
+    static assert(__traits(isFinalFunction, AC2.foo) == false);
+    static assert(__traits(isFinalFunction, FC.foo) == true);
+    static assert(__traits(isFinalFunction, FC.foo, FC.foo) == true);
+    static assert(__traits(isFinalFunction, C.foo) == true);
+    static assert(__traits(isFinalFunction, C.foo, C.foo) == true);
+    static assert(__traits(isFinalFunction, S.bar, C.foo) == false);
+    static assert(__traits(isFinalFunction, C.foo, S.bar) == false);
+}
+
+void test_isNormalFunction() // mimics `std.traits.isFunction`
+{
+    static assert(__traits(isNormalFunction) == false);
+    static assert(__traits(isNormalFunction, C.bar) == true);
+    static assert(__traits(isNormalFunction, C.tbar) == false);
+    static assert(__traits(isNormalFunction, C.tbar!()) == true);
+    static assert(__traits(isNormalFunction, C.foo) == true);
+    static assert(__traits(isNormalFunction, C.del) == false);
+    static assert(__traits(isNormalFunction, S.bar) == true);
+    static assert(__traits(isNormalFunction, S.tbar) == false);
+    static assert(__traits(isNormalFunction, S.tbar!()) == true);
+    static assert(__traits(isNormalFunction, AC2.foo) == true);
+    static assert(__traits(isNormalFunction, FC.foo) == true);
+    static assert(__traits(isNormalFunction, FC.foo, FC.foo) == true);
+    static assert(__traits(isNormalFunction, C.foo) == true);
+    static assert(__traits(isNormalFunction, C.foo, C.foo) == true);
+    static assert(__traits(isNormalFunction, S.bar, C.foo) == true);
+    static assert(__traits(isNormalFunction, C.foo, S.bar) == true);
+    static assert(__traits(isNormalFunction, C.bar) == true);
+    static assert(__traits(isNormalFunction, S.bar) == true);
+    static assert(__traits(isNormalFunction, AC2.foo) == true);
+    static assert(__traits(isNormalFunction, AC2.foo, AC2.foo) == true);
+    static assert(__traits(isNormalFunction, C.bar, AC2.foo) == true);
+    static assert(__traits(isNormalFunction, AC2.foo, C.bar) == true);
+}
+
+void test_isTemplate()
+{
+    struct S {}
+    struct C {}
+    struct St() {}
+    class Ct() {}
+    static assert(__traits(isTemplate) == false);
+    static assert(__traits(isTemplate, St) == true);
+    static assert(__traits(isTemplate, St, Ct) == true);
+    static assert(__traits(isTemplate, St, St) == true);
+    static assert(__traits(isTemplate, Ct, Ct) == true);
+    static assert(__traits(isTemplate, St, S) == false);
+    static assert(__traits(isTemplate, S, S) == false);
+    static foreach (T; ArithmeticTypes)
+        static assert(__traits(isTemplate, T) == false);
+}
+
+/********************************************************/
+
+void test_getMember()
 {
     S s;
     __traits(getMember, s, "x") = 7;
@@ -340,11 +438,19 @@ void test13()
     assert(i == 7);
     auto j = __traits(getMember, S, "z");
     assert(j == 5);
+}
 
-    assert(__traits(hasMember, s, "x") == true);
-    assert(__traits(hasMember, S, "z") == true);
-    assert(__traits(hasMember, S, "aaa") == false);
+void test_hasMember()
+{
+    S s;
+    static assert(__traits(hasMember, s, "x") == true);
+    static assert(__traits(hasMember, S, "z") == true);
+    static assert(__traits(hasMember, S, "aaa") == false);
+}
 
+void test_classInstanceSize()
+{
+    S s;
     auto k = __traits(classInstanceSize, C);
     assert(k == C.classinfo.initializer.length);
 }
@@ -364,7 +470,7 @@ auto toDelegate7123(F)(F fp)
 }
 
 
-void test7123()
+void test_toDelegate7123()
 {
     static assert(is(typeof(toDelegate7123(&main))));
 }
@@ -379,7 +485,7 @@ class D14
     int foo(int) { return 0; }
 }
 
-void test14()
+void test_derivedMembers()
 {
     auto a = [__traits(derivedMembers, D14)];
     assert(a == ["__ctor","__dtor","foo", "__xdtor"]);
@@ -402,14 +508,15 @@ struct S16 { }
 int foo16();
 int bar16();
 
-void test16()
+void test_isSame()
 {
-    assert(__traits(isSame, foo16, foo16) == true);
-    assert(__traits(isSame, foo16, bar16) == false);
-    assert(__traits(isSame, foo16, S16) == false);
-    assert(__traits(isSame, S16, S16) == true);
-    assert(__traits(isSame, core, S16) == false);
-    assert(__traits(isSame, core, core) == true);
+    static assert(__traits(isSame, foo16, foo16) == true);
+    static assert(__traits(isSame, foo16, bar16) == false);
+    static assert(__traits(isSame, foo16, S16) == false);
+    static assert(__traits(isSame, S16, S16) == true);
+    static assert(__traits(isSame, core, S16) == false);
+    static assert(__traits(isSame, core, core) == true);
+    static assert(__traits(isSame, core, core) == true);
 }
 
 /********************************************************/
@@ -422,18 +529,18 @@ struct S17
 
 int foo17();
 
-void test17()
+void test_compiles()
 {
-    assert(__traits(compiles) == false);
-    assert(__traits(compiles, foo17) == true);
-    assert(__traits(compiles, foo17 + 1) == true);
-    assert(__traits(compiles, &foo17 + 1) == false);
-    assert(__traits(compiles, typeof(1)) == true);
-    assert(__traits(compiles, S17.s1) == true);
-    assert(__traits(compiles, S17.s3) == false);
-    assert(__traits(compiles, 1,2,3,int,long,core) == true);
-    assert(__traits(compiles, 3[1]) == false);
-    assert(__traits(compiles, 1,2,3,int,long,3[1]) == false);
+    static assert(__traits(compiles) == false);
+    static assert(__traits(compiles, foo17) == true);
+    static assert(__traits(compiles, foo17 + 1) == true);
+    static assert(__traits(compiles, &foo17 + 1) == false);
+    static assert(__traits(compiles, typeof(1)) == true);
+    static assert(__traits(compiles, S17.s1) == true);
+    static assert(__traits(compiles, S17.s3) == false);
+    static assert(__traits(compiles, 1,2,3,int,long,core) == true);
+    static assert(__traits(compiles, 3[1]) == false);
+    static assert(__traits(compiles, 1,2,3,int,long,3[1]) == false);
 }
 
 /********************************************************/
@@ -445,7 +552,7 @@ interface D18
     int foo(int);
 }
 
-void test18()
+void test_allMembers_D18()
 {
     auto a = __traits(allMembers, D18);
     assert(a.length == 1);
@@ -465,7 +572,7 @@ class C19
 }
 
 
-void test19()
+void test_allMembers_C19()
 {
     auto a = __traits(allMembers, C19);
     assert(a.length == 9);
@@ -477,37 +584,50 @@ void test19()
 
 /********************************************************/
 
-void test20()
+void test_isRef_isOut_isLazy()
 {
     void fooref(ref int x)
     {
         static assert(__traits(isRef, x));
+        static assert(__traits(isRef, x, x));
         static assert(!__traits(isOut, x));
+        static assert(!__traits(isOut, x, x));
         static assert(!__traits(isLazy, x));
+        static assert(!__traits(isLazy, x, x));
     }
 
     void fooout(out int x)
     {
         static assert(!__traits(isRef, x));
+        static assert(!__traits(isRef, x, x));
         static assert(__traits(isOut, x));
+        static assert(__traits(isOut, x, x));
         static assert(!__traits(isLazy, x));
+        static assert(!__traits(isLazy, x, x));
     }
 
     void foolazy(lazy int x)
     {
         static assert(!__traits(isRef, x));
+        static assert(!__traits(isRef, x, x));
         static assert(!__traits(isOut, x));
+        static assert(!__traits(isOut, x, x));
         static assert(__traits(isLazy, x));
+        static assert(__traits(isLazy, x, x));
     }
 }
 
 /********************************************************/
 
-void test21()
+void test_isStaticFunction()
 {
-    assert(__traits(isStaticFunction, C.bar) == false);
-    assert(__traits(isStaticFunction, C.abc) == true);
-    assert(__traits(isStaticFunction, S.bar) == false);
+    static assert(__traits(isStaticFunction, C.bar) == false);
+    static assert(__traits(isStaticFunction, C.bar, C.bar) == false);
+    static assert(__traits(isStaticFunction, C.abc) == true);
+    static assert(__traits(isStaticFunction, C.abc, C.abc) == true);
+    static assert(__traits(isStaticFunction, S.bar) == false);
+    static assert(__traits(isStaticFunction, C.abc, S.bar) == false);
+    static assert(__traits(isStaticFunction, S.bar, C.abc) == false);
 }
 
 /********************************************************/
@@ -520,7 +640,7 @@ class D22
     int foo(int) { return 2; }
 }
 
-void test22()
+void test_getOverloads()
 {
     D22 d = new D22();
 
@@ -548,7 +668,7 @@ string toString23(E)(E value) if (is(E == enum)) {
 
 enum OddWord { acini, alembicated, prolegomena, aprosexia }
 
-void test23()
+void test_allMembers_toString23()
 {
    auto w = OddWord.alembicated;
    assert(toString23(w) == "alembicated");
@@ -567,7 +687,7 @@ static assert(__traits(getVisibility, __traits(getOverloads, Test24, "test24")[1
 /********************************************************/
 // https://issues.dlang.org/show_bug.cgi?id=1369
 
-void test1369()
+void test_getMember_issue1369()
 {
     class C1
     {
@@ -694,6 +814,7 @@ class DD
 }
 
 static assert(__traits(isVirtualMethod, DD.YYY) == false);
+static assert(__traits(isVirtualMethod, DD.YYY, DD.YYY) == false);
 static assert(__traits(getVirtualMethods, DD, "YYY").length == 0);
 
 class EE
@@ -707,6 +828,7 @@ class FF : EE
 }
 
 static assert(__traits(isVirtualMethod, FF.YYY));
+static assert(__traits(isVirtualMethod, FF.YYY, FF.YYY));
 static assert(__traits(getVirtualMethods, FF, "YYY").length == 1);
 
 /********************************************************/
@@ -723,7 +845,7 @@ struct S7608b
     int y;
 }
 template TypeTuple7608(T...){ alias T TypeTuple7608; }
-void test7608()
+void test_issue7608()
 {
     alias TypeTuple7608!(__traits(allMembers, S7608a!false)) MembersA;
     static assert(MembersA.length == 1);
@@ -737,7 +859,7 @@ void test7608()
 /********************************************************/
 // https://issues.dlang.org/show_bug.cgi?id=7858
 
-void test7858()
+void test_issue7858()
 {
     class C
     {
@@ -979,7 +1101,7 @@ struct S9091
     }
 }
 
-void test9091()
+void test_issue9091()
 {
     auto c = new C9091();
     c.test();
@@ -1068,7 +1190,7 @@ void test9237()
 /*************************************************************/
 // https://issues.dlang.org/show_bug.cgi?id=5978
 
-void test5978()
+void test_issue5978()
 {
     () {
         int x;
@@ -1080,7 +1202,7 @@ void test5978()
 
 template T7408() { }
 
-void test7408()
+void test_issue7408()
 {
     auto x = T7408!().stringof;
     auto y = T7408!().mangleof;
@@ -1099,7 +1221,7 @@ class C9552
     int f(int n) { return n * 2; }
 }
 
-void test9552()
+void test_issue9552()
 {
     auto c = new C9552;
     auto dg1 = &(__traits(getOverloads, c, "f")[0]); // DMD crashes
@@ -1110,7 +1232,7 @@ void test9552()
 
 /*************************************************************/
 
-void test9136()
+void test_issue9136()
 {
     int x;
     struct S1 { void f() { x++; } }
@@ -1230,7 +1352,7 @@ struct S10096
     string s;
 }
 
-void test10096()
+void test_issue10096()
 {
     S10096 s = S10096(1, "");
     auto x = foo10096!s;
@@ -1266,8 +1388,11 @@ class TestIsOverrideFunctionPass : TestIsOverrideFunctionBase
 
 void test_isOverrideFunction ()
 {
-    assert(__traits(isOverrideFunction, TestIsOverrideFunctionPass.bar) == true);
-    assert(__traits(isOverrideFunction, TestIsOverrideFunctionBase.bar) == false);
+    static assert(__traits(isOverrideFunction, TestIsOverrideFunctionPass.bar) == true);
+    static assert(__traits(isOverrideFunction, TestIsOverrideFunctionPass.bar, TestIsOverrideFunctionPass.bar) == true);
+    static assert(__traits(isOverrideFunction, TestIsOverrideFunctionBase.bar, TestIsOverrideFunctionBase.bar) == false);
+    static assert(__traits(isOverrideFunction, TestIsOverrideFunctionPass.bar, TestIsOverrideFunctionBase.bar) == false);
+    static assert(__traits(isOverrideFunction, TestIsOverrideFunctionBase.bar, TestIsOverrideFunctionPass.bar) == false);
 }
 
 /********************************************************/
@@ -1342,7 +1467,7 @@ auto f12237(T)(T a)
         return 10;
 }
 
-void test12237()
+void test_issue12237()
 {
     assert(f12237(1) == 10);
 
@@ -1373,7 +1498,7 @@ alias test17495 = async!(int, int);
 /********************************************************/
 // https://issues.dlang.org/show_bug.cgi?id=15094
 
-void test15094()
+void test_issue15094()
 {
     static struct Foo { int i; }
     static struct Bar { Foo foo; }
@@ -1385,11 +1510,14 @@ void test15094()
 
 /********************************************************/
 
-void testIsDisabled()
+void test_isDisabled()
 {
     static assert(__traits(isDisabled, D1.true_));
+    static assert(__traits(isDisabled, D1.true_, D1.true_));
+    static assert(!__traits(isDisabled, D1.true_, D1.false_));
     static assert(!__traits(isDisabled, D1.false_));
     static assert(!__traits(isDisabled, D1));
+    static assert(!__traits(isDisabled, D1, D1));
 }
 
 /********************************************************/
@@ -1411,41 +1539,49 @@ static assert(
 
 int main()
 {
-    test1();
-    test2();
-    test3();
-    test4();
-    test5();
-    test6();
-    test7();
-    test8();
-    test9();
-    test11();
-    test12();
-    test13();
-    test7123();
-    test14();
-    test16();
-    test17();
-    test18();
-    test19();
-    test20();
-    test21();
-    test22();
-    test23();
-    test1369();
-    test7608();
-    test7858();
-    test9091();
-    test5978();
-    test7408();
-    test9552();
-    test9136();
-    test10096();
+    test_isArithmetic();
+    test_isScalar();
+    test_isIntegral();
+    test_isFloating();
+    test_isUnsigned();
+    test_isSigned();
+    test_isAssociativeArray();
+    test_isStaticArray();
+    test_isDynamicArray();
+    test_isArray();
+    test_isAbstractClass();
+    test_isFinalClass();
+    test_isAbstractFunction();
+    test_isFinalFunction();
+    test_isNormalFunction();
+    test_isTemplate();
+    test_getMember();
+    test_hasMember();
+    test_classInstanceSize();
+    test_toDelegate7123();
+    test_derivedMembers();
+    test_isSame();
+    test_compiles();
+    test_allMembers_D18();
+    test_allMembers_C19();
+    test_isRef_isOut_isLazy();
+    test_isStaticFunction();
+    test_getOverloads();
+    test_allMembers_toString23();
+    test_getMember_issue1369();
+    test_issue7608();
+    test_issue7858();
+    test_issue9091();
+    test_issue5978();
+    test_issue7408();
+    test_issue9552();
+    test_issue9136();
+    test_issue10096();
     test_getUnitTests();
     test_isOverrideFunction();
-    test12237();
-    test15094();
+    test_issue12237();
+    test_issue15094();
+    test_isDisabled();
 
     printf("Success\n");
     return 0;

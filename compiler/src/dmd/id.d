@@ -454,6 +454,7 @@ immutable Msgtable[] msgtable =
     { "ctfeWrite", "__ctfeWrite" },
 
     // Traits
+    { "isAggregate" },
     { "isAbstractClass" },
     { "isArithmetic" },
     { "isAssociativeArray" },
@@ -469,9 +470,13 @@ immutable Msgtable[] msgtable =
     { "isIntegral" },
     { "isScalar" },
     { "isStaticArray" },
+    { "isDynamicArray" },
+    { "isArray" },
     { "isUnsigned" },
+    { "isSigned" },
     { "isVirtualFunction" },
     { "isVirtualMethod" },
+    { "isNormalFunction" },
     { "isAbstractFunction" },
     { "isFinalFunction" },
     { "isOverrideFunction" },

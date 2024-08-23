@@ -8908,6 +8908,7 @@ struct Id final
     static Identifier* outpw;
     static Identifier* builtinsModuleName;
     static Identifier* ctfeWrite;
+    static Identifier* isAggregate;
     static Identifier* isAbstractClass;
     static Identifier* isArithmetic;
     static Identifier* isAssociativeArray;
@@ -8923,9 +8924,13 @@ struct Id final
     static Identifier* isIntegral;
     static Identifier* isScalar;
     static Identifier* isStaticArray;
+    static Identifier* isDynamicArray;
+    static Identifier* isArray;
     static Identifier* isUnsigned;
+    static Identifier* isSigned;
     static Identifier* isVirtualFunction;
     static Identifier* isVirtualMethod;
+    static Identifier* isNormalFunction;
     static Identifier* isAbstractFunction;
     static Identifier* isFinalFunction;
     static Identifier* isOverrideFunction;

@@ -464,6 +464,10 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
     {
         return isTypeX(t => t.isUnsigned());
     }
+    if (e.ident == Id.isSigned)
+    {
+        return isTypeX(t => t.isIntegral && !t.isUnsigned());
+    }
     if (e.ident == Id.isAssociativeArray)
     {
         return isTypeX(t => t.toBasetype().ty == Taarray);
@@ -481,6 +485,19 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
     if (e.ident == Id.isStaticArray)
     {
         return isTypeX(t => t.toBasetype().ty == Tsarray);
+    }
+    if (e.ident == Id.isDynamicArray)
+    {
+        return isTypeX(t => t.toBasetype().ty == Tarray);
+    }
+    if (e.ident == Id.isArray)
+    {
+        return isTypeX(t => t.toBasetype().ty == Tsarray ||
+                            t.toBasetype().ty == Tarray);
+    }
+    if (e.ident == Id.isAggregate)
+    {
+        return isTypeX(t => t.isAggregate() !is null);
     }
     if (e.ident == Id.isAbstractClass)
     {
@@ -500,9 +517,6 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
     }
     if (e.ident == Id.isTemplate)
     {
-        if (dim != 1)
-            return dimError(1);
-
         return isDsymX((s)
         {
             if (!s.toAlias().isOverloadable())
@@ -615,16 +629,14 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
     }
     if (e.ident == Id.isDisabled)
     {
-        if (dim != 1)
-            return dimError(1);
-
         return isDeclX(f => f.isDisabled());
+    }
+    if (e.ident == Id.isNormalFunction)
+    {
+        return isFuncX(f => true);
     }
     if (e.ident == Id.isAbstractFunction)
     {
-        if (dim != 1)
-            return dimError(1);
-
         return isFuncX(f => f.isAbstract());
     }
     if (e.ident == Id.isVirtualFunction)
@@ -633,37 +645,22 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         // Deprecated in 2.101 - Can be removed from 2.121
         deprecation(e.loc, "`traits(isVirtualFunction)` is deprecated. Use `traits(isVirtualMethod)` instead");
 
-        if (dim != 1)
-            return dimError(1);
-
         return isFuncX(f => f.isVirtual());
     }
     if (e.ident == Id.isVirtualMethod)
     {
-        if (dim != 1)
-            return dimError(1);
-
         return isFuncX(f => f.isVirtualMethod());
     }
     if (e.ident == Id.isFinalFunction)
     {
-        if (dim != 1)
-            return dimError(1);
-
         return isFuncX(f => f.isFinalFunc());
     }
     if (e.ident == Id.isOverrideFunction)
     {
-        if (dim != 1)
-            return dimError(1);
-
         return isFuncX(f => f.isOverride());
     }
     if (e.ident == Id.isStaticFunction)
     {
-        if (dim != 1)
-            return dimError(1);
-
         return isFuncX(f => !f.needThis() && !f.isNested());
     }
     if (e.ident == Id.isModule)
@@ -682,23 +679,14 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
     }
     if (e.ident == Id.isRef)
     {
-        if (dim != 1)
-            return dimError(1);
-
         return isDeclX(d => d.isRef());
     }
     if (e.ident == Id.isOut)
     {
-        if (dim != 1)
-            return dimError(1);
-
         return isDeclX(d => d.isOut());
     }
     if (e.ident == Id.isLazy)
     {
-        if (dim != 1)
-            return dimError(1);
-
         return isDeclX(d => (d.storage_class & STC.lazy_) != 0);
     }
     if (e.ident == Id.identifier)
@@ -2282,7 +2270,7 @@ private void traitNotFound(TraitsExp e)
         initialized = true;     // lazy initialization
 
         // All possible traits
-        __gshared Identifier*[59] idents =
+        __gshared Identifier*[61] idents =
         [
             &Id.allMembers,
             &Id.child,
@@ -2312,7 +2300,9 @@ private void traitNotFound(TraitsExp e)
             &Id.hasMember,
             &Id.hasPostblit,
             &Id.identifier,
+            &Id.isAggregate,
             &Id.isAbstractClass,
+            &Id.isNormalFunction,
             &Id.isAbstractFunction,
             &Id.isArithmetic,
             &Id.isAssociativeArray,
