@@ -511,6 +511,15 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
     {
         return isTypeX(t => t.toBasetype().ty == Tsarray);
     }
+    if (e.ident == Id.isDynamicArray)
+    {
+        return isTypeX(t => t.toBasetype().ty == Tarray);
+    }
+    if (e.ident == Id.isArray)
+    {
+        return isTypeX(t => t.toBasetype().ty == Tsarray ||
+                            t.toBasetype().ty == Tarray);
+    }
     if (e.ident == Id.isAbstractClass)
     {
         return isTypeX((t)

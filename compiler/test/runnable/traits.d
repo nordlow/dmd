@@ -237,6 +237,13 @@ void test6()
 
 void test7()
 {
+    test7s();
+    test7d();
+    test7a();
+}
+
+void test7s()
+{
     assert(__traits(isStaticArray) == false);
     assert(__traits(isStaticArray, S) == false);
     assert(__traits(isStaticArray, C) == false);
@@ -263,6 +270,65 @@ void test7()
     assert(__traits(isStaticArray, char) == false);
     assert(__traits(isStaticArray, wchar) == false);
     assert(__traits(isStaticArray, dchar) == false);
+}
+
+void test7d()
+{
+    assert(__traits(isDynamicArray) == false);
+    assert(__traits(isDynamicArray, S) == false);
+    assert(__traits(isDynamicArray, C) == false);
+    assert(__traits(isDynamicArray, E) == false);
+    assert(__traits(isDynamicArray, void*) == false);
+    assert(__traits(isDynamicArray, void[]) == true);
+    assert(__traits(isDynamicArray, void[3]) == false);
+    assert(__traits(isDynamicArray, int[char]) == false);
+    assert(__traits(isDynamicArray, float, float) == false);
+    assert(__traits(isDynamicArray, float, S) == false);
+
+    assert(__traits(isDynamicArray, void) == false);
+    assert(__traits(isDynamicArray, byte) == false);
+    assert(__traits(isDynamicArray, ubyte) == false);
+    assert(__traits(isDynamicArray, short) == false);
+    assert(__traits(isDynamicArray, ushort) == false);
+    assert(__traits(isDynamicArray, int) == false);
+    assert(__traits(isDynamicArray, uint) == false);
+    assert(__traits(isDynamicArray, long) == false);
+    assert(__traits(isDynamicArray, ulong) == false);
+    assert(__traits(isDynamicArray, float) == false);
+    assert(__traits(isDynamicArray, double) == false);
+    assert(__traits(isDynamicArray, real) == false);
+    assert(__traits(isDynamicArray, char) == false);
+    assert(__traits(isDynamicArray, wchar) == false);
+    assert(__traits(isDynamicArray, dchar) == false);
+}
+
+void test7a()
+{
+    assert(__traits(isArray) == false);
+    assert(__traits(isArray, S) == false);
+    assert(__traits(isArray, C) == false);
+    assert(__traits(isArray, E) == false);
+    assert(__traits(isArray, void*) == false);
+    assert(__traits(isArray, void[]) == true);
+    assert(__traits(isArray, void[3]) == true);
+    assert(__traits(isArray, float, float) == false);
+    assert(__traits(isArray, float, S) == false);
+
+    assert(__traits(isArray, void) == false);
+    assert(__traits(isArray, byte) == false);
+    assert(__traits(isArray, ubyte) == false);
+    assert(__traits(isArray, short) == false);
+    assert(__traits(isArray, ushort) == false);
+    assert(__traits(isArray, int) == false);
+    assert(__traits(isArray, uint) == false);
+    assert(__traits(isArray, long) == false);
+    assert(__traits(isArray, ulong) == false);
+    assert(__traits(isArray, float) == false);
+    assert(__traits(isArray, double) == false);
+    assert(__traits(isArray, real) == false);
+    assert(__traits(isArray, char) == false);
+    assert(__traits(isArray, wchar) == false);
+    assert(__traits(isArray, dchar) == false);
 }
 
 /********************************************************/
