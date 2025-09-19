@@ -4537,7 +4537,7 @@ void resolve(Type mt, Loc loc, Scope* sc, out Expression pe, out Type pt, out Ds
             // f might be a unittest declaration which is incomplete when compiled
             // without -unittest. That causes a segfault in checkForwardRef, see
             // https://issues.dlang.org/show_bug.cgi?id=20626
-            if ((!f.isUnitTestDeclaration() || global.params.useUnitTests) && checkForwardRef(f, loc))
+            if ((!f.isUnitTestDeclaration() || global.params.useUnitTest(f)) && checkForwardRef(f, loc))
                 goto Lerr;
         }
         if (auto f = isFuncAddress(mt.exp))

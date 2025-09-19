@@ -454,7 +454,7 @@ void FuncDeclaration_toObjFile(FuncDeclaration fd, bool multiobj)
         return;
 
     UnitTestDeclaration ud = fd.isUnitTestDeclaration();
-    if (ud && !global.params.useUnitTests)
+    if (ud && !global.params.useUnitTest(ud))
         return;
 
     import dmd.timetrace;

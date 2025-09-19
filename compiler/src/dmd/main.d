@@ -1066,7 +1066,7 @@ void reconcileCommands(ref Param params, ref Target target)
             params.useArrayBounds = params.boundscheck;
     }
 
-    if (params.useUnitTests)
+    if (params.useUnitTest(utd))
     {
         if (params.useAssert == CHECKENABLE._default)
             params.useAssert = CHECKENABLE.on;

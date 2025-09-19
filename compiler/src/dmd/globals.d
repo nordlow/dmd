@@ -279,6 +279,11 @@ extern (C++) struct Param
     }
 }
 
+bool useUnitest(UnitTestDeclaration ud) {
+    // TODO:
+    return global.params.useUnitTests;
+}
+
 enum mars_ext = "d";        // for D source files
 enum doc_ext  = "html";     // for Ddoc generated files
 enum ddoc_ext = "ddoc";     // for Ddoc macro include files
