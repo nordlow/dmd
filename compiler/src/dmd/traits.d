@@ -566,7 +566,8 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
         }
         return True();
     }
-    if (e.ident == Id.hasCopyConstructor ||
+    if (e.ident == Id.needsCopyConstruction ||
+        e.ident == Id.hasCopyConstructor ||
         e.ident == Id.hasMoveConstructor ||
         e.ident == Id.hasPostblit)
     {
@@ -582,6 +583,9 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
             return ErrorExp.get();
         }
 
+        if (e.ident == Id.needsCopyConstruction)
+			return t.needsCopyOrPostblit() ? True() : False;
+
         Type tb = t.baseElemOf();
         auto ts = tb.isTypeStruct();
         if (auto sd = ts ? ts.sym : null)
@@ -589,7 +593,7 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
             bool result;
             if (e.ident == Id.hasPostblit)
                 result = sd.postblit !is null;
-            else if (e.ident == Id. hasCopyConstructor)
+            else if (e.ident == Id.hasCopyConstructor)
                 result = sd.hasCopyCtor;
             else
                 result = sd.hasMoveCtor;
