@@ -4701,6 +4701,7 @@ private extern(C++) final class DsymbolSemanticVisitor : Visitor
     {
         if (utd.semanticRun >= PASS.semanticdone)
             return;
+
         if (utd._scope)
         {
             sc = utd._scope;
@@ -4708,8 +4709,8 @@ private extern(C++) final class DsymbolSemanticVisitor : Visitor
         }
 
         utd.visibility = sc.visibility;
-
         utd.parent = sc.parent;
+
         Dsymbol p = utd.parent.pastMixin();
         if (!p.isScopeDsymbol())
         {
@@ -4719,7 +4720,14 @@ private extern(C++) final class DsymbolSemanticVisitor : Visitor
             return;
         }
 
-        if (global.params.useUnitTests)
+        auto use = global.params.useUnitTests;
+        if (use && global.params.useUnitTestsRootOnly)
+        {
+            auto m = sc._module;
+            if (m && !m.isRoot())
+                use = false;
+        }
+        if (use)
         {
             if (!utd.type)
                 utd.type = new TypeFunction(ParameterList(), Type.tvoid, LINK.d, utd.storage_class);
