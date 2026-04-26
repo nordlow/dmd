@@ -330,6 +330,7 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
 
     if (e.ident != Id.compiles &&
         e.ident != Id.isSame &&
+        e.ident != Id.indexOf &&
         e.ident != Id.identifier &&
         e.ident != Id.getProtection && e.ident != Id.getVisibility &&
         e.ident != Id.getAttributes)
@@ -1965,6 +1966,31 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
                 return False();
         return True();
     }
+    if (e.ident == Id.indexOf)
+    {
+        if (dim != 2)
+            return dimError(2);
+        // Like isSame, semanticTiargs may expand the haystack in place,
+        // so we isolate it in its own list before calling semantic.
+        Objects ob1;
+        ob1.push((*e.args)[0]);
+        Objects ob2;
+        ob2.push((*e.args)[1]);
+        if (!TemplateInstance_semanticTiargs(e.loc, sc, &ob1, 0))
+            return ErrorExp.get();
+        if (!TemplateInstance_semanticTiargs(e.loc, sc, &ob2, 0))
+            return ErrorExp.get();
+        if (ob1.length != 1)
+        {
+            error(e.loc, "first argument to `__traits(indexOf)` must be a single value, not a sequence");
+            return ErrorExp.get();
+        }
+        auto oNeedle = ob1[0];
+        foreach (size_t i, o; ob2)
+            if (isSame(o, oNeedle, sc))
+                return new IntegerExp(e.loc, i, Type.tint32);
+        return IntegerExp.literal!(-1);
+    }
     if (e.ident == Id.getUnitTests)
     {
         if (dim != 1)
@@ -2418,7 +2444,7 @@ private void traitNotFound(TraitsExp e)
         initialized = true;     // lazy initialization
 
         // All possible traits
-        __gshared Identifier*[60] idents =
+        __gshared Identifier*[61] idents =
         [
             &Id.allMembers,
             &Id.child,
@@ -2471,6 +2497,7 @@ private void traitNotFound(TraitsExp e)
             &Id.isRef,
             &Id.isReturnOnStack,
             &Id.isSame,
+            &Id.indexOf,
             &Id.isScalar,
             &Id.isStaticArray,
             &Id.isStaticFunction,
