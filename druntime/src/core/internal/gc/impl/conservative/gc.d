@@ -105,6 +105,15 @@ private
     }
 }
 
+/++ Ignore `pointerTagBits` top-most bits of addressed when scanning.
+ 	See_Also: Top-Byte-Ignore (TBI) in Arm processors.
+ +/
+version (D_LP64)
+{
+    enum pointerTagBits = 8;
+    enum size_t pointerAddressMask = ~(0xFFUL << (64 - pointerTagBits));
+}
+
 alias gc_t = GC;
 
 /* ============================ GC =============================== */
@@ -2033,6 +2042,8 @@ struct Gcx
 
     Pool* findPool(void* p) pure nothrow @nogc
     {
+        // Ensure findPool looks up the underlying memory block, not the tag
+        version (D_LP64) p = cast(typeof(p))(cast(size_t)p & pointerAddressMask);
         return pooltable.findPool(p);
     }
 
@@ -2552,6 +2563,9 @@ struct Gcx
         for (;;)
         {
             auto p = undefinedRead(*cast(void**)(rng.pbot));
+             // Mask out the top 8 bits for 64-bit pointers
+            version (D_LP64) p = cast(typeof(p))(cast(size_t)p & pointerAddressMask);
+
             debug (VALGRIND) makeMemDefined((&p)[0 .. 1]);
 
             debug(MARK_PRINTF) printf("\tmark %p: %p\n", rng.pbot, p);
@@ -2781,6 +2795,7 @@ struct Gcx
         for (auto p = cast(void**)pbot; cast(void*)p < ptop; p++)
         {
             auto ptr = *p;
+            version (D_LP64) ptr = cast(typeof(ptr))(cast(size_t)ptr & pointerAddressMask);
             debug (VALGRIND) makeMemDefined((&ptr)[0 .. 1]);
             if (cast(size_t)(ptr - minAddr) < memSize)
                 toscanRoots.push(ptr);
@@ -4170,11 +4185,13 @@ struct Pool
     size_t pagenumOf(void *p) const nothrow @nogc
     in
     {
-        assert(p >= baseAddr);
-        assert(p < topAddr);
+        version (D_LP64) auto p_ = cast(typeof(p))(cast(size_t)p & pointerAddressMask);
+        assert(p_ >= baseAddr);
+        assert(p_ < topAddr);
     }
     do
     {
+        version (D_LP64) p = cast(typeof(p))(cast(size_t)p & pointerAddressMask);
         return cast(size_t)(p - baseAddr) / PAGESIZE;
     }
 
@@ -4208,6 +4225,7 @@ struct Pool
 
     void* findBase(void* p) nothrow @nogc
     {
+        version (D_LP64) p = cast(typeof(p))(cast(size_t)p & pointerAddressMask);
         size_t offset = cast(size_t)(p - baseAddr);
         size_t pn = offset / PAGESIZE;
         Bins   bin = pagetable[pn];
@@ -4516,11 +4534,13 @@ struct LargeObjectPool
     size_t getPages(void *p) const nothrow @nogc
     in
     {
-        assert(p >= baseAddr);
-        assert(p < topAddr);
+        auto p_ = cast(typeof(p))(cast(size_t)p & pointerAddressMask);
+        assert(p_ >= baseAddr);
+        assert(p_ < topAddr);
     }
     do
     {
+        p = cast(typeof(p))(cast(size_t)p & pointerAddressMask);
         if (cast(size_t)p & (PAGESIZE - 1)) // check for interior pointer
             return 0;
         size_t pagenum = pagenumOf(p);
@@ -4639,11 +4659,13 @@ struct SmallObjectPool
     size_t getSize(void *p) const nothrow @nogc
     in
     {
-        assert(p >= baseAddr);
-        assert(p < topAddr);
+        auto p_ = cast(typeof(p))(cast(size_t)p & pointerAddressMask);
+        assert(p_ >= baseAddr);
+        assert(p_ < topAddr);
     }
     do
     {
+        p = cast(typeof(p))(cast(size_t)p & pointerAddressMask);
         size_t pagenum = pagenumOf(p);
         Bins bin = pagetable[pagenum];
         assert(bin < Bins.B_PAGE);
