@@ -1397,14 +1397,14 @@ void processEnvironment()
                 stderr.writeln(`DMD does not support LTO! Ignoring ENABLE_LTO flag...`);
                 break;
             case "ldc":
-                dflags ~= "-flto=full";
+                dflags ~= ["-flto=full", "--fvisibility=hidden"];
                 // workaround missing druntime-ldc-lto on 32-bit releases
                 // https://github.com/dlang/dmd/pull/14083#issuecomment-1125832084
                 if (env["MODEL"] != "32")
                     dflags ~= "-defaultlib=druntime-ldc-lto";
                 break;
             case "gdc":
-                dflags ~= "-flto";
+                dflags ~= ["-flto=full", "--fvisibility=hidden"];
                 break;
             default:
                 assert(false, "Unknown host compiler kind: " ~ env["HOST_DMD_KIND"]);
