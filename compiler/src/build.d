@@ -587,7 +587,8 @@ alias dmdPGO = makeRule!((builder, rule) {
             // Run dmd test suite to get data
             scope cmd = ["ldc-profdata", "merge", "--output=merged.data"];
             import std.file : dirEntries;
-            auto files = dirEntries(pgoState.pgoDataPath, "*.raw", SpanMode.shallow).map!(f => f.name);
+	        auto files = dirEntries(pgoState.pgoDataPath, "*.raw", SpanMode.shallow).map!(f => f.name);
+    		writeln("files.empty: ", files.empty);
 
             // Use a separate file to work around the windows command limit
             version (Windows)
@@ -1397,14 +1398,14 @@ void processEnvironment()
                 stderr.writeln(`DMD does not support LTO! Ignoring ENABLE_LTO flag...`);
                 break;
             case "ldc":
-                dflags ~= "-flto=full";
+                dflags ~= ["-flto=full", "--fvisibility=hidden"];
                 // workaround missing druntime-ldc-lto on 32-bit releases
                 // https://github.com/dlang/dmd/pull/14083#issuecomment-1125832084
                 if (env["MODEL"] != "32")
                     dflags ~= "-defaultlib=druntime-ldc-lto";
                 break;
             case "gdc":
-                dflags ~= "-flto";
+                dflags ~= ["-flto=full", "--fvisibility=hidden"];
                 break;
             default:
                 assert(false, "Unknown host compiler kind: " ~ env["HOST_DMD_KIND"]);
