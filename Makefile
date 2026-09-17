@@ -165,7 +165,6 @@ dmd-pgo: $(BUILD_EXE) $(RUN_EXE) ../phobos
 	$(BUILD_EXE) DFLAGS='-fprofile-instr-generate=$(abspath $(GENERATED))/%p.profraw -release $(HOST_DFLAGS)' dmd --force
 	@echo "PGO step 2/4: Gathering profiles by compiling druntime & phobos and running 'compilable' test suite"
 	$(MAKE) -C ../phobos
-	$(RUN_EXE) compilable
 	@echo "PGO step 3/4: Merging profiles"
 # using a response file with list of generated *.profraw files, to avoid cmdline-length problems with many files
 	cd $(GENERATED) && find -maxdepth 1 -name '*.profraw' > profraw_list.rsp
