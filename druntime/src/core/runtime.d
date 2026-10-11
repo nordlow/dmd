@@ -715,9 +715,58 @@ private UnitTestResult runIndividualUnitTests()
 {
     import core.exception : AssertError;
     import core.stdc.stdio : FILE, fprintf, stderr;
+    import core.time : MonoTime, Duration;
 
-    // C stdio owns this shared global; only the current handle is needed.
     auto err = cast(FILE*) stderr;
+    const totalT0 = MonoTime.currTime;
+
+    static void printDuration(scope const(char*) prefix, size_t preLen, scope const(char*) name, size_t nameLen, Duration dur, scope const(char*) suffix, size_t sufLen)
+    {
+        const nsecs = dur.total!"nsecs";
+        if (nsecs < 1_000)
+        {
+            fprintf(stderr, "%.*s%.*s%.*s (%lldns)\n", cast(int)preLen, prefix, cast(int)nameLen, name, cast(int)sufLen, suffix, cast(long)nsecs);
+        }
+        else if (nsecs < 1_000_000)
+        {
+            const us = nsecs / 1_000.0;
+            fprintf(stderr, "%.*s%.*s%.*s (%.2fµs)\n", cast(int)preLen, prefix, cast(int)nameLen, name, cast(int)sufLen, suffix, us);
+        }
+        else if (nsecs < 1_000_000_000)
+        {
+            const ms = nsecs / 1_000_000.0;
+            fprintf(stderr, "%.*s%.*s%.*s (%.2fms)\n", cast(int)preLen, prefix, cast(int)nameLen, name, cast(int)sufLen, suffix, ms);
+        }
+        else
+        {
+            const s = nsecs / 1_000_000_000.0;
+            fprintf(stderr, "%.*s%.*s%.*s (%.2fs)\n", cast(int)preLen, prefix, cast(int)nameLen, name, cast(int)sufLen, suffix, s);
+        }
+    }
+
+    static void printSummaryDuration(scope const(char*) name, size_t nameLen, scope const(char*) middle, size_t midLen, Duration dur)
+    {
+        const nsecs = dur.total!"nsecs";
+        if (nsecs < 1_000)
+        {
+            fprintf(stderr, "%.*s%.*s (%lldns)\n", cast(int)nameLen, name, cast(int)midLen, middle, cast(long)nsecs);
+        }
+        else if (nsecs < 1_000_000)
+        {
+            const us = nsecs / 1_000.0;
+            fprintf(stderr, "%.*s%.*s (%.2fµs)\n", cast(int)nameLen, name, cast(int)midLen, middle, us);
+        }
+        else if (nsecs < 1_000_000_000)
+        {
+            const ms = nsecs / 1_000_000.0;
+            fprintf(stderr, "%.*s%.*s (%.2fms)\n", cast(int)nameLen, name, cast(int)midLen, middle, ms);
+        }
+        else
+        {
+            const s = nsecs / 1_000_000_000.0;
+            fprintf(stderr, "%.*s%.*s (%.2fs)\n", cast(int)nameLen, name, cast(int)midLen, middle, s);
+        }
+    }
 
     UnitTestResult results;
     foreach ( m; ModuleInfo )
@@ -728,35 +777,90 @@ private UnitTestResult runIndividualUnitTests()
         auto moduleName = m.name;
         size_t executed;
         size_t passed;
+        const moduleT0 = MonoTime.currTime;
 
         void run( void function() fp, string testName )
         {
             ++executed;
+            const t0 = MonoTime.currTime;
             try
             {
                 fp();
                 ++passed;
+                const elapsed = MonoTime.currTime - t0;
+                if ( testName.length )
+                {
+                    char[512] fullName = void;
+                    if (moduleName.length + 1 + testName.length <= fullName.length)
+                    {
+                        fullName[0 .. moduleName.length] = moduleName[];
+                        fullName[moduleName.length] = '.';
+                        fullName[moduleName.length + 1 .. moduleName.length + 1 + testName.length] = testName[];
+                        printDuration("", 0, fullName.ptr, moduleName.length + 1 + testName.length, elapsed, ": passed", 7);
+                    }
+                    else
+                    {
+                        fprintf(err, "%.*s.%.*s: passed\n",
+                            cast(int) moduleName.length, moduleName.ptr,
+                            cast(int) testName.length, testName.ptr);
+                    }
+                }
             }
             catch ( Throwable e )
             {
+                const elapsed = MonoTime.currTime - t0;
                 if ( testName.length )
-                    fprintf(err, "%.*s.%.*s: FAILED\n",
-                        cast(int) moduleName.length, moduleName.ptr,
-                        cast(int) testName.length, testName.ptr);
+                {
+                    char[512] fullName = void;
+                    if (moduleName.length + 1 + testName.length <= fullName.length)
+                    {
+                        fullName[0 .. moduleName.length] = moduleName[];
+                        fullName[moduleName.length] = '.';
+                        fullName[moduleName.length + 1 .. moduleName.length + 1 + testName.length] = testName[];
+                        printDuration("", 0, fullName.ptr, moduleName.length + 1 + testName.length, elapsed, ": FAILED", 8);
+                    }
+                    else
+                    {
+                        fprintf(err, "%.*s.%.*s: FAILED\n",
+                            cast(int) moduleName.length, moduleName.ptr,
+                            cast(int) testName.length, testName.ptr);
+                    }
+                }
                 else
-                    fprintf(err, "%.*s: FAILED\n",
-                        cast(int) moduleName.length, moduleName.ptr);
+                {
+                    printDuration(moduleName.ptr, moduleName.length, "", 0, elapsed, ": FAILED", 8);
+                }
 
-                // Same crude heuristic as the per-module runner to figure
-                // whether the assertion originates in the unittested module.
                 if ( typeid(e) == typeid(AssertError)
                     && moduleName.length && e.file.length > moduleName.length
                     && e.file[0 .. moduleName.length] == moduleName)
                 {
-                    // Don't print the stack trace.
-                    fprintf(err, "%.*s(%llu): [unittest] %.*s\n",
-                        cast(int) e.file.length, e.file.ptr, cast(ulong) e.line,
-                        cast(int) e.message.length, e.message.ptr);
+                    const dur = MonoTime.currTime - t0;
+                    const nsecs = dur.total!"nsecs";
+                    if (nsecs < 1_000)
+                    {
+                        fprintf(err, "%.*s(%llu): [unittest] %.*s (%lldns)\n",
+                            cast(int) e.file.length, e.file.ptr, cast(ulong) e.line,
+                            cast(int) e.message.length, e.message.ptr, cast(long) nsecs);
+                    }
+                    else if (nsecs < 1_000_000)
+                    {
+                        fprintf(err, "%.*s(%llu): [unittest] %.*s (%.2fµs)\n",
+                            cast(int) e.file.length, e.file.ptr, cast(ulong) e.line,
+                            cast(int) e.message.length, e.message.ptr, nsecs / 1_000.0);
+                    }
+                    else if (nsecs < 1_000_000_000)
+                    {
+                        fprintf(err, "%.*s(%llu): [unittest] %.*s (%.2fms)\n",
+                            cast(int) e.file.length, e.file.ptr, cast(ulong) e.line,
+                            cast(int) e.message.length, e.message.ptr, nsecs / 1_000_000.0);
+                    }
+                    else
+                    {
+                        fprintf(err, "%.*s(%llu): [unittest] %.*s (%.2fs)\n",
+                            cast(int) e.file.length, e.file.ptr, cast(ulong) e.line,
+                            cast(int) e.message.length, e.message.ptr, nsecs / 1_000_000_000.0);
+                    }
                 }
                 else
                     _d_print_throwable(e);
@@ -771,31 +875,50 @@ private UnitTestResult runIndividualUnitTests()
         }
         else if ( auto fp = m.unitTest )
         {
-            // No information about the individual unittests of this module.
             run(fp, null);
         }
         else
             continue;
 
+        const moduleElapsed = MonoTime.currTime - moduleT0;
+        char[128] buf = void;
+        import core.stdc.stdio : snprintf;
+        int len;
         if ( passed == executed )
-            fprintf(err, "%.*s: %llu passed\n",
-                cast(int) moduleName.length, moduleName.ptr, cast(ulong) passed);
+            len = snprintf(buf.ptr, buf.length, ": %llu passed", cast(ulong) passed);
         else
-            fprintf(err, "%.*s: %llu passed, %llu FAILED\n",
-                cast(int) moduleName.length, moduleName.ptr, cast(ulong) passed,
-                cast(ulong) (executed - passed));
+            len = snprintf(buf.ptr, buf.length, ": %llu passed, %llu FAILED", cast(ulong) passed, cast(ulong) (executed - passed));
+
+        printSummaryDuration(moduleName.ptr, moduleName.length, buf.ptr, len, moduleElapsed);
 
         results.executed += executed;
         results.passed += passed;
     }
 
+    const totalElapsed = MonoTime.currTime - totalT0;
+    const totalNsecs = totalElapsed.total!"nsecs";
     if ( results.passed != results.executed )
-        fprintf(err, "%llu/%llu unittests FAILED\n",
-            cast(ulong) (results.executed - results.passed), cast(ulong) results.executed);
+    {
+        if (totalNsecs < 1_000)
+            fprintf(err, "%llu/%llu unittests FAILED (%lldns)\n", cast(ulong) (results.executed - results.passed), cast(ulong) results.executed, cast(long) totalNsecs);
+        else if (totalNsecs < 1_000_000)
+            fprintf(err, "%llu/%llu unittests FAILED (%.2fµs)\n", cast(ulong) (results.executed - results.passed), cast(ulong) results.executed, totalNsecs / 1_000.0);
+        else if (totalNsecs < 1_000_000_000)
+            fprintf(err, "%llu/%llu unittests FAILED (%.2fms)\n", cast(ulong) (results.executed - results.passed), cast(ulong) results.executed, totalNsecs / 1_000_000.0);
+        else
+            fprintf(err, "%llu/%llu unittests FAILED (%.2fs)\n", cast(ulong) (results.executed - results.passed), cast(ulong) results.executed, totalNsecs / 1_000_000_000.0);
+    }
     else
-        fprintf(err, "%llu unittests passed\n", cast(ulong) results.passed);
-
-    // Main is not run as unittests were present.
+    {
+        if (totalNsecs < 1_000)
+            fprintf(err, "%llu unittests passed (%lldns)\n", cast(ulong) results.passed, cast(long) totalNsecs);
+        else if (totalNsecs < 1_000_000)
+            fprintf(err, "%llu unittests passed (%.2fµs)\n", cast(ulong) results.passed, totalNsecs / 1_000.0);
+        else if (totalNsecs < 1_000_000_000)
+            fprintf(err, "%llu unittests passed (%.2fms)\n", cast(ulong) results.passed, totalNsecs / 1_000_000.0);
+        else
+            fprintf(err, "%llu unittests passed (%.2fs)\n", cast(ulong) results.passed, totalNsecs / 1_000_000_000.0);
+    }
     return results;
 }
 
