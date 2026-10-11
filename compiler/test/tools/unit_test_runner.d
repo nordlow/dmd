@@ -61,6 +61,7 @@ void writeRunnerFile(Range)(Range moduleNames, string path, string filter)
 
         UnitTestResult unitTestRunner()
         {
+            import core.time : MonoTime;
             import std.algorithm : any, canFind, each, map;
             import std.array : array;
             import std.conv : text;
@@ -174,23 +175,33 @@ void writeRunnerFile(Range)(Range moduleNames, string path, string filter)
 
                     try
                     {
+                        void runTest()
+                        {
+                            testCount++;
+                            executeCallbacks(beforeEachCallbacks);
+                            const t0 = MonoTime.currTime;
+                            unitTest();
+                            const elapsed = (MonoTime.currTime - t0).total!"msecs";
+                            static if (is(typeof(attributes) == string[]))
+                                const desc = attributes.length ? attributes.join(", ") : "unittest";
+                            else
+                                enum desc = "unittest";
+                            stderr.write(elapsed, " ms: ", desc, "\n");
+                        }
+
                         static if (!attributes.empty)
                         {
                             test.descriptions = attributes;
 
                             if (attributes.any!(a => a.canFind(filter)))
                             {
-                                testCount++;
-                                executeCallbacks(beforeEachCallbacks);
-                                unitTest();
+                                runTest();
                             }
                         }
 
                         else static if (filter.length == 0)
                         {
-                            testCount++;
-                            executeCallbacks(beforeEachCallbacks);
-                            unitTest();
+                            runTest();
                         }
                     }
 
