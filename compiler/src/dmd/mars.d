@@ -831,7 +831,7 @@ bool parseCommandLine(const ref Strings arguments, const size_t argc, out Param 
         {
             // ignore, already handled above
         }
-        else if (startsWith(p + 1, "cov")) // https://dlang.org/dmd.html#switch-cov
+        else if (startsWith(p, "cov")) // https://dlang.org/dmd.html#switch-cov
         {
             params.cov = true;
             // Parse:
@@ -842,6 +842,25 @@ bool parseCommandLine(const ref Strings arguments, const size_t argc, out Param 
             {
                 params.ctfe_cov = true;
             }
+            else if (arg == "-cov=warn" || p.toDString() == "cov=warn")
+            {
+                params.cov_warn = true;
+            }
+            else if (p[3] == '=')
+            {
+                auto val = p.toDString()[4 .. $];
+                if (val == "warn")
+                {
+                    params.cov_warn = true;
+                }
+                else if (!params.covPercent.parseDigits(val, 100))
+                {
+                    errorInvalidSwitch(p, "Only a number between 0 and 100 can be passed to `-cov=<num>`");
+                    return true;
+                }
+            }
+            else if (p[3])
+                goto Lerror;
             else if (p[4] == '=')
             {
                 if (!params.covPercent.parseDigits(p.toDString()[5 .. $], 100))

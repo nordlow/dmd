@@ -171,6 +171,7 @@ extern (C++) struct Param
     bool cov;               // generate code coverage data
     ubyte covPercent;       // 0..100 code coverage percentage required
     bool ctfe_cov = false;  // generate coverage data for ctfe
+    bool cov_warn = false;  // generate coverage warnings
     bool ignoreUnsupportedPragmas = true;  // rather than error on them
     bool useModuleInfo = true;   // generate runtime module information
     bool useTypeInfo = true;     // generate runtime type information

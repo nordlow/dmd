@@ -78,6 +78,7 @@ private
         string  dstpath;
         bool    disable;
         bool    merge;
+        bool    warn;
 
     @nogc nothrow:
 
@@ -113,6 +114,7 @@ private
  */
 extern (C) void dmd_coverSourcePath( string pathname )
 {
+    ensureInitialized();
     config.srcpath = pathname;
 }
 
@@ -125,6 +127,7 @@ extern (C) void dmd_coverSourcePath( string pathname )
  */
 extern (C) void dmd_coverDestPath( string pathname )
 {
+    ensureInitialized();
     config.dstpath = pathname;
 }
 
@@ -138,6 +141,7 @@ extern (C) void dmd_coverDestPath( string pathname )
  */
 extern (C) void dmd_coverSetMerge( bool flag )
 {
+    ensureInitialized();
     config.merge = flag;
 }
 
@@ -153,6 +157,7 @@ extern (C) void dmd_coverSetMerge( bool flag )
  */
 extern (C) void _d_cover_register2(string filename, size_t[] valid, uint[] data, ubyte minPercent)
 {
+    ensureInitialized();
     assert(minPercent <= 100);
 
     Cover c;
@@ -224,10 +229,153 @@ unittest
     assert(!lstEquals(src, badLst));
 }
 
-shared static this()
+
+__gshared bool coverInitialized;
+
+void ensureInitialized() nothrow
 {
+    if (coverInitialized) return;
+    coverInitialized = true;
+
     config.initialize();
+
+    import core.stdc.stdlib : getenv, atexit;
+    import core.stdc.string : strstr;
+    if (auto p = getenv("DRT_COVOPT"))
+        if (strstr(p, "warn:1"))
+            config.warn = true;
+    if (auto p = getenv("COVOPT"))
+        if (strstr(p, "warn:1"))
+            config.warn = true;
+
+    atexit(&_d_cover_term);
 }
+
+extern(C) nothrow void _d_cover_term()
+{
+    __gshared bool executed;
+    if (executed) return;
+    executed = true;
+
+    ensureInitialized();
+    if (config.disable)
+        return;
+
+    const NUMLINES = 16384 - 1;
+    const NUMCHARS = 16384 * 16 - 1;
+
+    try
+    {
+        auto buf = new char[NUMCHARS];
+        auto lines = new char[][NUMLINES];
+        auto lstLines = new char[][NUMLINES];
+
+        foreach (c; gdata)
+        {
+            if (config.warn)
+            {
+                if (c.data.ptr && c.valid.ptr && readFile(appendFN(config.srcpath, c.filename), buf))
+                {
+                    splitLines(buf, lines);
+                    auto minLineLength = min(c.data.length, lines.length);
+                    foreach (i, n; c.data[0 .. minLineLength])
+                    {
+                        if (n == 0 && c.valid[i])
+                        {
+                            fprintf(stderr, "%.*s(%zu): Coverage: Uncovered\n",
+                                    cast(int)c.filename.length, c.filename.ptr, i + 1);
+                        }
+                    }
+                }
+                continue;
+            }
+
+            auto fname = appendFN(config.dstpath, addExt(baseName(c.filename), "lst"));
+            auto flst = openOrCreateFile(fname);
+            if (flst is null)
+                continue;
+            lockFile(fileno(flst));
+            scope(exit) fclose(flst);
+
+            if (!readFile(appendFN(config.srcpath, c.filename), buf))
+                continue;
+            splitLines(buf, lines);
+
+            auto minLineLength = min(c.data.length, lines.length);
+            foreach (i; 0 .. minLineLength)
+                lines[i] = expandTabs(lines[i]);
+
+            auto buf2 = new char[NUMCHARS];
+            if (config.merge && readFile(flst, buf2))
+            {
+                splitLines(buf2, lstLines);
+                if (lstEquals(lines, lstLines))
+                    foreach (i, line; lstLines[0 .. min($, c.data.length)])
+                        c.data[i] += parseNum(line);
+            }
+
+            uint maxCallCount;
+            foreach (n; c.data[0 .. minLineLength])
+                maxCallCount = max(maxCallCount, n);
+
+            immutable maxDigits = max(7, digits(maxCallCount));
+            uint nno, nyes;
+            fseek(flst, 0, SEEK_SET);
+
+            foreach (i, n; c.data[0 .. minLineLength])
+            {
+                auto line = lines[i];
+                if (n == 0)
+                {
+                    if (c.valid[i])
+                    {
+                        ++nno;
+                        fprintf(flst, "%0*u|%.*s\n", maxDigits, 0, cast(int)line.length, line.ptr);
+                    }
+                    else
+                    {
+                        fprintf(flst, "%*s|%.*s\n", maxDigits, "".ptr, cast(int)line.length, line.ptr);
+                    }
+                }
+                else
+                {
+                    ++nyes;
+                    fprintf(flst, "%*u|%.*s\n", maxDigits, n, cast(int)line.length, line.ptr);
+                }
+            }
+
+            if (nyes + nno)
+            {
+                uint percent = (nyes * 100) / (nyes + nno);
+                fprintf(flst, "%.*s is %d%% covered\n", cast(int)c.filename.length, c.filename.ptr, percent);
+                if (percent < c.minPercent)
+                {
+                    fprintf(cast()stderr, "Error: %.*s is %d%% covered, less than required %d%%\n",
+                        cast(int)c.filename.length, c.filename.ptr, percent, c.minPercent);
+                    exit(EXIT_FAILURE);
+                }
+            }
+            else
+            {
+                fprintf(flst, "%.*s has no code\n", cast(int)c.filename.length, c.filename.ptr);
+            }
+
+            version (Windows)
+                SetEndOfFile(handle(fileno(flst)));
+            else version (Posix)
+                ftruncate(fileno(flst), ftell(flst));
+        }
+    }
+    catch (Throwable)
+    {
+    }
+}
+
+shared static ~this()
+{
+    _d_cover_term();
+}
+
 
 shared static ~this()
 {
